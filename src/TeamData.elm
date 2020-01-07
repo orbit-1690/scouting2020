@@ -54,8 +54,8 @@ teamDataView model =
             , rounded 3
             , Font.family
                 [ Font.external
-                    { name = "Pacifico"
-                    , url = "https://fonts.googleapis.com/css?family=Pacifico"
+                    { name = "Open Sans"
+                    , url = "https://fonts.googleapis.com/css?family=Open+Sans:700i&display=swap"
                     }
                 ]
             ]
@@ -71,8 +71,8 @@ textInput modelValue nextButton name =
         , height fill
         , Font.family
             [ Font.external
-                { name = "Pacifico"
-                , url = "https://fonts.googleapis.com/css?family=Pacifico"
+                { name = "Open Sans"
+                , url = "https://fonts.googleapis.com/css?family=Open+Sans:700i&display=swap"
                 }
             ]
         ]

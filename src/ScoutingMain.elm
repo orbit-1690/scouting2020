@@ -52,6 +52,42 @@ type alias Model =
     }
 
 
+stylishPage : Element.Element Msg -> Element.Element Msg
+stylishPage page =
+    column
+        [ Background.color lightBlue
+        , padding 10
+        , spacing 10
+        , width fill
+        , height fill
+        ]
+        [ page
+        , button
+            [ Font.color white
+            , Font.size 40
+            , Font.glow blue 5
+            , Border.rounded 10
+            , Font.family
+                [ Font.external
+                    { name = "Open Sans"
+                    , url = "https://fonts.googleapis.com/css?family=Open+Sans:700i&display=swap"
+                    }
+                ]
+            , Background.gradient
+                { angle = 2
+                , steps = [ purple, orange, blueGreen ]
+                }
+            , center
+            , centerX
+            , centerY
+            , width <| maximum 350 <| fill
+            ]
+            { onPress = Just <| NextPage
+            , label = Element.text "Next Page"
+            }
+        ]
+
+
 update : Msg -> Model -> Model
 update msg model =
     case msg of
@@ -75,48 +111,16 @@ view : Model -> Element.Element Msg
 view model =
     case model.pages of
         TeamDataPage ->
-            column
-                [ Background.color lightBlue
-                , padding 10
-                , spacing 10
-                , width fill
-                , height fill
-                ]
-                [ Element.map TeamDataMsg <|
-                    TeamData.view model.teamData
-                , button
-                    [ Font.color white
-                    , Font.size 40
-                    , Font.glow blue 5
-                    , Border.rounded 10
-                    , Font.family
-                        [ Font.external
-                            { name = "Pacifico"
-                            , url = "https://fonts.googleapis.com/css?family=Pacifico"
-                            }
-                        ]
-                    , Background.gradient
-                        { angle = 2
-                        , steps = [ purple, orange, blueGreen ]
-                        }
-                    , center
-                    , centerX
-                    , centerY
-                    , width <| maximum 350 <| fill
-                    ]
-                    { onPress = Just <| NextPage
-                    , label = Element.text "Next Page"
-                    }
-                ]
+            stylishPage <| Element.map TeamDataMsg <| TeamData.view model.teamData
 
         AutonomousPage ->
-            Element.map AutonomousDataMsg <| Autonomous.view model.autonomousData
+            stylishPage <| Element.map AutonomousDataMsg <| Autonomous.view model.autonomousData
 
         TeleopPage ->
-            Element.map TeleopDataMsg <| Teleop.view model.teleopData
+            stylishPage <| Element.map TeleopDataMsg <| Teleop.view model.teleopData
 
         ClimbingPage ->
-            Element.map ClimbingDataMsg <| Climbing.view model.climbingData
+            stylishPage <| Element.map ClimbingDataMsg <| Climbing.view model.climbingData
 
 
 subscriptions : Model -> Sub Msg

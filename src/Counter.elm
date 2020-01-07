@@ -2,7 +2,7 @@ module Counter exposing (Model, Msg, init, update, view)
 
 import Browser
 import Colors exposing (black, blue, pink, red, sky, white, yellow)
-import Element exposing (row, text)
+import Element exposing (padding, row, spacing, text)
 import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
@@ -41,10 +41,14 @@ update max min msg model =
                 { model | counter = model.counter - 1 }
 
 
-view : Model -> Element.Element Msg
-view model =
-    row []
-        [ button [] { onPress = Just Minus, label = text "-" }
+view : String -> Model -> Element.Element Msg
+view title model =
+    row
+        [ padding 3
+        , spacing 20
+        ]
+        [ text title
+        , button [] { onPress = Just Minus, label = text "-" }
         , text <| String.fromInt model.counter
         , button [] { onPress = Just Plus, label = text "+" }
         ]
