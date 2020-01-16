@@ -1,4 +1,4 @@
-module TeamData exposing (Model, Msg, init, subscriptions, update, view)
+module TeamData exposing (Model, Msg, init, subscriptions, teamDataView, update)
 
 import Colors exposing (black, blue, pink, red, sky, white, yellow)
 import Element exposing (centerX, centerY, column, fill, height, minimum, padding, px, spacing, width)
@@ -99,11 +99,6 @@ update msg model =
 
         MatchInput s ->
             { model | match = String.toInt s }
-
-
-view : Model -> Element.Element Msg
-view model =
-    teamDataView model
 
 
 subscriptions : Sub Msg
