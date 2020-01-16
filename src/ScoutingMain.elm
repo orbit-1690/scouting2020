@@ -9,11 +9,10 @@ import Element exposing (centerX, centerY, column, fill, height, layout, maximum
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font exposing (center)
-import Element.Input as Input exposing (button)
+import Element.Input exposing (button)
 import GetMatch exposing (getMatch, maybeIntToInt, unwrapToString)
 import Http
 import Maybe
-import String
 import TeamData
 import Teleop
 
@@ -88,6 +87,16 @@ stylishPage page =
         ]
 
 
+init : Model
+init =
+    { teamData = TeamData.init "" Nothing Nothing
+    , autonomousData = Autonomous.init Autonomous.Stage1 False Counter.init Counter.init Counter.init <| Counter.init
+    , teleopData = Teleop.init
+    , climbingData = Climbing.init 0
+    , pages = TeamDataPage
+    }
+
+
 update : Msg -> Model -> Model
 update msg model =
     case msg of
@@ -104,38 +113,33 @@ update msg model =
             { model | climbingData = Climbing.update climbMsg model.climbingData }
 
         NextPage ->
-            { model | pages = AutonomousPage }
+            if model.pages == AutonomousPage then
+                { model | pages = TeleopPage }
+
+            else
+                { model | pages = AutonomousPage }
 
 
 view : Model -> Element.Element Msg
 view model =
     case model.pages of
         TeamDataPage ->
-            stylishPage <| Element.map TeamDataMsg <| TeamData.view model.teamData
+            stylishPage << Element.map TeamDataMsg <| TeamData.teamDataView model.teamData
 
         AutonomousPage ->
-            stylishPage <| Element.map AutonomousDataMsg <| Autonomous.view model.autonomousData
+            stylishPage << Element.map AutonomousDataMsg <| Autonomous.autonomousView model.autonomousData
 
         TeleopPage ->
-            stylishPage <| Element.map TeleopDataMsg <| Teleop.view model.teleopData
+            stylishPage << Element.map TeleopDataMsg <| Teleop.teleopView model.teleopData
 
         ClimbingPage ->
-            stylishPage <| Element.map ClimbingDataMsg <| Climbing.view model.climbingData
+            stylishPage << Element.map ClimbingDataMsg <| Climbing.view model.climbingData
 
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
+subscriptions _ =
     Sub.batch
         [ Sub.map AutonomousDataMsg <| Autonomous.subscriptions
         , Sub.map TeamDataMsg <| TeamData.subscriptions
+        , Sub.map TeleopDataMsg <| Teleop.subscriptions
         ]
-
-
-init : Model
-init =
-    { teamData = TeamData.init "" Nothing Nothing
-    , autonomousData = Autonomous.init False (Counter.init 0) (Counter.init 0) <| Counter.init 0
-    , teleopData = Teleop.init 0
-    , climbingData = Climbing.init 0
-    , pages = TeamDataPage
-    }
