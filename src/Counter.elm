@@ -18,9 +18,9 @@ type Msg
     | Minus
 
 
-init : Int -> Model
+init : Model
 init =
-    Model
+    Model 0
 
 
 update : Int -> Int -> Msg -> Model -> Model
