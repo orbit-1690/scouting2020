@@ -1,4 +1,4 @@
-module GetMatch exposing (getMatch, maybeIntToInt, unwrapToString)
+module GetMatch exposing (getMatch, maybeIntToInt, stationIndex, unwrapToString)
 
 import List.Extra exposing (getAt)
 import Maybe.Extra exposing (unwrap)
