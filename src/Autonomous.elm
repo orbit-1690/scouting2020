@@ -1,31 +1,82 @@
-module Autonomous exposing (Model, Msg, init, subscriptions, update, view)
+module Autonomous exposing (Balls(..), Model, Msg, autonomousView, init, subscriptions, update)
 
-import Bool.Extra exposing (toString)
 import Colors exposing (black, blue, blueGreen, lightBlue, orange, pink, purple, sky, white, yellow)
 import Counter
 import Element exposing (centerX, centerY, column, el, fill, height, minimum, padding, px, rgb, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
-import Element.Input as Input exposing (button, labelHidden)
-import Http
-import Maybe
-import String
+import Element.Input as Input exposing (button, labelHidden, radioRow)
 
 
 type Msg
     = Moved
-    | LevelOne Counter.Msg
-    | LevelTow Counter.Msg
-    | LevelThree Counter.Msg
+    | LowLevel Counter.Msg
+    | HighLevel Counter.Msg
+    | Missed Counter.Msg
+    | TrenchCollection Counter.Msg
+    | EnemyTrenchCollection Counter.Msg
+    | RendezvousCollection Counter.Msg
+    | Stage Balls
 
 
 type alias Model =
-    { moved : Bool
-    , levelOne : Counter.Model
-    , levelTow : Counter.Model
-    , levelThree : Counter.Model
+    { stage : Balls
+    , moved : Bool
+    , lowlevel : Counter.Model
+    , highlevel : Counter.Model
+    , missed : Counter.Model
+    , trenchCollection : Counter.Model
+    , enemyTrenchCollection : Counter.Model
+    , rendezvousCollection : Counter.Model
     }
+
+
+type Balls
+    = Ball0
+    | Ball1
+    | Ball2
+    | Ball3
+
+
+createButton : Msg -> String -> Element.Element Msg
+createButton msg name =
+    button
+        [ Font.color white
+        , Font.size 25
+        , Font.glow blue 5
+        , Border.rounded 10
+        , Font.family
+            [ Font.external
+                { name = "Open Sans"
+                , url = "https://fonts.googleapis.com/css?family=Open+Sans:700i&display=swap"
+                }
+            ]
+        , Background.gradient
+            { angle = 2
+            , steps = [ pink, yellow, white ]
+            }
+        , center
+        , centerX
+        , centerY
+        ]
+        { onPress = Just msg, label = text name }
+
+
+printButton : String -> String -> Bool -> Element.Element Msg
+printButton onFalse onTrue modelBool =
+    el
+        [ center
+        , centerX
+        , centerY
+        ]
+        (text <|
+            if modelBool then
+                onTrue
+
+            else
+                onFalse
+        )
 
 
 autonomousView : Model -> Element.Element Msg
@@ -40,42 +91,34 @@ autonomousView model =
         , centerX
         , centerY
         ]
-        [ button
-            [ Font.color
-                white
-            , Font.size 25
-            , Font.glow blue 5
-            , Border.rounded 10
-            , Font.family
-                [ Font.external
-                    { name = "Open Sans"
-                    , url = "https://fonts.googleapis.com/css?family=Open+Sans:700i&display=swap"
-                    }
+        [ radioRow
+            [ padding 10
+            , spacing 20
+            ]
+            { onChange = Stage
+            , selected = Just model.stage
+            , label = Input.labelAbove [] (text "started with:")
+            , options =
+                [ Input.option Ball0 (text "0 balls")
+                , Input.option Ball1 (text "1 ball")
+                , Input.option Ball2 (text "2 balls")
+                , Input.option Ball3 (text "3 balls")
                 ]
-            , Background.gradient
-                { angle = 2
-                , steps = [ pink, yellow, white ]
-                }
-            , center
-            , centerX
-            , centerY
-            ]
-            { onPress = Just Moved, label = text "moved?" }
-        , el
-            [ center
-            , centerX
-            , centerY
-            ]
-            (text <| toString model.moved)
-        , Element.map LevelOne <| Counter.view "Level 1:" model.levelOne
-        , Element.map LevelTow <| Counter.view "Level 2:" model.levelTow
-        , Element.map LevelThree <| Counter.view "Level 3:" model.levelThree
+            }
+        , createButton Moved "moved?"
+        , printButton "didn't move" "moved" model.moved
+        , Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
+        , Element.map HighLevel <| Counter.view "high Level:" model.highlevel
+        , Element.map Missed <| Counter.view "missed:" model.missed
+        , Element.map TrenchCollection <| Counter.view "Collected from their trench:" model.trenchCollection
+        , Element.map EnemyTrenchCollection <| Counter.view "Collected from enemy's trench:" model.enemyTrenchCollection
+        , Element.map RendezvousCollection <| Counter.view "Collected from rendemockelk881\u{0003}#:" model.rendezvousCollection
         ]
 
 
-init : Bool -> Counter.Model -> Counter.Model -> Counter.Model -> Model
+init : Model
 init =
-    Model
+    Model Ball0 False Counter.init Counter.init Counter.init Counter.init Counter.init <| Counter.init
 
 
 update : Msg -> Model -> Model
@@ -84,19 +127,26 @@ update msg model =
         Moved ->
             { model | moved = not model.moved }
 
-        LevelOne count1 ->
-            { model | levelOne = Counter.update 9 0 count1 model.levelOne }
+        LowLevel count ->
+            { model | lowlevel = Counter.update 15 0 count model.lowlevel }
 
-        LevelTow count2 ->
-            { model | levelTow = Counter.update 9 0 count2 model.levelTow }
+        HighLevel count ->
+            { model | highlevel = Counter.update 15 0 count model.highlevel }
 
-        LevelThree count3 ->
-            { model | levelThree = Counter.update 9 0 count3 model.levelThree }
+        Missed count ->
+            { model | missed = Counter.update 15 0 count model.missed }
 
+        TrenchCollection count ->
+            { model | trenchCollection = Counter.update 15 0 count model.trenchCollection }
 
-view : Model -> Element.Element Msg
-view model =
-    autonomousView model
+        Stage stage ->
+            { model | stage = stage }
+
+        EnemyTrenchCollection count ->
+            { model | enemyTrenchCollection = Counter.update 15 0 count model.enemyTrenchCollection }
+
+        RendezvousCollection count ->
+            { model | rendezvousCollection = Counter.update 15 0 count model.rendezvousCollection }
 
 
 subscriptions : Sub Msg

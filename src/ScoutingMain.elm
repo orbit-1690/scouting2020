@@ -2,7 +2,7 @@ module ScoutingMain exposing (Model, Msg, init, subscriptions, update, view)
 
 import Autonomous
 import Browser
-import Climbing
+import Climbing exposing (Status)
 import Colors exposing (black, blue, blueGreen, lightBlue, orange, purple, sky, white)
 import Counter
 import Element exposing (centerX, centerY, column, fill, height, layout, maximum, padding, rgb255, shrink, spacing, text, width)
@@ -39,6 +39,7 @@ type Msg
     | AutonomousDataMsg Autonomous.Msg
     | TeleopDataMsg Teleop.Msg
     | ClimbingDataMsg Climbing.Msg
+    | PrevPage
     | NextPage
 
 
@@ -62,37 +63,24 @@ stylishPage page =
         ]
         [ page
         , button
-            [ Font.color white
-            , Font.size 40
-            , Font.glow blue 5
-            , Border.rounded 10
-            , Font.family
-                [ Font.external
-                    { name = "Open Sans"
-                    , url = "https://fonts.googleapis.com/css?family=Open+Sans:700i&display=swap"
-                    }
-                ]
-            , Background.gradient
-                { angle = 2
-                , steps = [ purple, orange, blueGreen ]
-                }
-            , center
-            , centerX
-            , centerY
-            , width <| maximum 350 <| fill
-            ]
+            rainbowStyle
             { onPress = Just <| NextPage
             , label = Element.text "Next Page"
+            }
+        , button
+            rainbowStyle
+            { onPress = Just <| PrevPage
+            , label = Element.text "Previous Page"
             }
         ]
 
 
 init : Model
 init =
-    { teamData = TeamData.init "" Nothing Nothing
-    , autonomousData = Autonomous.init Autonomous.Stage1 False Counter.init Counter.init Counter.init <| Counter.init
+    { teamData = TeamData.init
+    , autonomousData = Autonomous.init
     , teleopData = Teleop.init
-    , climbingData = Climbing.init 0
+    , climbingData = Climbing.init
     , pages = TeamDataPage
     }
 
@@ -112,16 +100,32 @@ update msg model =
         ClimbingDataMsg climbMsg ->
             { model | climbingData = Climbing.update climbMsg model.climbingData }
 
+        PrevPage ->
+            if model.pages == AutonomousPage then
+                { model | pages = TeamDataPage }
+
+            else if model.pages == TeleopPage then
+                { model | pages = AutonomousPage }
+
+            else if model.pages == ClimbingPage then
+                { model | pages = TeleopPage }
+
+            else
+                model
+
         NextPage ->
             let
                 error =
-                    getMatch model.teamData.team model.teamData.match
+                    getMatch model.teamData.match model.teamData.station
             in
-            if model.pages == TeamDataPage && error /= "Not a match" && error /= "Team not in this match" then
+            if model.pages == TeamDataPage && (error /= "Not a match") && (error /= "Team not in this match") then
                 { model | pages = AutonomousPage }
 
             else if model.pages == AutonomousPage then
                 { model | pages = TeleopPage }
+
+            else if model.pages == TeleopPage then
+                { model | pages = ClimbingPage }
 
             else
                 model
@@ -150,3 +154,26 @@ subscriptions =
         , Sub.map TeamDataMsg <| TeamData.subscriptions
         , Sub.map TeleopDataMsg <| Teleop.subscriptions
         ]
+
+
+rainbowStyle : List (Element.Attribute Msg)
+rainbowStyle =
+    [ Font.color white
+    , Font.size 40
+    , Font.glow blue 5
+    , Border.rounded 10
+    , Font.family
+        [ Font.external
+            { name = "Open Sans"
+            , url = "https://fonts.googleapis.com/css?family=Open+Sans:700i&display=swap"
+            }
+        ]
+    , Background.gradient
+        { angle = 2
+        , steps = [ purple, orange, blueGreen ]
+        }
+    , center
+    , centerX
+    , centerY
+    , width <| maximum 350 <| fill
+    ]

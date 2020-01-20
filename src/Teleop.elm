@@ -1,4 +1,4 @@
-module Teleop exposing (Model, Msg, init, subscriptions, teleopView, update)
+module Teleop exposing (Model, Msg, createButton, init, printButton, subscriptions, teleopView, update, yophyTophy)
 
 import Colors exposing (black, blue, blueGreen, lightBlue, orange, pink, purple, sky, white, yellow)
 import Counter
@@ -15,8 +15,6 @@ type Msg
     = LowLevel Counter.Msg
     | HighLevel Counter.Msg
     | Missed Counter.Msg
-    | FloorCollecting
-    | FiderCollecting
     | ColorRoulette
     | SpinedRoulette
 
@@ -81,16 +79,10 @@ update : Msg -> Model -> Model
 update msg model =
     case msg of
         LowLevel count ->
-            { model | lowlevel = Counter.update 15 0 count model.lowlevel }
+            { model | lowlevel = Counter.update 99 0 count model.lowlevel }
 
         HighLevel count ->
-            { model | highlevel = Counter.update 15 0 count model.highlevel }
-
-        FloorCollecting ->
-            { model | floorCollecting = not model.floorCollecting }
-
-        FiderCollecting ->
-            { model | fiderCollecting = not model.fiderCollecting }
+            { model | highlevel = Counter.update 99 0 count model.highlevel }
 
         ColorRoulette ->
             { model | colorRoulette = not model.colorRoulette }
@@ -99,7 +91,7 @@ update msg model =
             { model | spinedRoulette = not model.spinedRoulette }
 
         Missed count ->
-            { model | missed = Counter.update 15 0 count model.missed }
+            { model | missed = Counter.update 99 0 count model.missed }
 
 
 teleopView : Model -> Element.Element Msg
@@ -116,12 +108,12 @@ teleopView model =
         ]
         [ row yophyTophy
             [ column yophyTophy
-                [ createButton ColorRoulette "correct color?"
+                [ createButton ColorRoulette "spun to\ncorrect color?"
                 , printButton "no" "yes" model.colorRoulette
                 ]
             , column
                 yophyTophy
-                [ createButton SpinedRoulette "spun roulette?"
+                [ createButton SpinedRoulette "spun 3-5?"
                 , printButton "no" "yes" model.spinedRoulette
                 ]
             ]

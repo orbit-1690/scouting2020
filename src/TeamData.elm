@@ -7,20 +7,18 @@ import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
 import Element.Input as Input exposing (labelHidden)
 import GetMatch exposing (getMatch, maybeIntToInt, unwrapToString)
-import Http
-import Maybe
 import String
 
 
 type Msg
     = ScouterInput String
-    | TeamInput String
+    | StationInput String
     | MatchInput String
 
 
 type alias Model =
     { scouterName : String
-    , team : Maybe Int
+    , station : String
     , match : Maybe Int
     }
 
@@ -38,7 +36,7 @@ teamDataView model =
         , centerY
         ]
         [ textInput model.scouterName ScouterInput "Scouter's name"
-        , textInput (unwrapToString model.team) TeamInput "Scouted team number"
+        , textInput model.station StationInput "Scouted station"
         , textInput (unwrapToString model.match) MatchInput "Match number"
         , Element.el
             [ Background.gradient
@@ -59,7 +57,7 @@ teamDataView model =
                     }
                 ]
             ]
-            (Element.text <| getMatch model.team model.match)
+            (Element.text <| getMatch model.match model.station)
         ]
 
 
@@ -83,9 +81,9 @@ textInput modelValue nextButton name =
         }
 
 
-init : String -> Maybe Int -> Maybe Int -> Model
+init : Model
 init =
-    Model
+    Model "" "" Nothing
 
 
 update : Msg -> Model -> Model
@@ -94,8 +92,8 @@ update msg model =
         ScouterInput s ->
             { model | scouterName = s }
 
-        TeamInput s ->
-            { model | team = String.toInt s }
+        StationInput s ->
+            { model | station = s }
 
         MatchInput s ->
             { model | match = String.toInt s }
