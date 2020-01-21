@@ -58,26 +58,50 @@ type alias Model =
     }
 
 
-stylishPage : Element.Element Msg -> Element.Element Msg
-stylishPage page =
+stylishPage : PagePosition -> Element.Element Msg -> Element.Element Msg
+stylishPage position page =
     column
         [ Background.color blue
-        , padding 10
+        , padding 105
         , spacing 10
         , width fill
         , height fill
+        , centerY
         ]
         [ page
-        , button
-            rainbowStyle
-            { onPress = Just <| NextPage
-            , label = Element.text "Next Page"
-            }
-        , button
-            rainbowStyle
-            { onPress = Just <| PrevPage
-            , label = Element.text "Previous Page"
-            }
+        , case position of
+            FirstPage ->
+                button
+                    rainbowStyle
+                    { onPress = Just <| NextPage
+                    , label = Element.text "Next Page"
+                    }
+
+            LastPage ->
+                button
+                    rainbowStyle
+                    { onPress = Just <| PrevPage
+                    , label = Element.text "Previous Page"
+                    }
+
+            MiddlePage ->
+                column
+                    [ Background.color blue
+                    , spacing 10
+                    , width fill
+                    , height fill
+                    ]
+                    [ button
+                        rainbowStyle
+                        { onPress = Just <| NextPage
+                        , label = Element.text "Next Page"
+                        }
+                    , button
+                        rainbowStyle
+                        { onPress = Just <| PrevPage
+                        , label = Element.text "Previous Page"
+                        }
+                    ]
         ]
 
 
@@ -141,16 +165,16 @@ view : Model -> Element.Element Msg
 view model =
     case model.pages of
         TeamDataPage ->
-            stylishPage <| Element.map TeamDataMsg <| TeamData.teamDataView model.teamData
+            stylishPage FirstPage <| Element.map TeamDataMsg <| TeamData.teamDataView model.teamData
 
         AutonomousPage ->
-            stylishPage <| Element.map AutonomousDataMsg <| Autonomous.autonomousView model.autonomousData
+            stylishPage MiddlePage <| Element.map AutonomousDataMsg <| Autonomous.autonomousView model.autonomousData
 
         TeleopPage ->
-            stylishPage <| Element.map TeleopDataMsg <| Teleop.teleopView model.teleopData
+            stylishPage MiddlePage <| Element.map TeleopDataMsg <| Teleop.teleopView model.teleopData
 
         ClimbingPage ->
-            stylishPage <| Element.map ClimbingDataMsg <| Climbing.view model.climbingData
+            stylishPage LastPage <| Element.map ClimbingDataMsg <| Climbing.view model.climbingData
 
 
 subscriptions : Sub Msg
