@@ -1,6 +1,6 @@
 module TeamData exposing (Model, Msg, init, subscriptions, teamDataView, update)
 
-import Colors exposing (black, blue, pink, red, sky, white, yellow)
+import Colors exposing (black, blue, orange, pink, red, sky, white, yellow)
 import Element exposing (centerX, centerY, column, fill, height, minimum, padding, px, spacing, width)
 import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
@@ -39,10 +39,7 @@ teamDataView model =
         , textInput model.station StationInput "Scouted station"
         , textInput (unwrapToString model.match) MatchInput "Match number"
         , Element.el
-            [ Background.gradient
-                { angle = 3
-                , steps = [ red, pink, yellow ]
-                }
+            [ Background.color orange
             , width <| minimum 350 <| fill
             , height fill
             , center

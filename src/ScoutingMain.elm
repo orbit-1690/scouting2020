@@ -43,6 +43,12 @@ type Msg
     | NextPage
 
 
+type PagePosition
+    = FirstPage
+    | MiddlePage
+    | LastPage
+
+
 type alias Model =
     { teamData : TeamData.Model
     , autonomousData : Autonomous.Model
@@ -55,7 +61,7 @@ type alias Model =
 stylishPage : Element.Element Msg -> Element.Element Msg
 stylishPage page =
     column
-        [ Background.color lightBlue
+        [ Background.color blue
         , padding 10
         , spacing 10
         , width fill
@@ -153,6 +159,7 @@ subscriptions =
         [ Sub.map AutonomousDataMsg <| Autonomous.subscriptions
         , Sub.map TeamDataMsg <| TeamData.subscriptions
         , Sub.map TeleopDataMsg <| Teleop.subscriptions
+        , Sub.map ClimbingDataMsg <| Climbing.subscriptions
         ]
 
 
@@ -168,10 +175,7 @@ rainbowStyle =
             , url = "https://fonts.googleapis.com/css?family=Open+Sans:700i&display=swap"
             }
         ]
-    , Background.gradient
-        { angle = 2
-        , steps = [ purple, orange, blueGreen ]
-        }
+    , Background.color purple
     , center
     , centerX
     , centerY

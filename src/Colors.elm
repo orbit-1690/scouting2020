@@ -50,7 +50,7 @@ blueGreen =
 
 lightBlue : Color
 lightBlue =
-    Element.rgb255 0 255 255
+    Element.rgb255 0 0 200
 
 
 sky : Color
@@ -60,7 +60,7 @@ sky =
 
 blue : Color
 blue =
-    Element.rgb255 0 0 255
+    Element.rgb255 0 0 200
 
 
 purple : Color

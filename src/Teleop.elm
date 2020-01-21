@@ -48,10 +48,7 @@ createButton msg name =
                 , url = "https://fonts.googleapis.com/css?family=Open+Sans:700i&display=swap"
                 }
             ]
-        , Background.gradient
-            { angle = 2
-            , steps = [ pink, yellow, white ]
-            }
+        , Background.color purple
         , center
         , centerX
         , centerY

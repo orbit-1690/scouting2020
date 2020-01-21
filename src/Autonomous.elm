@@ -45,17 +45,14 @@ createButton msg name =
         [ Font.color white
         , Font.size 25
         , Font.glow blue 5
-        , Border.rounded 10
+        , Border.rounded 4
         , Font.family
             [ Font.external
                 { name = "Open Sans"
                 , url = "https://fonts.googleapis.com/css?family=Open+Sans:700i&display=swap"
                 }
             ]
-        , Background.gradient
-            { angle = 2
-            , steps = [ pink, yellow, white ]
-            }
+        , Background.color purple
         , center
         , centerX
         , centerY
