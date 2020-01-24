@@ -2,17 +2,14 @@ module ScoutingMain exposing (Model, Msg, init, subscriptions, update, view)
 
 import Autonomous
 import Browser
-import Climbing exposing (Status)
-import Colors exposing (black, blue, blueGreen, lightBlue, orange, purple, sky, white)
-import Counter
-import Element exposing (centerX, centerY, column, fill, height, layout, maximum, padding, rgb255, shrink, spacing, text, width)
+import Climbing
+import Colors exposing (blue, purple, white)
+import Element exposing (centerX, centerY, column, fill, height, layout, maximum, padding, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font exposing (center)
-import Element.Input as Input exposing (button)
-import GetMatch exposing (getMatch, maybeIntToInt, stationIndex, unwrapToString)
-import Http
-import Maybe
+import Element.Input exposing (button)
+import GetMatch exposing (getMatch)
 import TeamData
 import Teleop
 
@@ -165,13 +162,13 @@ view : Model -> Element.Element Msg
 view model =
     case model.pages of
         TeamDataPage ->
-            stylishPage FirstPage <| Element.map TeamDataMsg <| TeamData.teamDataView model.teamData
+            stylishPage FirstPage <| Element.map TeamDataMsg <| TeamData.view model.teamData
 
         AutonomousPage ->
-            stylishPage MiddlePage <| Element.map AutonomousDataMsg <| Autonomous.autonomousView model.autonomousData
+            stylishPage MiddlePage <| Element.map AutonomousDataMsg <| Autonomous.view model.autonomousData
 
         TeleopPage ->
-            stylishPage MiddlePage <| Element.map TeleopDataMsg <| Teleop.teleopView model.teleopData
+            stylishPage MiddlePage <| Element.map TeleopDataMsg <| Teleop.view model.teleopData
 
         ClimbingPage ->
             stylishPage LastPage <| Element.map ClimbingDataMsg <| Climbing.view model.climbingData

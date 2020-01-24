@@ -1,6 +1,7 @@
 module GetMatch exposing (getMatch, maybeIntToInt, stationIndex, unwrapToString)
 
 import List.Extra exposing (getAt)
+import Maybe exposing (andThen)
 import Maybe.Extra exposing (unwrap)
 
 
@@ -28,12 +29,7 @@ matches =
 
 checkMatch : Maybe Int -> Maybe Match
 checkMatch match =
-    case match of
-        Nothing ->
-            Nothing
-
-        Just n ->
-            getAt (n - 1) matches
+    andThen (\n -> getAt (n - 1) matches) match
 
 
 unwrapToString : Maybe Int -> String

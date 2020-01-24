@@ -1,12 +1,12 @@
-module TeamData exposing (Model, Msg, init, subscriptions, teamDataView, update)
+module TeamData exposing (Model, Msg, init, subscriptions, update, view)
 
-import Colors exposing (black, blue, orange, pink, red, sky, white, yellow)
-import Element exposing (centerX, centerY, column, fill, height, minimum, padding, px, spacing, width)
+import Colors exposing (black, blue, orange, sky, white)
+import Element exposing (centerX, centerY, column, fill, height, minimum, padding, spacing, width)
 import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
 import Element.Input as Input exposing (labelHidden)
-import GetMatch exposing (getMatch, maybeIntToInt, unwrapToString)
+import GetMatch exposing (getMatch, unwrapToString)
 import String
 
 
@@ -23,8 +23,8 @@ type alias Model =
     }
 
 
-teamDataView : Model -> Element.Element Msg
-teamDataView model =
+view : Model -> Element.Element Msg
+view model =
     column
         [ Background.color sky
         , Border.color black
@@ -86,14 +86,14 @@ init =
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        ScouterInput s ->
-            { model | scouterName = s }
+        ScouterInput name ->
+            { model | scouterName = name }
 
-        StationInput s ->
-            { model | station = s }
+        StationInput station ->
+            { model | station = station }
 
-        MatchInput s ->
-            { model | match = String.toInt s }
+        MatchInput match ->
+            { model | match = String.toInt match }
 
 
 subscriptions : Sub Msg

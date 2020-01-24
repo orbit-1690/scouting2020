@@ -1,14 +1,12 @@
-module Teleop exposing (Model, Msg, createButton, init, printButton, subscriptions, teleopView, update, yophyTophy)
+module Teleop exposing (Model, Msg, createButton, init, printButton, subscriptions, update, view, yophyTophy)
 
-import Colors exposing (black, blue, blueGreen, lightBlue, orange, pink, purple, sky, white, yellow)
+import Colors exposing (black, blue, purple, sky, white)
 import Counter
-import Element exposing (centerX, centerY, column, el, fill, height, minimum, padding, px, rgb, row, spacing, text, width)
+import Element exposing (centerX, centerY, column, el, padding, row, spacing, text)
 import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
-import Element.Input as Input exposing (button, labelHidden)
-import Http
-import Maybe
+import Element.Input exposing (button)
 
 
 type Msg
@@ -23,8 +21,6 @@ type alias Model =
     { lowlevel : Counter.Model
     , highlevel : Counter.Model
     , missed : Counter.Model
-    , floorCollecting : Bool
-    , fiderCollecting : Bool
     , colorRoulette : Bool
     , spinedRoulette : Bool
     }
@@ -32,7 +28,7 @@ type alias Model =
 
 init : Model
 init =
-    Model (Counter.Model 0) (Counter.Model 0) (Counter.Model 0) False False False False
+    Model (Counter.Model 0) (Counter.Model 0) (Counter.Model 0) False False
 
 
 createButton : Msg -> String -> Element.Element Msg
@@ -74,12 +70,18 @@ printButton onFalse onTrue modelBool =
 
 update : Msg -> Model -> Model
 update msg model =
+    let
+        counterUpdate : Counter.Msg -> Counter.Model -> Counter.Model
+        counterUpdate =
+            Counter.update 99
+    in
     case msg of
         LowLevel count ->
-            { model | lowlevel = Counter.update 99 0 count model.lowlevel }
+            { model | lowlevel = counterUpdate count model.lowlevel }
 
         HighLevel count ->
-            { model | highlevel = Counter.update 99 0 count model.highlevel }
+            { model | highlevel = counterUpdate count model.highlevel }
+
         ColorRoulette ->
             { model | colorRoulette = not model.colorRoulette }
 
@@ -87,11 +89,11 @@ update msg model =
             { model | spinedRoulette = not model.spinedRoulette }
 
         Missed count ->
-            { model | missed = Counter.update 99 0 count model.missed }
-            
+            { model | missed = counterUpdate count model.missed }
 
-teleopView : Model -> Element.Element Msg
-teleopView model =
+
+view : Model -> Element.Element Msg
+view model =
     column
         [ Background.color sky
         , Border.color black

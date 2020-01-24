@@ -1,13 +1,12 @@
-module Autonomous exposing (Balls(..), Model, Msg, autonomousView, init, subscriptions, update)
+module Autonomous exposing (Model, Msg, init, subscriptions, update, view)
 
-
-import Colors exposing (black, blue, blueGreen, lightBlue, orange, pink, purple, sky, white, yellow)
+import Colors exposing (black, blue, purple, sky, white)
 import Counter
-import Element exposing (centerX, centerY, column, el, fill, height, minimum, padding, px, rgb, spacing, text, width)
+import Element exposing (centerX, centerY, column, el, padding, spacing, text)
 import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
-import Element.Input as Input exposing (button, labelHidden, radioRow)
+import Element.Input as Input exposing (button, radioRow)
 
 
 type Msg
@@ -18,11 +17,11 @@ type Msg
     | TrenchCollection Counter.Msg
     | EnemyTrenchCollection Counter.Msg
     | RendezvousCollection Counter.Msg
-    | Stage Balls
+    | BallsAmount BallsInitAmount
 
 
 type alias Model =
-    { stage : Balls
+    { ballsAmount : BallsInitAmount
     , moved : Bool
     , lowlevel : Counter.Model
     , highlevel : Counter.Model
@@ -33,11 +32,11 @@ type alias Model =
     }
 
 
-type Balls
-    = Ball0
-    | Ball1
-    | Ball2
-    | Ball3
+type BallsInitAmount
+    = NoBalls
+    | OneBall
+    | TwoBalls
+    | ThreeBalls
 
 
 createButton : Msg -> String -> Element.Element Msg
@@ -61,8 +60,8 @@ createButton msg name =
         { onPress = Just msg, label = text name }
 
 
-printButton : String -> String -> Bool -> Element.Element Msg
-printButton onFalse onTrue modelBool =
+buttonInfo : String -> String -> Bool -> Element.Element Msg
+buttonInfo onFalse onTrue modelBool =
     el
         [ center
         , centerX
@@ -77,8 +76,8 @@ printButton onFalse onTrue modelBool =
         )
 
 
-autonomousView : Model -> Element.Element Msg
-autonomousView model =
+view : Model -> Element.Element Msg
+view model =
     column
         [ Background.color sky
         , Border.color black
@@ -93,59 +92,64 @@ autonomousView model =
             [ padding 10
             , spacing 20
             ]
-            { onChange = Stage
-            , selected = Just model.stage
+            { onChange = BallsAmount
+            , selected = Just model.ballsAmount
             , label = Input.labelAbove [] (text "started with:")
             , options =
-                [ Input.option Ball0 (text "0 balls")
-                , Input.option Ball1 (text "1 ball")
-                , Input.option Ball2 (text "2 balls")
-                , Input.option Ball3 (text "3 balls")
-
+                [ Input.option NoBalls (text "0 balls")
+                , Input.option OneBall (text "1 ball")
+                , Input.option TwoBalls (text "2 balls")
+                , Input.option ThreeBalls (text "3 balls")
                 ]
             }
         , createButton Moved "moved?"
-        , printButton "didn't move" "moved" model.moved
+        , buttonInfo "didn't move" "moved" model.moved
         , Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
         , Element.map HighLevel <| Counter.view "high Level:" model.highlevel
         , Element.map Missed <| Counter.view "missed:" model.missed
         , Element.map TrenchCollection <| Counter.view "Collected from their trench:" model.trenchCollection
         , Element.map EnemyTrenchCollection <| Counter.view "Collected from enemy's trench:" model.enemyTrenchCollection
-        , Element.map RendezvousCollection <| Counter.view "Collected from rendemockelk881\u{0003}#:" model.rendezvousCollection
+        , Element.map RendezvousCollection <| Counter.view "Collected from rendezvous:" model.rendezvousCollection
         ]
 
 
 init : Model
 init =
-    Model Ball0 False Counter.init Counter.init Counter.init Counter.init Counter.init <| Counter.init
+    Model NoBalls False Counter.init Counter.init Counter.init Counter.init Counter.init <| Counter.init
 
 
 update : Msg -> Model -> Model
 update msg model =
+    let
+        counterUpdate : Counter.Msg -> Counter.Model -> Counter.Model
+        counterUpdate =
+            Counter.update 15
+    in
     case msg of
         Moved ->
             { model | moved = not model.moved }
 
         LowLevel count ->
-            { model | lowlevel = Counter.update 15 0 count model.lowlevel }
+            { model | lowlevel = counterUpdate count model.lowlevel }
 
         HighLevel count ->
-            { model | highlevel = Counter.update 15 0 count model.highlevel }
+            { model | highlevel = counterUpdate count model.highlevel }
 
         Missed count ->
-            { model | missed = Counter.update 15 0 count model.missed }
+            { model | missed = counterUpdate count model.missed }
 
         TrenchCollection count ->
-            { model | trenchCollection = Counter.update 15 0 count model.trenchCollection }
+            { model | trenchCollection = counterUpdate count model.trenchCollection }
 
-        Stage stage ->
-            { model | stage = stage }
+        BallsAmount ballsAmount ->
+            { model | ballsAmount = ballsAmount }
 
         EnemyTrenchCollection count ->
-            { model | enemyTrenchCollection = Counter.update 15 0 count model.enemyTrenchCollection }
+            { model | enemyTrenchCollection = counterUpdate count model.enemyTrenchCollection }
 
         RendezvousCollection count ->
-            { model | rendezvousCollection = Counter.update 15 0 count model.rendezvousCollection }
+            { model | rendezvousCollection = counterUpdate count model.rendezvousCollection }
+
 
 subscriptions : Sub Msg
 subscriptions =
