@@ -1,32 +1,26 @@
-module Teleop exposing (Model, Msg, init, subscriptions, teleopView, update)
+module Teleop exposing (Model, Msg, createButton, init, printButton, subscriptions, update, view, yophyTophy)
 
-import Colors exposing (black, blue, blueGreen, lightBlue, orange, pink, purple, sky, white, yellow)
+import Colors exposing (black, blue, purple, sky, white)
 import Counter
-import Element exposing (centerX, centerY, column, el, fill, height, minimum, padding, px, rgb, row, spacing, text, width)
+import Element exposing (centerX, centerY, column, el, padding, row, spacing, text)
 import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
-import Element.Input as Input exposing (button, labelHidden)
-import Http
-import Maybe
+import Element.Input exposing (button)
 
 
 type Msg
-    = LevelOne Counter.Msg
-    | LevelTwo Counter.Msg
-    | LevelThree Counter.Msg
-    | FloorCollecting
-    | FiderCollecting
+    = LowLevel Counter.Msg
+    | HighLevel Counter.Msg
+    | Missed Counter.Msg
     | ColorRoulette
     | SpinedRoulette
 
 
 type alias Model =
-    { levelOne : Counter.Model
-    , levelTwo : Counter.Model
-    , levelThree : Counter.Model
-    , floorCollecting : Bool
-    , fiderCollecting : Bool
+    { lowlevel : Counter.Model
+    , highlevel : Counter.Model
+    , missed : Counter.Model
     , colorRoulette : Bool
     , spinedRoulette : Bool
     }
@@ -34,7 +28,7 @@ type alias Model =
 
 init : Model
 init =
-    Model (Counter.Model 0) (Counter.Model 0) (Counter.Model 0) False False False False
+    Model (Counter.Model 0) (Counter.Model 0) (Counter.Model 0) False False
 
 
 createButton : Msg -> String -> Element.Element Msg
@@ -50,10 +44,7 @@ createButton msg name =
                 , url = "https://fonts.googleapis.com/css?family=Open+Sans:700i&display=swap"
                 }
             ]
-        , Background.gradient
-            { angle = 2
-            , steps = [ pink, yellow, white ]
-            }
+        , Background.color purple
         , center
         , centerX
         , centerY
@@ -79,21 +70,17 @@ printButton onFalse onTrue modelBool =
 
 update : Msg -> Model -> Model
 update msg model =
+    let
+        counterUpdate : Counter.Msg -> Counter.Model -> Counter.Model
+        counterUpdate =
+            Counter.update 99
+    in
     case msg of
-        LevelOne count1 ->
-            { model | levelOne = Counter.update 15 0 count1 model.levelOne }
+        LowLevel count ->
+            { model | lowlevel = counterUpdate count model.lowlevel }
 
-        LevelTwo count2 ->
-            { model | levelTwo = Counter.update 15 0 count2 model.levelTwo }
-
-        LevelThree count3 ->
-            { model | levelThree = Counter.update 15 0 count3 model.levelThree }
-
-        FloorCollecting ->
-            { model | floorCollecting = not model.floorCollecting }
-
-        FiderCollecting ->
-            { model | fiderCollecting = not model.fiderCollecting }
+        HighLevel count ->
+            { model | highlevel = counterUpdate count model.highlevel }
 
         ColorRoulette ->
             { model | colorRoulette = not model.colorRoulette }
@@ -101,9 +88,12 @@ update msg model =
         SpinedRoulette ->
             { model | spinedRoulette = not model.spinedRoulette }
 
+        Missed count ->
+            { model | missed = counterUpdate count model.missed }
 
-teleopView : Model -> Element.Element Msg
-teleopView model =
+
+view : Model -> Element.Element Msg
+view model =
     column
         [ Background.color sky
         , Border.color black
@@ -116,29 +106,18 @@ teleopView model =
         ]
         [ row yophyTophy
             [ column yophyTophy
-                [ createButton FloorCollecting "floor colected?"
-                , printButton "didn't floor collected" "floor collected" model.floorCollecting
+                [ createButton ColorRoulette "spun to\ncorrect color?"
+                , printButton "no" "yes" model.colorRoulette
                 ]
             , column
                 yophyTophy
-                [ createButton FiderCollecting "fider colected?"
-                , printButton "didn't fider collected" "fider collected" model.fiderCollecting
+                [ createButton SpinedRoulette "spun 3-5?"
+                , printButton "no" "yes" model.spinedRoulette
                 ]
             ]
-        , row yophyTophy
-            [ column yophyTophy
-                [ createButton ColorRoulette "grererreererere?"
-                , printButton "banana" "ferero" model.colorRoulette
-                ]
-            , column
-                yophyTophy
-                [ createButton SpinedRoulette "blablablab?"
-                , printButton "ys" "n" model.spinedRoulette
-                ]
-            ]
-        , Element.map LevelOne <| Counter.view "Level 1:" model.levelOne
-        , Element.map LevelTwo <| Counter.view "Level 2:" model.levelTwo
-        , Element.map LevelThree <| Counter.view "Level 3:" model.levelThree
+        , Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
+        , Element.map HighLevel <| Counter.view "high Level:" model.highlevel
+        , Element.map Missed <| Counter.view "missed:" model.missed
         ]
 
 

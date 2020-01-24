@@ -1,32 +1,30 @@
-module TeamData exposing (Model, Msg, init, subscriptions, teamDataView, update)
+module TeamData exposing (Model, Msg, init, subscriptions, update, view)
 
-import Colors exposing (black, blue, pink, red, sky, white, yellow)
-import Element exposing (centerX, centerY, column, fill, height, minimum, padding, px, spacing, width)
+import Colors exposing (black, blue, orange, sky, white)
+import Element exposing (centerX, centerY, column, fill, height, minimum, padding, spacing, width)
 import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
 import Element.Input as Input exposing (labelHidden)
-import GetMatch exposing (getMatch, maybeIntToInt, unwrapToString)
-import Http
-import Maybe
+import GetMatch exposing (getMatch, unwrapToString)
 import String
 
 
 type Msg
     = ScouterInput String
-    | TeamInput String
+    | StationInput String
     | MatchInput String
 
 
 type alias Model =
     { scouterName : String
-    , team : Maybe Int
+    , station : String
     , match : Maybe Int
     }
 
 
-teamDataView : Model -> Element.Element Msg
-teamDataView model =
+view : Model -> Element.Element Msg
+view model =
     column
         [ Background.color sky
         , Border.color black
@@ -38,13 +36,10 @@ teamDataView model =
         , centerY
         ]
         [ textInput model.scouterName ScouterInput "Scouter's name"
-        , textInput (unwrapToString model.team) TeamInput "Scouted team number"
+        , textInput model.station StationInput "Scouted station"
         , textInput (unwrapToString model.match) MatchInput "Match number"
         , Element.el
-            [ Background.gradient
-                { angle = 3
-                , steps = [ red, pink, yellow ]
-                }
+            [ Background.color orange
             , width <| minimum 350 <| fill
             , height fill
             , center
@@ -59,7 +54,7 @@ teamDataView model =
                     }
                 ]
             ]
-            (Element.text <| getMatch model.team model.match)
+            (Element.text <| getMatch model.match model.station)
         ]
 
 
@@ -83,22 +78,22 @@ textInput modelValue nextButton name =
         }
 
 
-init : String -> Maybe Int -> Maybe Int -> Model
+init : Model
 init =
-    Model
+    Model "" "" Nothing
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        ScouterInput s ->
-            { model | scouterName = s }
+        ScouterInput name ->
+            { model | scouterName = name }
 
-        TeamInput s ->
-            { model | team = String.toInt s }
+        StationInput station ->
+            { model | station = station }
 
-        MatchInput s ->
-            { model | match = String.toInt s }
+        MatchInput match ->
+            { model | match = String.toInt match }
 
 
 subscriptions : Sub Msg

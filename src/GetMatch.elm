@@ -1,6 +1,7 @@
-module GetMatch exposing (getMatch, maybeIntToInt, unwrapToString)
+module GetMatch exposing (getMatch, maybeIntToInt, stationIndex, unwrapToString)
 
 import List.Extra exposing (getAt)
+import Maybe exposing (andThen)
 import Maybe.Extra exposing (unwrap)
 
 
@@ -28,12 +29,7 @@ matches =
 
 checkMatch : Maybe Int -> Maybe Match
 checkMatch match =
-    case match of
-        Nothing ->
-            Nothing
-
-        Just n ->
-            getAt (n - 1) matches
+    andThen (\n -> getAt (n - 1) matches) match
 
 
 unwrapToString : Maybe Int -> String
@@ -51,35 +47,39 @@ maybeIntToInt mi =
             n
 
 
-getMatch : Maybe Int -> Maybe Int -> String
-getMatch team match =
-    stationIndex match <| maybeIntToInt team
+getMatch : Maybe Int -> String -> String
+getMatch match station =
+    stationIndex match <| station
 
 
-stationIndex : Maybe Int -> Int -> String
-stationIndex match team =
+stationIndex : Maybe Int -> String -> String
+stationIndex match station =
     case checkMatch match of
         Nothing ->
             "Not a match"
 
         Just matchData ->
-            if matchData.blue.one == team then
-                "Blue 1"
+            let
+                fixedStation =
+                    String.trim (String.toLower station)
+            in
+            if fixedStation == "blue 1" then
+                String.fromInt matchData.blue.one
 
-            else if matchData.blue.two == team then
-                "Blue 2"
+            else if fixedStation == "blue 2" then
+                String.fromInt matchData.blue.two
 
-            else if matchData.blue.three == team then
-                "Blue 3"
+            else if fixedStation == "blue 3" then
+                String.fromInt matchData.blue.three
 
-            else if matchData.red.one == team then
-                "Red 1"
+            else if fixedStation == "red 1" then
+                String.fromInt matchData.red.one
 
-            else if matchData.red.two == team then
-                "Red 2"
+            else if fixedStation == "red 2" then
+                String.fromInt matchData.red.two
 
-            else if matchData.red.three == team then
-                "Red 3"
+            else if fixedStation == "red 3" then
+                String.fromInt matchData.red.three
 
             else
-                "Team not in this match"
+                "Not a station"
