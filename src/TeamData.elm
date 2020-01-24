@@ -1,12 +1,12 @@
-module TeamData exposing (Model, Msg, init, subscriptions, teamDataView, update)
+module TeamData exposing (Model, Msg, init, subscriptions, update, view)
 
-import Colors exposing (black, blue, orange, pink, red, sky, white, yellow)
-import Element exposing (centerX, centerY, column, fill, height, minimum, padding, px, spacing, width)
+import Colors exposing (black, blue, orange, sky, white)
+import Element exposing (centerX, centerY, column, fill, height, minimum, padding, spacing, width)
 import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
 import Element.Input as Input exposing (labelHidden)
-import GetMatch exposing (getMatch, maybeIntToInt, unwrapToString)
+import GetMatch exposing (getMatch, unwrapToString)
 import String
 
 

@@ -1,13 +1,12 @@
-module Autonomous exposing (Balls(..), Model, Msg, autonomousView, init, subscriptions, update)
+module Autonomous exposing (Model, Msg, init, subscriptions, update, view)
 
-
-import Colors exposing (black, blue, blueGreen, lightBlue, orange, pink, purple, sky, white, yellow)
+import Colors exposing (black, blue, purple, sky, white)
 import Counter
-import Element exposing (centerX, centerY, column, el, fill, height, minimum, padding, px, rgb, spacing, text, width)
+import Element exposing (centerX, centerY, column, el, padding, spacing, text)
 import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
-import Element.Input as Input exposing (button, labelHidden, radioRow)
+import Element.Input as Input exposing (button, radioRow)
 
 
 type Msg

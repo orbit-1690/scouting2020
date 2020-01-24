@@ -1,14 +1,12 @@
-module Teleop exposing (Model, Msg, createButton, init, printButton, subscriptions, teleopView, update, yophyTophy)
+module Teleop exposing (Model, Msg, createButton, init, printButton, subscriptions, update, view, yophyTophy)
 
-import Colors exposing (black, blue, blueGreen, lightBlue, orange, pink, purple, sky, white, yellow)
+import Colors exposing (black, blue, purple, sky, white)
 import Counter
-import Element exposing (centerX, centerY, column, el, fill, height, minimum, padding, px, rgb, row, spacing, text, width)
+import Element exposing (centerX, centerY, column, el, padding, row, spacing, text)
 import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
-import Element.Input as Input exposing (button, labelHidden)
-import Http
-import Maybe
+import Element.Input exposing (button)
 
 
 type Msg

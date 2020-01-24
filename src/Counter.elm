@@ -1,12 +1,7 @@
 module Counter exposing (Model, Msg, init, update, view)
 
-import Browser
-import Colors exposing (black, blue, pink, red, sky, white, yellow)
 import Element exposing (padding, row, spacing, text)
-import Element.Background as Background
-import Element.Border as Border exposing (rounded, widthXY)
-import Element.Font as Font exposing (center)
-import Element.Input as Input exposing (button, labelHidden)
+import Element.Input exposing (button)
 
 
 type alias Model =

@@ -2,17 +2,14 @@ module ScoutingMain exposing (Model, Msg, init, subscriptions, update, view)
 
 import Autonomous
 import Browser
-import Climbing exposing (Status)
-import Colors exposing (black, blue, blueGreen, lightBlue, orange, purple, sky, white)
-import Counter
-import Element exposing (centerX, centerY, column, fill, height, layout, maximum, padding, rgb255, shrink, spacing, text, width)
+import Climbing
+import Colors exposing (blue, purple, white)
+import Element exposing (centerX, centerY, column, fill, height, layout, maximum, padding, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font exposing (center)
-import Element.Input as Input exposing (button)
-import GetMatch exposing (getMatch, maybeIntToInt, stationIndex, unwrapToString)
-import Http
-import Maybe
+import Element.Input exposing (button)
+import GetMatch exposing (getMatch)
 import TeamData
 import Teleop
 
