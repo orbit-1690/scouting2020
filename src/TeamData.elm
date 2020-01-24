@@ -23,8 +23,8 @@ type alias Model =
     }
 
 
-teamDataView : Model -> Element.Element Msg
-teamDataView model =
+view : Model -> Element.Element Msg
+view model =
     column
         [ Background.color sky
         , Border.color black
@@ -86,14 +86,14 @@ init =
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        ScouterInput s ->
-            { model | scouterName = s }
+        ScouterInput name ->
+            { model | scouterName = name }
 
-        StationInput s ->
-            { model | station = s }
+        StationInput station ->
+            { model | station = station }
 
-        MatchInput s ->
-            { model | match = String.toInt s }
+        MatchInput match ->
+            { model | match = String.toInt match }
 
 
 subscriptions : Sub Msg

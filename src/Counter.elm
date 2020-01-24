@@ -18,8 +18,8 @@ init =
     Model 0
 
 
-update : Int -> Int -> Msg -> Model -> Model
-update max min msg model =
+update : Int -> Msg -> Model -> Model
+update max msg model =
     case msg of
         Plus ->
             if model.counter == max then
@@ -29,7 +29,7 @@ update max min msg model =
                 { model | counter = model.counter + 1 }
 
         Minus ->
-            if model.counter == min then
+            if model.counter == 0 then
                 model
 
             else

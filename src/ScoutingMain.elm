@@ -162,13 +162,13 @@ view : Model -> Element.Element Msg
 view model =
     case model.pages of
         TeamDataPage ->
-            stylishPage FirstPage <| Element.map TeamDataMsg <| TeamData.teamDataView model.teamData
+            stylishPage FirstPage <| Element.map TeamDataMsg <| TeamData.view model.teamData
 
         AutonomousPage ->
-            stylishPage MiddlePage <| Element.map AutonomousDataMsg <| Autonomous.autonomousView model.autonomousData
+            stylishPage MiddlePage <| Element.map AutonomousDataMsg <| Autonomous.view model.autonomousData
 
         TeleopPage ->
-            stylishPage MiddlePage <| Element.map TeleopDataMsg <| Teleop.teleopView model.teleopData
+            stylishPage MiddlePage <| Element.map TeleopDataMsg <| Teleop.view model.teleopData
 
         ClimbingPage ->
             stylishPage LastPage <| Element.map ClimbingDataMsg <| Climbing.view model.climbingData
