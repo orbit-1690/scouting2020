@@ -80,7 +80,6 @@ update msg model =
 
         HighLevel count ->
             { model | highlevel = Counter.update 99 0 count model.highlevel }
-
         ColorRoulette ->
             { model | colorRoulette = not model.colorRoulette }
 
@@ -89,7 +88,7 @@ update msg model =
 
         Missed count ->
             { model | missed = Counter.update 99 0 count model.missed }
-
+            
 
 teleopView : Model -> Element.Element Msg
 teleopView model =

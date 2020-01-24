@@ -1,5 +1,6 @@
 module Autonomous exposing (Balls(..), Model, Msg, autonomousView, init, subscriptions, update)
 
+
 import Colors exposing (black, blue, blueGreen, lightBlue, orange, pink, purple, sky, white, yellow)
 import Counter
 import Element exposing (centerX, centerY, column, el, fill, height, minimum, padding, px, rgb, spacing, text, width)
@@ -100,6 +101,7 @@ autonomousView model =
                 , Input.option Ball1 (text "1 ball")
                 , Input.option Ball2 (text "2 balls")
                 , Input.option Ball3 (text "3 balls")
+
                 ]
             }
         , createButton Moved "moved?"
@@ -144,7 +146,6 @@ update msg model =
 
         RendezvousCollection count ->
             { model | rendezvousCollection = Counter.update 15 0 count model.rendezvousCollection }
-
 
 subscriptions : Sub Msg
 subscriptions =
