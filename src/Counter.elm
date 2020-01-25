@@ -18,15 +18,11 @@ init =
     Model 0
 
 
-update : Int -> Msg -> Model -> Model
-update max msg model =
+update : Msg -> Model -> Model
+update msg model =
     case msg of
         Plus ->
-            if model.counter == max then
-                model
-
-            else
-                { model | counter = model.counter + 1 }
+            { model | counter = model.counter + 1 }
 
         Minus ->
             if model.counter == 0 then

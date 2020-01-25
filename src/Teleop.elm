@@ -73,7 +73,7 @@ update msg model =
     let
         counterUpdate : Counter.Msg -> Counter.Model -> Counter.Model
         counterUpdate =
-            Counter.update 99
+            Counter.update
     in
     case msg of
         LowLevel count ->
