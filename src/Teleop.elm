@@ -109,9 +109,8 @@ view model =
                 [ createButton ColorRoulette "spun to\ncorrect color?"
                 , printButton "no" "yes" model.colorRoulette
                 ]
-            , column
-                yophyTophy
-                [ createButton SpinedRoulette "spun 3-5?"
+            , column yophyTophy
+                [ createButton SpinedRoulette "spun cycles 3-5?"
                 , printButton "no" "yes" model.spinedRoulette
                 ]
             ]
