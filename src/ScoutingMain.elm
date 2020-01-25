@@ -143,7 +143,7 @@ update msg model =
         NextPage ->
             let
                 error =
-                    getMatch model.teamData.match model.teamData.station
+                    getMatch model.teamData.match <| TeamData.stationToString model.teamData.station
             in
             if model.pages == TeamDataPage && (error /= "Not a match") && (error /= "Team not in this match") then
                 { model | pages = AutonomousPage }
