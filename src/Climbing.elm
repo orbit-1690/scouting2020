@@ -138,7 +138,7 @@ yophyTophy =
 
 init : Model
 init =
-    Model False Loser False False False "" False
+    Model False Loser False False False ""
 
 
 update : Msg -> Model -> Model
@@ -161,9 +161,6 @@ update msg model =
 
         Comment string ->
             { model | comment = string }
-
-        Rate ->
-            { model | rate = not model.rate }
 
 
 subscriptions : Sub Msg
