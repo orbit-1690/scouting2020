@@ -1,26 +1,36 @@
-module TeamData exposing (Model, Msg, init, subscriptions, update, view)
+module TeamData exposing (Model, Msg, Stations, init, stationToString, subscriptions, update, view)
 
 import Colors exposing (black, blue, orange, sky, white)
-import Element exposing (centerX, centerY, column, fill, height, minimum, padding, spacing, width)
+import Element exposing (centerX, centerY, column, fill, height, minimum, padding, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
-import Element.Input as Input exposing (labelHidden)
+import Element.Input as Input exposing (labelHidden, radioRow)
 import GetMatch exposing (getMatch, unwrapToString)
 import String
 
 
 type Msg
     = ScouterInput String
-    | StationInput String
     | MatchInput String
+    | Station Stations
 
 
 type alias Model =
     { scouterName : String
-    , station : String
     , match : Maybe Int
+    , station : Stations
     }
+
+
+type Stations
+    = Blue1
+    | Blue2
+    | Blue3
+    | Red1
+    | Red2
+    | Red3
+    | NotAStation
 
 
 view : Model -> Element.Element Msg
@@ -36,7 +46,22 @@ view model =
         , centerY
         ]
         [ textInput model.scouterName ScouterInput "Scouter's name"
-        , textInput model.station StationInput "Scouted station"
+        , radioRow
+            [ padding 10
+            , spacing 20
+            ]
+            { onChange = Station
+            , selected = Just model.station
+            , label = Input.labelAbove [] (text "Which station?")
+            , options =
+                [ Input.option Blue1 (text "Blue 1")
+                , Input.option Blue2 (text "Blue 2")
+                , Input.option Blue3 (text "Blue 3")
+                , Input.option Red1 (text "Red 1")
+                , Input.option Red2 (text "Red 2")
+                , Input.option Red3 (text "Red 3")
+                ]
+            }
         , textInput (unwrapToString model.match) MatchInput "Match number"
         , Element.el
             [ Background.color orange
@@ -54,8 +79,33 @@ view model =
                     }
                 ]
             ]
-            (Element.text <| getMatch model.match model.station)
+            (Element.text <| getMatch model.match <| stationToString model.station)
         ]
+
+
+stationToString : Stations -> String
+stationToString station =
+    case station of
+        Blue1 ->
+            "Blue 1"
+
+        Blue2 ->
+            "Blue 2"
+
+        Blue3 ->
+            "Blue 3"
+
+        Red1 ->
+            "Red 1"
+
+        Red2 ->
+            "Red 2"
+
+        Red3 ->
+            "Red 3"
+
+        NotAStation ->
+            "none"
 
 
 textInput : String -> (String -> Msg) -> String -> Element.Element Msg
@@ -80,7 +130,7 @@ textInput modelValue nextButton name =
 
 init : Model
 init =
-    Model "" "" Nothing
+    Model "" Nothing NotAStation
 
 
 update : Msg -> Model -> Model
@@ -89,7 +139,7 @@ update msg model =
         ScouterInput name ->
             { model | scouterName = name }
 
-        StationInput station ->
+        Station station ->
             { model | station = station }
 
         MatchInput match ->

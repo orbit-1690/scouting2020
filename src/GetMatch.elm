@@ -59,26 +59,22 @@ stationIndex match station =
             "Not a match"
 
         Just matchData ->
-            let
-                fixedStation =
-                    String.trim (String.toLower station)
-            in
-            if fixedStation == "blue 1" then
+            if station == "Blue 1" then
                 String.fromInt matchData.blue.one
 
-            else if fixedStation == "blue 2" then
+            else if station == "Blue 2" then
                 String.fromInt matchData.blue.two
 
-            else if fixedStation == "blue 3" then
+            else if station == "Blue 3" then
                 String.fromInt matchData.blue.three
 
-            else if fixedStation == "red 1" then
+            else if station == "Red 1" then
                 String.fromInt matchData.red.one
 
-            else if fixedStation == "red 2" then
+            else if station == "Red 2" then
                 String.fromInt matchData.red.two
 
-            else if fixedStation == "red 3" then
+            else if station == "Red 3" then
                 String.fromInt matchData.red.three
 
             else

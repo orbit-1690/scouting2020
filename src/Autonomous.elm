@@ -123,7 +123,7 @@ update msg model =
     let
         counterUpdate : Counter.Msg -> Counter.Model -> Counter.Model
         counterUpdate =
-            Counter.update 15
+            Counter.update
     in
     case msg of
         Moved ->
