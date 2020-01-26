@@ -10,7 +10,7 @@ import Element.Input as Input exposing (button, labelHidden, radioRow)
 
 type Msg
     = TriedClimb
-    | ClimbStatus Status
+    | ClimbStatus State
     | Balanced
     | Defended
     | WasDefended
@@ -19,18 +19,30 @@ type Msg
 
 type alias Model =
     { triedClimb : Bool
-    , climbStatus : Status
+    , climbStatus : State
     , balanced : Bool
     , defended : Bool
     , wasDefended : Bool
     , comment : String
+    , postStatus : PostStatus
     }
 
 
-type Status
+init : Model
+init =
+    Model False Loser False False False "" NoStatus
+
+
+type State
     = Hanged
     | Parked
     | Loser
+
+
+type PostStatus
+    = NoStatus
+    | Sent
+    | Received
 
 
 view : Model -> Element.Element Msg
@@ -136,19 +148,14 @@ yophyTophy =
     ]
 
 
-init : Model
-init =
-    Model False Loser False False False ""
-
-
 update : Msg -> Model -> Model
 update msg model =
     case msg of
         TriedClimb ->
             { model | triedClimb = not model.triedClimb }
 
-        ClimbStatus status ->
-            { model | climbStatus = status }
+        ClimbStatus state ->
+            { model | climbStatus = state }
 
         Balanced ->
             { model | balanced = not model.balanced }
