@@ -52,7 +52,7 @@ view model =
             ]
             { onChange = Station
             , selected = Just model.station
-            , label = Input.labelAbove [] (text "Witch station?:")
+            , label = Input.labelAbove [] (text "Which station?")
             , options =
                 [ Input.option Blue1 (text "Blue 1")
                 , Input.option Blue2 (text "Blue 2")

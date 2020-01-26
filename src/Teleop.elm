@@ -14,7 +14,7 @@ type Msg
     | HighLevel Counter.Msg
     | Missed Counter.Msg
     | ColorRoulette
-    | SpinedRoulette
+    | SpunRoulette
 
 
 type alias Model =
@@ -22,7 +22,7 @@ type alias Model =
     , highlevel : Counter.Model
     , missed : Counter.Model
     , colorRoulette : Bool
-    , spinedRoulette : Bool
+    , spunRoulette : Bool
     }
 
 
@@ -85,8 +85,8 @@ update msg model =
         ColorRoulette ->
             { model | colorRoulette = not model.colorRoulette }
 
-        SpinedRoulette ->
-            { model | spinedRoulette = not model.spinedRoulette }
+        SpunRoulette ->
+            { model | spunRoulette = not model.spunRoulette }
 
         Missed count ->
             { model | missed = counterUpdate count model.missed }
@@ -110,8 +110,8 @@ view model =
                 , printButton "no" "yes" model.colorRoulette
                 ]
             , column yophyTophy
-                [ createButton SpinedRoulette "spun cycles 3-5?"
-                , printButton "no" "yes" model.spinedRoulette
+                [ createButton SpunRoulette "spun cycles 3-5?"
+                , printButton "no" "yes" model.spunRoulette
                 ]
             ]
         , Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
