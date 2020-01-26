@@ -15,7 +15,6 @@ type Msg
     | Defended
     | WasDefended
     | Comment String
-    | Rate
 
 
 type alias Model =
@@ -25,7 +24,6 @@ type alias Model =
     , defended : Bool
     , wasDefended : Bool
     , comment : String
-    , rate : Bool
     }
 
 
@@ -84,11 +82,6 @@ view model =
                     ]
                 ]
             , textInput model.comment Comment "any comments?"
-            , text "rate us plz"
-            , column yophyTophy
-                [ createButton Rate "rate?"
-                , printButton "enjoyed very very" "enjoyed very very" model.rate
-                ]
             ]
         ]
 
