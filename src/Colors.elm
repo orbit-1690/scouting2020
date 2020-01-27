@@ -11,6 +11,7 @@ module Colors exposing
     , purple
     , red
     , sky
+    , veryLightBlue
     , white
     , yellow
     )
@@ -86,3 +87,8 @@ black =
 gray : Color
 gray =
     Element.rgb255 128 128 128
+
+
+veryLightBlue : Color
+veryLightBlue =
+    Element.rgb255 153 204 255

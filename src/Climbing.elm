@@ -26,8 +26,7 @@ type alias Model =
     , defended : Bool
     , wasDefended : Bool
     , comment : String
-    , station : TeamData.Stations
-    , localMatch : TeamData.Model
+    , localTeam : TeamData.Model
     }
 
 
@@ -39,7 +38,7 @@ type Status
 
 init : Model
 init =
-    Model False Loser False False False "" TeamData.NotAStation TeamData.init
+    Model False Loser False False False "" TeamData.init
 
 
 update : Msg -> Model -> Model
@@ -127,8 +126,7 @@ view model =
         , centerY
         ]
         [ column yophyTophy
-            [ text <| "End-game " ++ getMatch model.localMatch.match (stationToString model.station)
-            , row
+            [ row
                 yophyTophy
                 [ column yophyTophy
                     [ createButton TriedClimb "Tried hanging?"
