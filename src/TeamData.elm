@@ -1,4 +1,4 @@
-module TeamData exposing (Model, Msg, Stations, init, stationToString, subscriptions, update, view)
+module TeamData exposing (Model, Msg(..), Stations(..), init, nameCheck, stationToString, subscriptions, team, update, view)
 
 import Colors exposing (black, blue, orange, sky, white)
 import Element exposing (centerX, centerY, column, fill, height, minimum, padding, spacing, text, width)
@@ -23,6 +23,11 @@ type alias Model =
     }
 
 
+team : Model -> String
+team model =
+    getMatch model.match <| stationToString model.station
+
+
 type Stations
     = Blue1
     | Blue2
@@ -31,6 +36,11 @@ type Stations
     | Red2
     | Red3
     | NotAStation
+
+
+init : Model
+init =
+    Model "" Nothing NotAStation
 
 
 view : Model -> Element.Element Msg
@@ -79,7 +89,7 @@ view model =
                     }
                 ]
             ]
-            (Element.text <| getMatch model.match <| stationToString model.station)
+            (Element.text <| team model)
         ]
 
 
@@ -108,6 +118,15 @@ stationToString station =
             "none"
 
 
+nameCheck : Model -> Bool
+nameCheck model =
+    if model.scouterName == "" then
+        False
+
+    else
+        True
+
+
 textInput : String -> (String -> Msg) -> String -> Element.Element Msg
 textInput modelValue nextButton name =
     Input.text
@@ -126,11 +145,6 @@ textInput modelValue nextButton name =
         , placeholder = Just <| Input.placeholder [] <| Element.text name
         , label = labelHidden modelValue
         }
-
-
-init : Model
-init =
-    Model "" Nothing NotAStation
 
 
 update : Msg -> Model -> Model

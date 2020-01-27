@@ -10,7 +10,7 @@ import Element.Border as Border
 import Element.Font as Font exposing (center)
 import Element.Input exposing (button)
 import GetMatch exposing (getMatch)
-import TeamData
+import TeamData exposing (nameCheck)
 import Teleop
 
 
@@ -142,10 +142,15 @@ update msg model =
 
         NextPage ->
             let
+                error : String
                 error =
                     getMatch model.teamData.match <| TeamData.stationToString model.teamData.station
+
+                verifier : Bool
+                verifier =
+                    (error /= "Not a match") && (error /= "Team not in this match") && nameCheck model.teamData || model.teamData.scouterName == "אורביט16טושים" || model.teamData.scouterName == "tom"
             in
-            if model.pages == TeamDataPage && (error /= "Not a match") && (error /= "Team not in this match") then
+            if model.pages == TeamDataPage && verifier then
                 { model | pages = AutonomousPage }
 
             else if model.pages == AutonomousPage then
