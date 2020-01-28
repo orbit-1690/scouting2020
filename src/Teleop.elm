@@ -1,4 +1,4 @@
-module Teleop exposing (Model, Msg, createButton, init, printButton, subscriptions, update, view, yophyTophy)
+module Teleop exposing (Model, Msg, createButton, init, subscriptions, update, view, yophyTophy)
 
 import Colors exposing (black, blue, purple, sky, white)
 import Counter
@@ -52,22 +52,6 @@ createButton msg name =
         { onPress = Just msg, label = text name }
 
 
-printButton : String -> String -> Bool -> Element.Element Msg
-printButton onFalse onTrue modelBool =
-    el
-        [ center
-        , centerX
-        , centerY
-        ]
-        (text <|
-            if modelBool then
-                onTrue
-
-            else
-                onFalse
-        )
-
-
 update : Msg -> Model -> Model
 update msg model =
     let
@@ -106,12 +90,24 @@ view model =
         ]
         [ row yophyTophy
             [ column yophyTophy
-                [ createButton ColorRoulette "spun to\ncorrect color?"
-                , printButton "no" "yes" model.colorRoulette
+                [ el yophyTophy
+                    (text "spun to\ncorrect color?")
+                , createButton ColorRoulette <|
+                    if model.colorRoulette then
+                        "Yes"
+
+                    else
+                        "No"
                 ]
             , column yophyTophy
-                [ createButton SpunRoulette "spun cycles 3-5?"
-                , printButton "no" "yes" model.spunRoulette
+                [ el yophyTophy
+                    (text "spun cycles 3-5?")
+                , createButton SpunRoulette <|
+                    if model.spunRoulette then
+                        "Yes"
+
+                    else
+                        "No"
                 ]
             ]
         , Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
