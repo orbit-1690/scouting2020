@@ -4,7 +4,7 @@ import Autonomous
 import Browser
 import Climbing
 import Colors exposing (blue, purple, white)
-import Element exposing (centerX, centerY, column, fill, height, layout, maximum, padding, spacing, text, width)
+import Element exposing (centerX, centerY, column, el, fill, height, layout, maximum, padding, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font exposing (center)
@@ -55,8 +55,19 @@ type alias Model =
     }
 
 
-stylishPage : PagePosition -> Element.Element Msg -> Element.Element Msg
-stylishPage position page =
+stylishPage : PagePosition -> String -> String -> Element.Element Msg -> Element.Element Msg
+stylishPage position title teamNumber page =
+    let
+        decoration : Int -> List (Element.Attribute Msg)
+        decoration size =
+            [ padding 10
+            , spacing 10
+            , centerX
+            , centerY
+            , Font.color Colors.veryLightBlue
+            , Font.size size
+            ]
+    in
     column
         [ Background.color blue
         , padding 105
@@ -65,18 +76,24 @@ stylishPage position page =
         , height fill
         , centerY
         ]
-        [ page
+        [ el
+            (decoration 50)
+            (text <| title)
+        , el
+            (decoration 35)
+            (text <| "\nscouted team: " ++ teamNumber)
+        , page
         , case position of
             FirstPage ->
                 button
-                    rainbowStyle
+                    buttonStyle
                     { onPress = Just <| NextPage
                     , label = Element.text "Next Page"
                     }
 
             LastPage ->
                 button
-                    rainbowStyle
+                    buttonStyle
                     { onPress = Just <| PrevPage
                     , label = Element.text "Previous Page"
                     }
@@ -89,12 +106,12 @@ stylishPage position page =
                     , height fill
                     ]
                     [ button
-                        rainbowStyle
+                        buttonStyle
                         { onPress = Just <| NextPage
                         , label = Element.text "Next Page"
                         }
                     , button
-                        rainbowStyle
+                        buttonStyle
                         { onPress = Just <| PrevPage
                         , label = Element.text "Previous Page"
                         }
@@ -149,7 +166,7 @@ update msg model =
 
                 verifier : Bool
                 verifier =
-                    (error /= "Not a match") && (error /= "Team not in this match") && nameCheck model.teamData || model.teamData.scouterName == "אורביט16טושים" || model.teamData.scouterName == "tom"
+                    (error /= "Not a match") && (error /= "Team not in this match") && nameCheck model.teamData || model.teamData.scouterName == "Itamar" || model.teamData.scouterName == "tom"
             in
             if model.pages == TeamDataPage && verifier then
                 { model | pages = AutonomousPage }
@@ -168,16 +185,16 @@ view : Model -> Element.Element Msg
 view model =
     case model.pages of
         TeamDataPage ->
-            stylishPage FirstPage <| Element.map TeamDataMsg <| TeamData.view model.teamData
+            stylishPage FirstPage "Registeration" (TeamData.team model.teamData) <| Element.map TeamDataMsg <| TeamData.view model.teamData
 
         AutonomousPage ->
-            stylishPage MiddlePage <| Element.map AutonomousDataMsg <| Autonomous.view model.autonomousData
+            stylishPage MiddlePage "Autonomous" (TeamData.team model.teamData) <| Element.map AutonomousDataMsg <| Autonomous.view model.autonomousData
 
         TeleopPage ->
-            stylishPage MiddlePage <| Element.map TeleopDataMsg <| Teleop.view model.teleopData
+            stylishPage MiddlePage "Teleop" (TeamData.team model.teamData) <| Element.map TeleopDataMsg <| Teleop.view model.teleopData
 
         ClimbingPage ->
-            stylishPage LastPage <| Element.map ClimbingDataMsg <| Climbing.view model.climbingData
+            stylishPage LastPage "End-game" (TeamData.team model.teamData) <| Element.map ClimbingDataMsg <| Climbing.view model.climbingData
 
 
 subscriptions : Sub Msg
@@ -190,8 +207,8 @@ subscriptions =
         ]
 
 
-rainbowStyle : List (Element.Attribute Msg)
-rainbowStyle =
+buttonStyle : List (Element.Attribute Msg)
+buttonStyle =
     [ Font.color white
     , Font.size 40
     , Font.glow blue 5

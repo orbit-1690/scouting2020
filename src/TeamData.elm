@@ -14,12 +14,14 @@ type Msg
     = ScouterInput String
     | MatchInput String
     | Station Stations
+    | Team
 
 
 type alias Model =
     { scouterName : String
     , match : Maybe Int
     , station : Stations
+    , team : String
     }
 
 
@@ -40,7 +42,7 @@ type Stations
 
 init : Model
 init =
-    Model "" Nothing NotAStation
+    Model "" Nothing NotAStation "Not a team"
 
 
 view : Model -> Element.Element Msg
@@ -158,6 +160,9 @@ update msg model =
 
         MatchInput match ->
             { model | match = String.toInt match }
+
+        Team ->
+            { model | team = getMatch model.match <| stationToString model.station }
 
 
 subscriptions : Sub Msg
