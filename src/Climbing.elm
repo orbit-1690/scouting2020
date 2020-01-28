@@ -37,6 +37,7 @@ type Status
     | Loser
 
 
+
 init : Model
 init =
     Model False Loser False False False "" TeamData.NotAStation TeamData.init
@@ -62,6 +63,7 @@ update msg model =
 
         Comment string ->
             { model | comment = string }
+
 
 
 textInput : String -> (String -> Msg) -> String -> Element.Element Msg
@@ -112,6 +114,7 @@ yophyTophy =
     , centerX
     , centerY
     ]
+
 
 
 view : Model -> Element.Element Msg
