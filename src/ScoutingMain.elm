@@ -128,17 +128,18 @@ update msg model =
             { model | climbingData = Climbing.update climbMsg model.climbingData }
 
         PrevPage ->
-            if model.pages == AutonomousPage then
-                { model | pages = TeamDataPage }
+            case model.pages of
+                AutonomousPage ->
+                    { model | pages = TeamDataPage }
 
-            else if model.pages == TeleopPage then
-                { model | pages = AutonomousPage }
+                TeleopPage ->
+                    { model | pages = AutonomousPage }
 
-            else if model.pages == ClimbingPage then
-                { model | pages = TeleopPage }
+                ClimbingPage ->
+                    { model | pages = TeleopPage }
 
-            else
-                model
+                TeamDataPage ->
+                    model
 
         NextPage ->
             let

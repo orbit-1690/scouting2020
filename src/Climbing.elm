@@ -15,7 +15,6 @@ type Msg
     | Defended
     | WasDefended
     | Comment String
-    | Rate
 
 
 type alias Model =
@@ -25,7 +24,6 @@ type alias Model =
     , defended : Bool
     , wasDefended : Bool
     , comment : String
-    , rate : Bool
     }
 
 
@@ -84,11 +82,6 @@ view model =
                     ]
                 ]
             , textInput model.comment Comment "any comments?"
-            , text "rate us plz"
-            , column yophyTophy
-                [ createButton Rate "rate?"
-                , printButton "enjoyed very very" "enjoyed very very" model.rate
-                ]
             ]
         ]
 
@@ -145,7 +138,7 @@ yophyTophy =
 
 init : Model
 init =
-    Model False Loser False False False "" False
+    Model False Loser False False False ""
 
 
 update : Msg -> Model -> Model
@@ -168,9 +161,6 @@ update msg model =
 
         Comment string ->
             { model | comment = string }
-
-        Rate ->
-            { model | rate = not model.rate }
 
 
 subscriptions : Sub Msg
