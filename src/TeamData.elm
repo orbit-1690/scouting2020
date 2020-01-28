@@ -61,6 +61,7 @@ view model =
         , radioRow
             [ padding 10
             , spacing 20
+            , Font.size 10
             ]
             { onChange = Station
             , selected = Just model.station
@@ -82,8 +83,9 @@ view model =
             , center
             , Font.color white
             , Font.glow blue 5
-            , Font.size 20
+            , Font.size 10
             , rounded 3
+            , Font.size 15
             , Font.family
                 [ Font.external
                     { name = "Open Sans"
@@ -120,20 +122,11 @@ stationToString station =
             "none"
 
 
-nameCheck : Model -> Bool
-nameCheck model =
-    if model.scouterName == "" then
-        False
-
-    else
-        True
-
-
 textInput : String -> (String -> Msg) -> String -> Element.Element Msg
 textInput modelValue nextButton name =
     Input.text
         [ Font.color sky
-        , Font.size 20
+        , Font.size 10
         , height fill
         , Font.family
             [ Font.external
@@ -168,3 +161,12 @@ update msg model =
 subscriptions : Sub Msg
 subscriptions =
     Sub.none
+
+
+nameCheck : Model -> Bool
+nameCheck model =
+    if model.scouterName == "" then
+        False
+
+    else
+        True

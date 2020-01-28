@@ -70,17 +70,16 @@ stylishPage position title teamNumber page =
     in
     column
         [ Background.color blue
-        , padding 105
         , spacing 10
         , width fill
         , height fill
         , centerY
         ]
         [ el
-            (decoration 50)
+            (decoration 20)
             (text <| title)
         , el
-            (decoration 35)
+            (decoration 15)
             (text <| "\nscouted team: " ++ teamNumber)
         , page
         , case position of
@@ -100,10 +99,11 @@ stylishPage position title teamNumber page =
 
             MiddlePage ->
                 column
-                    [ Background.color blue
-                    , spacing 10
+                    [ spacing 10
                     , width fill
                     , height fill
+                    , Element.moveUp 170
+                    , centerY
                     ]
                     [ button
                         buttonStyle
@@ -163,9 +163,21 @@ update msg model =
                 error =
                     getMatch model.teamData.match <| TeamData.stationToString model.teamData.station
 
+                scouterNameModel : String
+                scouterNameModel =
+                    model.teamData.scouterName
+
                 verifier : Bool
                 verifier =
-                    (error /= "Not a match") && (error /= "Team not in this match") && nameCheck model.teamData || model.teamData.scouterName == "Itamar" || model.teamData.scouterName == "tom"
+                    (error /= "Not a match")
+                        && (error /= "Team not in this match")
+                        && nameCheck model.teamData
+                        || scouterNameModel
+                        == "Itamar"
+                        || scouterNameModel
+                        == "tom"
+                        || scouterNameModel
+                        == "hadar"
             in
             if model.pages == TeamDataPage && verifier then
                 { model | pages = AutonomousPage }
@@ -187,10 +199,32 @@ view model =
             stylishPage FirstPage "Registeration" (TeamData.team model.teamData) <| Element.map TeamDataMsg <| TeamData.view model.teamData
 
         AutonomousPage ->
-            stylishPage MiddlePage "Autonomous" (TeamData.team model.teamData) <| Element.map AutonomousDataMsg <| Autonomous.view model.autonomousData
+            el
+                [ Background.color blue
+                , padding 105
+                , spacing 10
+                , width fill
+                , height fill
+                , centerY
+                ]
+            <|
+                stylishPage MiddlePage "Autonomous" (TeamData.team model.teamData) <|
+                    Element.map AutonomousDataMsg <|
+                        Autonomous.view model.autonomousData
 
         TeleopPage ->
-            stylishPage MiddlePage "Teleop" (TeamData.team model.teamData) <| Element.map TeleopDataMsg <| Teleop.view model.teleopData
+            el
+                [ Background.color blue
+                , padding 155
+                , spacing 10
+                , width fill
+                , height fill
+                , centerY
+                ]
+            <|
+                stylishPage MiddlePage "Teleop" (TeamData.team model.teamData) <|
+                    Element.map TeleopDataMsg <|
+                        Teleop.view model.teleopData
 
         ClimbingPage ->
             stylishPage LastPage "End-game" (TeamData.team model.teamData) <| Element.map ClimbingDataMsg <| Climbing.view model.climbingData
