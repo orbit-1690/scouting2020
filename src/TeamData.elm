@@ -1,4 +1,4 @@
-module TeamData exposing (Model, Msg(..), Stations(..), init, nameCheck, stationToString, subscriptions, team, update, view)
+module TeamData exposing (Model, Msg(..), Stations(..), init, nameCheck, station, stationToString, subscriptions, team, update, view)
 
 import Colors exposing (black, blue, orange, sky, white)
 import Element exposing (centerX, centerY, column, fill, height, minimum, padding, spacing, text, width)
@@ -30,6 +30,11 @@ team model =
     getMatch model.match <| stationToString model.station
 
 
+station : Model -> String
+station model =
+    stationToString model.station
+
+
 type Stations
     = Blue1
     | Blue2
@@ -56,6 +61,7 @@ view model =
         , rounded 10
         , centerX
         , centerY
+        , Element.scale 1.5
         ]
         [ textInput model.scouterName ScouterInput "Scouter's name"
         , radioRow
@@ -98,8 +104,8 @@ view model =
 
 
 stationToString : Stations -> String
-stationToString station =
-    case station of
+stationToString chosenStation =
+    case chosenStation of
         Blue1 ->
             "Blue 1"
 
@@ -148,8 +154,8 @@ update msg model =
         ScouterInput name ->
             { model | scouterName = name }
 
-        Station station ->
-            { model | station = station }
+        Station chosenStation ->
+            { model | station = chosenStation }
 
         MatchInput match ->
             { model | match = String.toInt match }

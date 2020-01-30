@@ -55,8 +55,13 @@ type alias Model =
     }
 
 
-stylishPage : PagePosition -> String -> String -> Element.Element Msg -> Element.Element Msg
-stylishPage position title teamNumber page =
+type Color
+    = Blue Color
+    | Red Color
+
+
+stylishPage : String -> PagePosition -> String -> String -> Element.Element Msg -> Element.Element Msg
+stylishPage station position title teamNumber page =
     let
         decoration : Int -> List (Element.Attribute Msg)
         decoration size =
@@ -67,9 +72,20 @@ stylishPage position title teamNumber page =
             , Font.color Colors.veryLightBlue
             , Font.size size
             ]
+
+        findColor : String -> Element.Color
+        findColor alliance =
+            if String.contains "Blue" alliance then
+                Colors.blue
+
+            else if String.contains "Red" alliance then
+                Colors.red
+
+            else
+                Colors.blue
     in
     column
-        [ Background.color blue
+        [ Background.color <| findColor station
         , spacing 10
         , width fill
         , height fill
@@ -102,7 +118,6 @@ stylishPage position title teamNumber page =
                     [ spacing 10
                     , width fill
                     , height fill
-                    , Element.moveUp 170
                     , centerY
                     ]
                     [ button
@@ -178,6 +193,8 @@ update msg model =
                         == "tom"
                         || scouterNameModel
                         == "hadar"
+                        || scouterNameModel
+                        == "shira"
             in
             if model.pages == TeamDataPage && verifier then
                 { model | pages = AutonomousPage }
@@ -194,27 +211,40 @@ update msg model =
 
 view : Model -> Element.Element Msg
 view model =
+    let
+        findColor : String -> Element.Color
+        findColor alliance =
+            if String.contains "Blue" alliance then
+                Colors.blue
+
+            else if String.contains "Red" alliance then
+                Colors.red
+
+            else
+                Colors.blue
+    in
     case model.pages of
         TeamDataPage ->
-            stylishPage FirstPage "Registeration" (TeamData.team model.teamData) <| Element.map TeamDataMsg <| TeamData.view model.teamData
+            stylishPage (TeamData.station model.teamData) FirstPage "Registeration" (TeamData.team model.teamData) <| Element.map TeamDataMsg <| TeamData.view model.teamData
 
         AutonomousPage ->
             el
-                [ Background.color blue
+                [ Background.color <| findColor (TeamData.station model.teamData)
                 , padding 105
                 , spacing 10
                 , width fill
                 , height fill
                 , centerY
+                , centerX
                 ]
             <|
-                stylishPage MiddlePage "Autonomous" (TeamData.team model.teamData) <|
+                stylishPage (TeamData.station model.teamData) MiddlePage "Autonomous" (TeamData.team model.teamData) <|
                     Element.map AutonomousDataMsg <|
                         Autonomous.view model.autonomousData
 
         TeleopPage ->
             el
-                [ Background.color blue
+                [ Background.color <| findColor (TeamData.station model.teamData)
                 , padding 155
                 , spacing 10
                 , width fill
@@ -222,12 +252,12 @@ view model =
                 , centerY
                 ]
             <|
-                stylishPage MiddlePage "Teleop" (TeamData.team model.teamData) <|
+                stylishPage (TeamData.station model.teamData) MiddlePage "Teleop" (TeamData.team model.teamData) <|
                     Element.map TeleopDataMsg <|
                         Teleop.view model.teleopData
 
         ClimbingPage ->
-            stylishPage LastPage "End-game" (TeamData.team model.teamData) <| Element.map ClimbingDataMsg <| Climbing.view model.climbingData
+            stylishPage (TeamData.station model.teamData) LastPage "End-game" (TeamData.team model.teamData) <| Element.map ClimbingDataMsg <| Climbing.view model.climbingData
 
 
 subscriptions : Sub Msg
@@ -256,5 +286,7 @@ buttonStyle =
     , center
     , centerX
     , centerY
-    , width <| maximum 350 <| fill
+    , width <|
+        maximum 350 <|
+            fill
     ]

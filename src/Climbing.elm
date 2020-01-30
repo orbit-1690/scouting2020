@@ -6,8 +6,7 @@ import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
 import Element.Input as Input exposing (button, labelHidden, radioRow)
-import GetMatch exposing (getMatch)
-import TeamData exposing (stationToString, team)
+import TeamData
 
 
 type Msg
