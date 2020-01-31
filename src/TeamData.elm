@@ -52,10 +52,9 @@ type Stations
     | Red3
     | NotAStation
 
-
-init : Model
-init =
-    Model "" Nothing NotAStation "Not a team"
+inputOption : GetMatch.AllianceColor -> GetMatch.StationNumber -> String -> Input.Option ( AllianceColor, StationNumber ) msg
+inputOption allianceColor allianceNumber text =
+    Input.option ( allianceColor, allianceNumber ) (Element.text text)
 
 
 view : Model -> Element.Element Msg
