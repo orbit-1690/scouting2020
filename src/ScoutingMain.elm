@@ -10,7 +10,6 @@ import Element.Border as Border
 import Element.Font as Font exposing (center)
 import Element.Input exposing (button)
 import GetMatch exposing (getMatch)
-import TeamData exposing (nameCheck)
 import Teleop
 
 
@@ -55,9 +54,16 @@ type alias Model =
     }
 
 
-type Color
-    = Blue Color
-    | Red Color
+findColor : String -> Element.Color
+findColor alliance =
+    if String.contains "Blue" alliance then
+        Colors.blue
+
+    else if String.contains "Red" alliance then
+        Colors.red
+
+    else
+        Colors.blue
 
 
 stylishPage : String -> PagePosition -> String -> String -> Element.Element Msg -> Element.Element Msg
@@ -167,23 +173,11 @@ update msg model =
                 error =
                     getMatch model.teamData.match <| TeamData.stationToString model.teamData.station
 
-                scouterNameModel : String
-                scouterNameModel =
-                    model.teamData.scouterName
-
                 verifier : Bool
                 verifier =
-                    (error /= "Not a match")
-                        && (error /= "Team not in this match")
-                        && nameCheck model.teamData
-                        || scouterNameModel
-                        == "Itamar"
-                        || scouterNameModel
-                        == "tom"
-                        || scouterNameModel
-                        == "hadar"
-                        || scouterNameModel
-                        == "shira"
+                    (not <| List.member error [ "Not a match", "Team not in this match" ])
+                        && (not << String.isEmpty << .scouterName << .teamData) model
+                        || List.member model.teamData.scouterName [ "Itamar", "tom", "hadar", "shira" ]
             in
             if model.pages == TeamDataPage && verifier then
                 { model | pages = AutonomousPage }
