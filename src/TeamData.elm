@@ -10,6 +10,15 @@ import GetMatch exposing (getMatch, unwrapToString)
 import String
 
 
+main : Program () Model Msg
+main =
+    Browser.sandbox
+        { init = init <| Array.fromList GetMatch.matches
+        , view = Element.layout [] << view
+        , update = update
+        }
+
+
 type Msg
     = ScouterInput String
     | MatchInput String
