@@ -1,10 +1,10 @@
 module Teleop exposing (Model, Msg, createButton, init, subscriptions, update, view, yophyTophy)
 
-import Colors exposing (black, blue, purple, sky, white)
+import Colors exposing (blue, purple, sky, white)
 import Counter
-import Element exposing (centerX, centerY, column, el, padding, row, spacing, text)
+import Element exposing (centerX, centerY, column, el, padding, spacing, text)
 import Element.Background as Background
-import Element.Border as Border exposing (rounded, widthXY)
+import Element.Border exposing (rounded)
 import Element.Font as Font exposing (center)
 import Element.Input exposing (button)
 
@@ -35,9 +35,9 @@ createButton : Msg -> String -> Element.Element Msg
 createButton msg name =
     button
         [ Font.color white
-        , Font.size 25
+        , Font.size 60
         , Font.glow blue 5
-        , Border.rounded 10
+        , rounded 10
         , Font.family
             [ Font.external
                 { name = "Open Sans"
@@ -80,36 +80,28 @@ view : Model -> Element.Element Msg
 view model =
     column
         [ Background.color sky
-        , Border.color black
         , padding 50
         , spacing 20
-        , widthXY 5 5
-        , rounded 10
+        , rounded 20
         , centerX
         , centerY
         ]
-        [ row yophyTophy
-            [ column yophyTophy
-                [ el yophyTophy
-                    (text "spun to\ncorrect color?")
-                , createButton ColorRoulette <|
-                    if model.colorRoulette then
-                        "Yes"
+        [ el yophyTophy
+            (text "spun to\ncorrect color?")
+        , createButton ColorRoulette <|
+            if model.colorRoulette then
+                "Yes"
 
-                    else
-                        "No"
-                ]
-            , column yophyTophy
-                [ el yophyTophy
-                    (text "spun cycles 3-5?")
-                , createButton SpunRoulette <|
-                    if model.spunRoulette then
-                        "Yes"
+            else
+                "No"
+        , el yophyTophy
+            (text "spun cycles 3-5?")
+        , createButton SpunRoulette <|
+            if model.spunRoulette then
+                "Yes"
 
-                    else
-                        "No"
-                ]
-            ]
+            else
+                "No"
         , Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
         , Element.map HighLevel <| Counter.view "high Level:" model.highlevel
         , Element.map Missed <| Counter.view "missed:" model.missed
@@ -127,4 +119,5 @@ yophyTophy =
     , spacing 5
     , centerX
     , centerY
+    , Font.size 60
     ]

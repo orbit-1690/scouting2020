@@ -1,11 +1,11 @@
 module Climbing exposing (Model, Msg, init, subscriptions, update, view)
 
-import Colors exposing (black, blue, purple, sky, white)
+import Colors exposing (blue, purple, sky, white)
 import Element exposing (centerX, centerY, column, el, fill, height, padding, row, spacing, text)
 import Element.Background as Background
-import Element.Border as Border exposing (rounded, widthXY)
+import Element.Border as Border exposing (rounded)
 import Element.Font as Font exposing (center)
-import Element.Input as Input exposing (button, labelHidden, radioRow)
+import Element.Input as Input exposing (button, labelHidden, radio)
 
 
 type Msg
@@ -39,11 +39,9 @@ view : Model -> Element.Element Msg
 view model =
     column
         [ Background.color sky
-        , Border.color black
         , padding 50
         , spacing 20
-        , widthXY 5 5
-        , rounded 10
+        , rounded 20
         , centerX
         , centerY
         ]
@@ -51,15 +49,27 @@ view model =
             [ row
                 yophyTophy
                 [ column yophyTophy
-                    [ createButton TriedClimb "Tried hanging?"
-                    , printButton "no" "yes" model.triedClimb
+                    [ el yophyTophy
+                        (text "Tried hanging?")
+                    , createButton TriedClimb <|
+                        if model.triedClimb then
+                            "Yes"
+
+                        else
+                            "No"
                     ]
                 , column yophyTophy
-                    [ createButton Balanced "Balanced?"
-                    , printButton "no" "yes" model.balanced
+                    [ el yophyTophy
+                        (text "Balanced?")
+                    , createButton Balanced <|
+                        if model.balanced then
+                            "Yes"
+
+                        else
+                            "No"
                     ]
                 ]
-            , radioRow
+            , radio
                 [ padding 10
                 , spacing 20
                 ]
@@ -72,22 +82,34 @@ view model =
                     , Input.option Hanged (text "hanged")
                     ]
                 }
-            , row
-                yophyTophy
+            , row yophyTophy
                 [ column yophyTophy
-                    [ createButton Defended "Defended?"
-                    , printButton "no" "yes" model.defended
+                    [ el yophyTophy
+                        (text "Defended?")
+                    , createButton Defended <|
+                        if model.defended then
+                            "Yes"
+
+                        else
+                            "No"
                     ]
                 , column yophyTophy
-                    [ createButton WasDefended "Was defended?"
-                    , printButton "no" "yes" model.wasDefended
+                    [ el yophyTophy
+                        (text "Was defended?")
+                    , createButton WasDefended <|
+                        if model.wasDefended then
+                            "Yes"
+
+                        else
+                            "No"
                     ]
                 ]
             , textInput model.comment Comment "any comments?"
             , text "rate us plz"
             , column yophyTophy
-                [ createButton Rate "rate?"
-                , printButton "enjoyed very very" "enjoyed very very" model.rate
+                [ el yophyTophy
+                    (text "rate?")
+                , createButton Rate "enjoyed very very"
                 ]
             ]
         ]
@@ -97,7 +119,8 @@ textInput : String -> (String -> Msg) -> String -> Element.Element Msg
 textInput modelValue nextButton name =
     Input.text
         [ Font.color sky
-        , Font.size 20
+        , Font.size 60
+        , rounded 10
         , height fill
         , Font.family
             [ Font.external
@@ -117,7 +140,7 @@ createButton : Msg -> String -> Element.Element Msg
 createButton msg name =
     button
         [ Font.color white
-        , Font.size 25
+        , Font.size 60
         , Font.glow blue 5
         , Border.rounded 10
         , Font.family
@@ -138,6 +161,7 @@ yophyTophy : List (Element.Attribute Msg)
 yophyTophy =
     [ padding 10
     , spacing 5
+    , Font.size 60
     , centerX
     , centerY
     ]
@@ -176,19 +200,3 @@ update msg model =
 subscriptions : Sub Msg
 subscriptions =
     Sub.none
-
-
-printButton : String -> String -> Bool -> Element.Element Msg
-printButton onFalse onTrue modelBool =
-    el
-        [ center
-        , centerX
-        , centerY
-        ]
-        (text <|
-            if modelBool then
-                onTrue
-
-            else
-                onFalse
-        )
