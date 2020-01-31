@@ -7,8 +7,7 @@ import Element.Background as Background
 import Element.Border as Border exposing (rounded)
 import Element.Font as Font exposing (center)
 import Element.Input as Input exposing (button, labelHidden, radio)
-import GetMatch
-import TeamData
+import Teleop exposing (boolToText)
 
 
 type Msg
@@ -165,22 +164,12 @@ view model =
                 [ column yophyTophy
                     [ el yophyTophy
                         (text "Tried hanging?")
-                    , createButton TriedClimb <|
-                        if model.triedClimb then
-                            "Yes"
-
-                        else
-                            "No"
+                    , createButton TriedClimb <| boolToText model.triedClimb
                     ]
                 , column yophyTophy
                     [ el yophyTophy
                         (text "Balanced?")
-                    , createButton Balanced <|
-                        if model.balanced then
-                            "Yes"
-
-                        else
-                            "No"
+                    , createButton Balanced <| boolToText model.balanced
                     ]
                 ]
             , radio
@@ -200,22 +189,12 @@ view model =
                 [ column yophyTophy
                     [ el yophyTophy
                         (text "Defended?")
-                    , createButton Defended <|
-                        if model.defended then
-                            "Yes"
-
-                        else
-                            "No"
+                    , createButton Defended <| boolToText model.defended
                     ]
                 , column yophyTophy
                     [ el yophyTophy
                         (text "Was defended?")
-                    , createButton WasDefended <|
-                        if model.wasDefended then
-                            "Yes"
-
-                        else
-                            "No"
+                    , createButton WasDefended <| boolToText model.wasDefended
                     ]
                 ]
             , textInput model.comment Comment "any comments?"
