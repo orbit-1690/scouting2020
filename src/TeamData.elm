@@ -1,4 +1,4 @@
-module TeamData exposing (Model, Msg(..), Stations(..), init, nameCheck, station, stationToString, subscriptions, team, update, view)
+module TeamData exposing (Model, Msg, Stations(..), init, nameCheck, station, stationToString, subscriptions, team, update, view)
 
 import Colors exposing (blue, orange, sky, white)
 import Element exposing (centerX, centerY, column, fill, padding, spacing, text, width)
