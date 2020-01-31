@@ -72,17 +72,6 @@ stylishPage station position title teamNumber page =
             , Font.color Colors.veryLightBlue
             , Font.size size
             ]
-
-        findColor : String -> Element.Color
-        findColor alliance =
-            if String.contains "Blue" alliance then
-                Colors.blue
-
-            else if String.contains "Red" alliance then
-                Colors.red
-
-            else
-                Colors.blue
     in
     column
         [ Background.color <| findColor station
@@ -211,18 +200,6 @@ update msg model =
 
 view : Model -> Element.Element Msg
 view model =
-    let
-        findColor : String -> Element.Color
-        findColor alliance =
-            if String.contains "Blue" alliance then
-                Colors.blue
-
-            else if String.contains "Red" alliance then
-                Colors.red
-
-            else
-                Colors.blue
-    in
     case model.pages of
         TeamDataPage ->
             stylishPage (TeamData.station model.teamData) FirstPage "Registeration" (TeamData.team model.teamData) <| Element.map TeamDataMsg <| TeamData.view model.teamData
