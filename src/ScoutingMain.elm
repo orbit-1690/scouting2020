@@ -1,4 +1,4 @@
-module ScoutingMain exposing (Model, Msg, init, subscriptions, update, view)
+module ScoutingMain exposing (Model, Msg, init, update, view)
 
 import Autonomous
 import Browser
@@ -21,7 +21,7 @@ main =
         { init = always ( init, Cmd.none )
         , view = view >> layout [ width fill ]
         , update = \msg model -> ( update msg model, Cmd.none )
-        , subscriptions = \model -> subscriptions
+        , subscriptions = always Sub.none
         }
 
 
@@ -266,17 +266,6 @@ view model =
 
         ClimbingPage ->
             stylishPage (TeamData.station model.teamData) LastPage "End-game" (TeamData.team model.teamData) <| Element.map ClimbingDataMsg <| Climbing.view model.climbingData
-
-
-subscriptions : Sub Msg
-subscriptions =
-    Sub.batch
-        [ Sub.map AutonomousDataMsg <| Autonomous.subscriptions
-        , Sub.map TeamDataMsg <| TeamData.subscriptions
-        , Sub.map TeleopDataMsg <| Teleop.subscriptions
-        , Sub.map ClimbingDataMsg <| Climbing.subscriptions
-        , BE.onResize (\w h -> ScreenSize <| Element.classifyDevice <| DeviceSize w h)
-        ]
 
 
 buttonStyle : List (Element.Attribute Msg)
