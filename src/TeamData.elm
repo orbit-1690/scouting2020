@@ -14,7 +14,6 @@ type Msg
     = ScouterInput String
     | MatchInput String
     | Station Stations
-    | Team
 
 
 type alias Model =
@@ -154,9 +153,6 @@ update msg model =
 
         MatchInput match ->
             { model | match = String.toInt match }
-
-        Team ->
-            { model | team = getMatch model.match <| stationToString model.station }
 
 
 subscriptions : Sub Msg
