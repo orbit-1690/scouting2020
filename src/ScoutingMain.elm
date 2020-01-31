@@ -64,7 +64,7 @@ type alias Model =
     }
 
 
-type Color
+type BackGroundColorOptions
     = Blue Color
     | Red Color
 
@@ -184,14 +184,8 @@ update msg model =
                     (error /= "Not a match")
                         && (error /= "Team not in this match")
                         && nameCheck model.teamData
-                        || scouterNameModel
-                        == "Itamar"
-                        || scouterNameModel
-                        == "tom"
-                        || scouterNameModel
-                        == "hadar"
-                        || scouterNameModel
-                        == "shira"
+                            List.member
+                            [ "Itamar", "tom", "hadar", "shira" ]
             in
             if model.pages == TeamDataPage && verifier then
                 { model | pages = AutonomousPage }

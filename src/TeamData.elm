@@ -52,6 +52,7 @@ type Stations
     | Red3
     | NotAStation
 
+
 inputOption : GetMatch.AllianceColor -> GetMatch.StationNumber -> String -> Input.Option ( AllianceColor, StationNumber ) msg
 inputOption allianceColor allianceNumber text =
     Input.option ( allianceColor, allianceNumber ) (Element.text text)
@@ -77,12 +78,12 @@ view model =
             , selected = Just model.station
             , label = Input.labelAbove [ Font.size 60, padding 10, spacing 20 ] (text "Which station?")
             , options =
-                [ Input.option Blue1 (text "Blue 1")
-                , Input.option Blue2 (text "Blue 2")
-                , Input.option Blue3 (text "Blue 3")
-                , Input.option Red1 (text "Red 1")
-                , Input.option Red2 (text "Red 2")
-                , Input.option Red3 (text "Red 3")
+                [ inputOption GetMatch.Blue GetMatch.One "Blue 1"
+                , inputOption GetMatch.Blue GetMatch.Two "Blue 2"
+                , inputOption GetMatch.Blue GetMatch.Three "Blue 3"
+                , inputOption GetMatch.Red GetMatch.One "Red 1"
+                , inputOption GetMatch.Red GetMatch.Two "Red 2"
+                , inputOption GetMatch.Red GetMatch.Three "Red 3"
                 ]
             }
         , textInput (unwrapToString model.match) MatchInput "Match number"
@@ -166,12 +167,3 @@ update msg model =
 subscriptions : Sub Msg
 subscriptions =
     Sub.none
-
-
-nameCheck : Model -> Bool
-nameCheck model =
-    if model.scouterName == "" then
-        False
-
-    else
-        True
