@@ -25,11 +25,7 @@ update msg model =
             model + 1
 
         Minus ->
-            if model == 0 then
-                model
-
-            else
-                model - 1
+            max 0 <| model - 1
 
 
 view : String -> Model -> Element.Element Msg
