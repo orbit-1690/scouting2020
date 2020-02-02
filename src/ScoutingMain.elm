@@ -3,14 +3,16 @@ module ScoutingMain exposing (Model, Msg, init, update, view)
 import Autonomous
 import Browser
 import Climbing
+import TeamData
 import Colors exposing (blue, purple, white)
 import Element exposing (centerX, centerY, column, el, fill, height, layout, maximum, padding, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font exposing (center)
 import Element.Input exposing (button)
-import GetMatch exposing (getMatch)
+import GetMatch
 import Teleop
+import Array
 
 
 main : Program () Model Msg
@@ -63,7 +65,7 @@ findColor alliance =
         Colors.red
 
     else
-        Colors.blue
+        Colors.yellow
 
 
 stylishPage : String -> PagePosition -> String -> String -> Element.Element Msg -> Element.Element Msg
@@ -131,7 +133,7 @@ stylishPage station position title teamNumber page =
 
 init : Model
 init =
-    { teamData = TeamData.init
+    { teamData = TeamData.init <| Array.fromList GetMatch.matches
     , autonomousData = Autonomous.init
     , teleopData = Teleop.init
     , climbingData = Climbing.init
@@ -169,13 +171,18 @@ update msg model =
 
         NextPage ->
             let
-                error : String
-                error =
-                    getMatch model.teamData.match <| TeamData.stationToString model.teamData.station
+                matchError : Result String GetMatch.Match
+                matchError =
+                    TeamData.getMatch model.teamData
+
+                stationError : Result String Int
+                stationError =
+                    TeamData.getTeam2 model.teamData
 
                 verifier : Bool
                 verifier =
-                    (not <| List.member error [ "Not a match", "Team not in this match" ])
+                    (not <| List.member matchError [ Err "No such match", Err "Match number must be a number" ])
+                    && stationError /= Err "No station"
                         && (not << String.isEmpty << .scouterName << .teamData) model
                         || List.member model.teamData.scouterName [ "Itamar", "tom", "hadar", "shira" ]
             in
@@ -196,11 +203,11 @@ view : Model -> Element.Element Msg
 view model =
     case model.pages of
         TeamDataPage ->
-            stylishPage (TeamData.station model.teamData) FirstPage "Registeration" (TeamData.team model.teamData) <| Element.map TeamDataMsg <| TeamData.view model.teamData
+            stylishPage (TeamData.stationToString model.teamData.station) FirstPage "Registeration" (TeamData.stationToString model.teamData.station) <| Element.map TeamDataMsg <| TeamData.view model.teamData
 
         AutonomousPage ->
             el
-                [ Background.color <| findColor (TeamData.station model.teamData)
+                [ Background.color <| findColor (TeamData.stationToString model.teamData.station)
                 , padding 105
                 , spacing 10
                 , width fill
@@ -209,13 +216,13 @@ view model =
                 , centerX
                 ]
             <|
-                stylishPage (TeamData.station model.teamData) MiddlePage "Autonomous" (TeamData.team model.teamData) <|
+                stylishPage (TeamData.stationToString model.teamData.station) MiddlePage "Autonomous"  (TeamData.stationToString model.teamData.station) <|
                     Element.map AutonomousDataMsg <|
                         Autonomous.view model.autonomousData
 
         TeleopPage ->
             el
-                [ Background.color <| findColor (TeamData.station model.teamData)
+                [ Background.color <| findColor (TeamData.stationToString model.teamData.station)
                 , padding 155
                 , spacing 10
                 , width fill
@@ -223,12 +230,12 @@ view model =
                 , centerY
                 ]
             <|
-                stylishPage (TeamData.station model.teamData) MiddlePage "Teleop" (TeamData.team model.teamData) <|
+                stylishPage (TeamData.stationToString model.teamData.station) MiddlePage "Teleop" (TeamData.stationToString model.teamData.station) <|
                     Element.map TeleopDataMsg <|
                         Teleop.view model.teleopData
 
         ClimbingPage ->
-            stylishPage (TeamData.station model.teamData) LastPage "End-game" (TeamData.team model.teamData) <| Element.map ClimbingDataMsg <| Climbing.view model.climbingData
+            stylishPage (TeamData.stationToString model.teamData.station) LastPage "End-game" (TeamData.stationToString model.teamData.station) <| Element.map ClimbingDataMsg <| Climbing.view model.climbingData
 
 
 buttonStyle : List (Element.Attribute Msg)

@@ -1,4 +1,4 @@
-module TeamData exposing (Model, Msg, init, stationToString, update, view)
+module TeamData exposing (Model, Msg, init, stationToString, update, view, getTeam2, getMatch)
 
 import Array exposing (Array)
 import Browser
@@ -38,13 +38,6 @@ type alias Model =
     }
 
 
-
--- team : Model -> String
--- team model =
---     getMatch model.match <| stationToString model.station
--- { blue = { one = 1690, two = 1574, three = 3339 }, red = { one = 254, two = 2056, three = 1323 }
-
-
 init : Array Match -> Model
 init matches =
     Model "" "" Nothing (Err "") matches
@@ -76,7 +69,7 @@ view model =
             ]
             { onChange = Station
             , selected = model.station
-            , label = Input.labelAbove [] (text "Which station?")
+            , label = Input.labelAbove [] (text "stations")
             , options =
                 [ inputOption GetMatch.Blue GetMatch.One "Blue 1"
                 , inputOption GetMatch.Blue GetMatch.Two "Blue 2"

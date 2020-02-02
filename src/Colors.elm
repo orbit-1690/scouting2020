@@ -31,7 +31,7 @@ orange =
 
 yellow : Color
 yellow =
-    Element.rgb255 255 255 0
+    Element.rgb255 200 200 0
 
 
 grass : Color

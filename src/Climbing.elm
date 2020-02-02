@@ -7,6 +7,8 @@ import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
 import Element.Input as Input exposing (button, labelHidden, radioRow)
 import TeamData
+import GetMatch
+import Array
 
 
 type Msg
@@ -37,7 +39,7 @@ type Status
 
 init : Model
 init =
-    Model False Loser False False False "" TeamData.init
+    Model False Loser False False False "" (TeamData.init <| Array.fromList GetMatch.matches) 
 
 
 update : Msg -> Model -> Model
