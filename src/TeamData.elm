@@ -1,9 +1,9 @@
-module TeamData exposing (Model, Msg, init, stationToString, update, view, getTeam2, getMatch)
+module TeamData exposing (Model, Msg, getMatch, getTeam2, init, stationToString, update, view)
 
 import Array exposing (Array)
 import Browser
 import Colors exposing (black, blue, orange, sky, white)
-import Element exposing (centerX, centerY, column, fill, height, minimum, padding, spacing, text, width)
+import Element exposing (centerX, centerY, column, el, fill, height, minimum, padding, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
@@ -80,7 +80,7 @@ view model =
                 ]
             }
         , textInput model.matchNumber MatchInput "Match number"
-        , Element.el
+        , el
             [ Background.color orange
             , width <| minimum 350 <| fill
             , height fill
