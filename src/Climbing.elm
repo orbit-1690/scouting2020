@@ -1,13 +1,12 @@
 module Climbing exposing (Model, Msg, init, subscriptions, update, view)
 
-import Colors exposing (black, blue, purple, sky, white)
+import Colors exposing (blue, purple, sky, white)
 import Element exposing (centerX, centerY, column, el, fill, height, padding, row, spacing, text)
 import Element.Background as Background
-import Element.Border as Border exposing (rounded, widthXY)
+import Element.Border as Border exposing (rounded)
 import Element.Font as Font exposing (center)
-import Element.Input as Input exposing (button, labelHidden, radioRow)
-import GetMatch exposing (getMatch)
-import TeamData exposing (stationToString, team)
+import Element.Input as Input exposing (button, labelHidden, radio)
+import Teleop exposing (boolToText)
 
 
 type Msg
@@ -26,7 +25,6 @@ type alias Model =
     , defended : Bool
     , wasDefended : Bool
     , comment : String
-    , localTeam : TeamData.Model
     }
 
 
@@ -36,10 +34,9 @@ type Status
     | Loser
 
 
-
 init : Model
 init =
-    Model False Loser False False False "" TeamData.init
+    Model False Loser False False False ""
 
 
 update : Msg -> Model -> Model
@@ -64,12 +61,66 @@ update msg model =
             { model | comment = string }
 
 
+view : Model -> Element.Element Msg
+view model =
+    column
+        [ Background.color sky
+        , padding 50
+        , spacing 20
+        , rounded 20
+        , centerX
+        , centerY
+        ]
+        [ column yophyTophy
+            [ row
+                yophyTophy
+                [ column yophyTophy
+                    [ el yophyTophy
+                        (text "Tried hanging?")
+                    , createButton TriedClimb <| boolToText model.triedClimb
+                    ]
+                , column yophyTophy
+                    [ el yophyTophy
+                        (text "Balanced?")
+                    , createButton Balanced <| boolToText model.balanced
+                    ]
+                ]
+            , radio
+                [ padding 10
+                , spacing 20
+                ]
+                { onChange = ClimbStatus
+                , selected = Just model.climbStatus
+                , label = Input.labelAbove [] (text " climb status:")
+                , options =
+                    [ Input.option Loser (text "loser")
+                    , Input.option Parked (text "parked")
+                    , Input.option Hanged (text "hanged")
+                    ]
+                }
+            , row yophyTophy
+                [ column yophyTophy
+                    [ el yophyTophy
+                        (text "Defended?")
+                    , createButton Defended <| boolToText model.defended
+                    ]
+                , column yophyTophy
+                    [ el yophyTophy
+                        (text "Was defended?")
+                    , createButton WasDefended <| boolToText model.wasDefended
+                    ]
+                ]
+            , textInput model.comment Comment "any comments?"
+            ]
+        ]
+
 
 textInput : String -> (String -> Msg) -> String -> Element.Element Msg
 textInput modelValue nextButton name =
     Input.text
         [ Font.color sky
-        , Font.size 20
+        , Font.size 60
+        , rounded 10
         , height fill
         , Font.family
             [ Font.external
@@ -89,7 +140,7 @@ createButton : Msg -> String -> Element.Element Msg
 createButton msg name =
     button
         [ Font.color white
-        , Font.size 25
+        , Font.size 60
         , Font.glow blue 5
         , Border.rounded 10
         , Font.family
@@ -110,81 +161,12 @@ yophyTophy : List (Element.Attribute Msg)
 yophyTophy =
     [ padding 10
     , spacing 5
+    , Font.size 60
     , centerX
     , centerY
     ]
 
 
-
-view : Model -> Element.Element Msg
-view model =
-    column
-        [ Background.color sky
-        , Border.color black
-        , padding 50
-        , spacing 20
-        , widthXY 5 5
-        , rounded 10
-        , centerX
-        , centerY
-        ]
-        [ column yophyTophy
-            [ row
-                yophyTophy
-                [ column yophyTophy
-                    [ createButton TriedClimb "Tried hanging?"
-                    , printButton "no" "yes" model.triedClimb
-                    ]
-                , column yophyTophy
-                    [ createButton Balanced "Balanced?"
-                    , printButton "no" "yes" model.balanced
-                    ]
-                ]
-            , radioRow
-                [ padding 10
-                , spacing 20
-                ]
-                { onChange = ClimbStatus
-                , selected = Just model.climbStatus
-                , label = Input.labelAbove [] (text " climb status:")
-                , options =
-                    [ Input.option Loser (text "loser")
-                    , Input.option Parked (text "parked")
-                    , Input.option Hanged (text "hanged")
-                    ]
-                }
-            , row
-                yophyTophy
-                [ column yophyTophy
-                    [ createButton Defended "Defended?"
-                    , printButton "no" "yes" model.defended
-                    ]
-                , column yophyTophy
-                    [ createButton WasDefended "Was defended?"
-                    , printButton "no" "yes" model.wasDefended
-                    ]
-                ]
-            , textInput model.comment Comment "any comments?"
-            ]
-        ]
-
-
 subscriptions : Sub Msg
 subscriptions =
     Sub.none
-
-
-printButton : String -> String -> Bool -> Element.Element Msg
-printButton onFalse onTrue modelBool =
-    el
-        [ center
-        , centerX
-        , centerY
-        ]
-        (text <|
-            if modelBool then
-                onTrue
-
-            else
-                onFalse
-        )
