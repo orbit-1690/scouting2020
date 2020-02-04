@@ -1,25 +1,27 @@
 module ScoutingMain exposing (Model, Msg, init, update, view)
 
+import Array
 import Autonomous
 import Browser
 import Climbing
-import TeamData
 import Colors exposing (blue, purple, white)
-import Element exposing (centerX, centerY, column, el, fill, height, layout, maximum, padding, spacing, text, width)
+import Element exposing (centerX, centerY, column, el, fill, height, htmlAttribute, layout, maximum, padding, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font exposing (center)
 import Element.Input exposing (button)
 import GetMatch
+import Html.Attributes exposing (style)
+import Result.Extra exposing (merge)
+import TeamData
 import Teleop
-import Array
 
 
 main : Program () Model Msg
 main =
     Browser.element
         { init = always ( init, Cmd.none )
-        , view = view >> layout []
+        , view = view >> layout [ htmlAttribute <| style "touch-action" "manipulation" ]
         , update = \msg model -> ( update msg model, Cmd.none )
         , subscriptions = always Sub.none
         }
@@ -182,7 +184,8 @@ update msg model =
                 verifier : Bool
                 verifier =
                     (not <| List.member matchError [ Err "No such match", Err "Match number must be a number" ])
-                    && stationError /= Err "No station"
+                        && stationError
+                        /= Err "No station"
                         && (not << String.isEmpty << .scouterName << .teamData) model
                         || List.member model.teamData.scouterName [ "Itamar", "tom", "hadar", "shira" ]
             in
@@ -203,7 +206,17 @@ view : Model -> Element.Element Msg
 view model =
     case model.pages of
         TeamDataPage ->
-            stylishPage (TeamData.stationToString model.teamData.station) FirstPage "Registeration" (TeamData.stationToString model.teamData.station) <| Element.map TeamDataMsg <| TeamData.view model.teamData
+            stylishPage
+                (TeamData.stationToString model.teamData.station)
+                FirstPage
+                "Registeration"
+                (TeamData.getTeam2 model.teamData
+                    |> Result.map String.fromInt
+                    |> merge
+                )
+            <|
+                Element.map TeamDataMsg <|
+                    TeamData.view model.teamData
 
         AutonomousPage ->
             el
@@ -216,7 +229,15 @@ view model =
                 , centerX
                 ]
             <|
-                stylishPage (TeamData.stationToString model.teamData.station) MiddlePage "Autonomous"  (TeamData.stationToString model.teamData.station) <|
+                stylishPage
+                    (TeamData.stationToString model.teamData.station)
+                    MiddlePage
+                    "Autonomous"
+                    (TeamData.getTeam2 model.teamData
+                        |> Result.map String.fromInt
+                        |> merge
+                    )
+                <|
                     Element.map AutonomousDataMsg <|
                         Autonomous.view model.autonomousData
 
@@ -230,12 +251,30 @@ view model =
                 , centerY
                 ]
             <|
-                stylishPage (TeamData.stationToString model.teamData.station) MiddlePage "Teleop" (TeamData.stationToString model.teamData.station) <|
+                stylishPage
+                    (TeamData.stationToString model.teamData.station)
+                    MiddlePage
+                    "Teleop"
+                    (TeamData.getTeam2 model.teamData
+                        |> Result.map String.fromInt
+                        |> merge
+                    )
+                <|
                     Element.map TeleopDataMsg <|
                         Teleop.view model.teleopData
 
         ClimbingPage ->
-            stylishPage (TeamData.stationToString model.teamData.station) LastPage "End-game" (TeamData.stationToString model.teamData.station) <| Element.map ClimbingDataMsg <| Climbing.view model.climbingData
+            stylishPage
+                (TeamData.stationToString model.teamData.station)
+                LastPage
+                "End-game"
+                (TeamData.getTeam2 model.teamData
+                    |> Result.map String.fromInt
+                    |> merge
+                )
+            <|
+                Element.map ClimbingDataMsg <|
+                    Climbing.view model.climbingData
 
 
 buttonStyle : List (Element.Attribute Msg)
