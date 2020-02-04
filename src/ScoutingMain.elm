@@ -4,12 +4,13 @@ import Autonomous
 import Browser
 import Climbing
 import Colors exposing (blue, purple, white)
-import Element exposing (centerX, centerY, column, el, fill, height, layout, maximum, padding, spacing, text, width)
+import Element exposing (centerX, centerY, column, el, fill, height, htmlAttribute, layout, maximum, padding, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font exposing (center)
 import Element.Input exposing (button)
 import GetMatch exposing (getMatch)
+import Html.Attributes exposing (style)
 import TeamData exposing (nameCheck)
 import Teleop
 
@@ -18,7 +19,7 @@ main : Program () Model Msg
 main =
     Browser.element
         { init = always ( init, Cmd.none )
-        , view = view >> layout []
+        , view = view >> layout [ htmlAttribute <| style "touch-action" "manipulation" ]
         , update = \msg model -> ( update msg model, Cmd.none )
         , subscriptions = \model -> subscriptions
         }
