@@ -1,11 +1,12 @@
 module Climbing exposing (Model, Msg, init, subscriptions, update, view)
 
-import Colors exposing (black, blue, purple, sky, white)
+import Colors exposing (blue, purple, sky, white)
 import Element exposing (centerX, centerY, column, el, fill, height, padding, row, spacing, text)
 import Element.Background as Background
-import Element.Border as Border exposing (rounded, widthXY)
+import Element.Border as Border exposing (rounded)
 import Element.Font as Font exposing (center)
-import Element.Input as Input exposing (button, labelHidden, radioRow)
+import Element.Input as Input exposing (button, labelHidden, radio, radioRow)
+import Teleop exposing (boolToText)
 import GetMatch exposing (getMatch)
 import TeamData exposing (stationToString, team)
 
@@ -36,7 +37,6 @@ type Status
     | Loser
 
 
-
 init : Model
 init =
     Model False Loser False False False "" TeamData.init
@@ -64,12 +64,12 @@ update msg model =
             { model | comment = string }
 
 
-
 textInput : String -> (String -> Msg) -> String -> Element.Element Msg
 textInput modelValue nextButton name =
     Input.text
         [ Font.color sky
-        , Font.size 20
+        , Font.size 60
+        , rounded 10
         , height fill
         , Font.family
             [ Font.external
@@ -89,7 +89,7 @@ createButton : Msg -> String -> Element.Element Msg
 createButton msg name =
     button
         [ Font.color white
-        , Font.size 25
+        , Font.size 60
         , Font.glow blue 5
         , Border.rounded 10
         , Font.family
@@ -110,6 +110,7 @@ yophyTophy : List (Element.Attribute Msg)
 yophyTophy =
     [ padding 10
     , spacing 5
+    , Font.size 60
     , centerX
     , centerY
     ]
@@ -172,19 +173,3 @@ view model =
 subscriptions : Sub Msg
 subscriptions =
     Sub.none
-
-
-printButton : String -> String -> Bool -> Element.Element Msg
-printButton onFalse onTrue modelBool =
-    el
-        [ center
-        , centerX
-        , centerY
-        ]
-        (text <|
-            if modelBool then
-                onTrue
-
-            else
-                onFalse
-        )

@@ -1,11 +1,11 @@
 module TeamData exposing (Model, Msg(..), Stations(..), init, nameCheck, stationToString, subscriptions, team, update, view)
 
-import Colors exposing (black, blue, orange, sky, white)
-import Element exposing (centerX, centerY, column, fill, height, minimum, padding, spacing, text, width)
+import Colors exposing (blue, orange, sky, white)
+import Element exposing (centerX, centerY, column, fill, padding, spacing, text, width)
 import Element.Background as Background
-import Element.Border as Border exposing (rounded, widthXY)
+import Element.Border exposing (rounded)
 import Element.Font as Font exposing (center)
-import Element.Input as Input exposing (labelHidden, radioRow)
+import Element.Input as Input exposing (labelHidden, radio)
 import GetMatch exposing (getMatch, unwrapToString)
 import String
 
@@ -49,22 +49,21 @@ view : Model -> Element.Element Msg
 view model =
     column
         [ Background.color sky
-        , Border.color black
         , padding 50
-        , spacing 20
-        , widthXY 5 5
-        , rounded 10
+        , spacing 40
         , centerX
         , centerY
+        , rounded 20
         ]
         [ textInput model.scouterName ScouterInput "Scouter's name"
-        , radioRow
+        , radio
             [ padding 10
             , spacing 20
+            , Font.size 60
             ]
             { onChange = Station
             , selected = Just model.station
-            , label = Input.labelAbove [] (text "Which station?")
+            , label = Input.labelAbove [ Font.size 60, padding 10, spacing 20 ] (text "Which station?")
             , options =
                 [ Input.option Blue1 (text "Blue 1")
                 , Input.option Blue2 (text "Blue 2")
@@ -77,13 +76,12 @@ view model =
         , textInput (unwrapToString model.match) MatchInput "Match number"
         , Element.el
             [ Background.color orange
-            , width <| minimum 350 <| fill
-            , height fill
+            , width fill
             , center
+            , rounded 10
             , Font.color white
             , Font.glow blue 5
-            , Font.size 20
-            , rounded 3
+            , Font.size 60
             , Font.family
                 [ Font.external
                     { name = "Open Sans"
@@ -133,8 +131,8 @@ textInput : String -> (String -> Msg) -> String -> Element.Element Msg
 textInput modelValue nextButton name =
     Input.text
         [ Font.color sky
-        , Font.size 20
-        , height fill
+        , Font.size 60
+        , rounded 10
         , Font.family
             [ Font.external
                 { name = "Open Sans"
