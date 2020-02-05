@@ -2,9 +2,10 @@ module ScoutingMain exposing (Model, Msg, init, subscriptions, update, view)
 
 import Autonomous
 import Browser
+import Browser.Events as BE
 import Climbing
 import Colors exposing (blue, purple, white)
-import Element exposing (centerX, centerY, column, el, fill, height, layout, maximum, padding, spacing, text, width)
+import Element exposing (Device, centerX, centerY, column, fill, height, layout, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font exposing (center)
@@ -18,7 +19,7 @@ main : Program () Model Msg
 main =
     Browser.element
         { init = always ( init, Cmd.none )
-        , view = view >> layout []
+        , view = view >> layout [ width fill ]
         , update = \msg model -> ( update msg model, Cmd.none )
         , subscriptions = \model -> subscriptions
         }
@@ -36,6 +37,7 @@ type Msg
     | AutonomousDataMsg Autonomous.Msg
     | TeleopDataMsg Teleop.Msg
     | ClimbingDataMsg Climbing.Msg
+    | ScreenSize Device
     | PrevPage
     | NextPage
 
@@ -46,12 +48,19 @@ type PagePosition
     | LastPage
 
 
+type alias DeviceSize =
+    { width : Int
+    , height : Int
+    }
+
+
 type alias Model =
     { teamData : TeamData.Model
     , autonomousData : Autonomous.Model
     , teleopData : Teleop.Model
     , climbingData : Climbing.Model
     , pages : Pages
+    , screenSize : Device
     }
 
 
@@ -86,10 +95,9 @@ stylishPage station position title teamNumber page =
     in
     column
         [ Background.color <| findColor station
-        , spacing 10
+        , spacing 15
         , width fill
         , height fill
-        , centerY
         ]
         [ el
             (decoration 20)
@@ -114,12 +122,7 @@ stylishPage station position title teamNumber page =
                     }
 
             MiddlePage ->
-                column
-                    [ spacing 10
-                    , width fill
-                    , height fill
-                    , centerY
-                    ]
+                column [ spacing 15, centerX, centerY ]
                     [ button
                         buttonStyle
                         { onPress = Just <| NextPage
@@ -141,12 +144,16 @@ init =
     , teleopData = Teleop.init
     , climbingData = Climbing.init
     , pages = TeamDataPage
+    , screenSize = Element.classifyDevice <| DeviceSize 0 0
     }
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
+        ScreenSize device ->
+            { model | screenSize = device }
+
         TeamDataMsg teamMsg ->
             { model | teamData = TeamData.update teamMsg model.teamData }
 
@@ -160,17 +167,18 @@ update msg model =
             { model | climbingData = Climbing.update climbMsg model.climbingData }
 
         PrevPage ->
-            if model.pages == AutonomousPage then
-                { model | pages = TeamDataPage }
+            case model.pages of
+                AutonomousPage ->
+                    { model | pages = TeamDataPage }
 
-            else if model.pages == TeleopPage then
-                { model | pages = AutonomousPage }
+                TeleopPage ->
+                    { model | pages = AutonomousPage }
 
-            else if model.pages == ClimbingPage then
-                { model | pages = TeleopPage }
+                ClimbingPage ->
+                    { model | pages = TeleopPage }
 
-            else
-                model
+                TeamDataPage ->
+                    model
 
         NextPage ->
             let
@@ -267,13 +275,14 @@ subscriptions =
         , Sub.map TeamDataMsg <| TeamData.subscriptions
         , Sub.map TeleopDataMsg <| Teleop.subscriptions
         , Sub.map ClimbingDataMsg <| Climbing.subscriptions
+        , BE.onResize (\w h -> ScreenSize <| Element.classifyDevice <| DeviceSize w h)
         ]
 
 
 buttonStyle : List (Element.Attribute Msg)
 buttonStyle =
     [ Font.color white
-    , Font.size 40
+    , Font.size 60
     , Font.glow blue 5
     , Border.rounded 10
     , Font.family
@@ -286,7 +295,4 @@ buttonStyle =
     , center
     , centerX
     , centerY
-    , width <|
-        maximum 350 <|
-            fill
     ]
