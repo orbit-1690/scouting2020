@@ -204,21 +204,9 @@ update msg model =
 
 view : Model -> Element.Element Msg
 view model =
-    case model.pages of
-        TeamDataPage ->
-            stylishPage
-                (TeamData.stationToString model.teamData.station)
-                FirstPage
-                "Registeration"
-                (TeamData.getTeam2 model.teamData
-                    |> Result.map String.fromInt
-                    |> merge
-                )
-            <|
-                Element.map TeamDataMsg <|
-                    TeamData.view model.teamData
-
-        AutonomousPage ->
+    let
+        middlePage : String -> Element.Element Msg -> Element.Element Msg
+        middlePage name =
             el
                 [ Background.color <| findColor (TeamData.stationToString model.teamData.station)
                 , padding 105
@@ -228,18 +216,29 @@ view model =
                 , centerY
                 , centerX
                 ]
-            <|
-                stylishPage
+                << stylishPage
                     (TeamData.stationToString model.teamData.station)
                     MiddlePage
-                    "Autonomous"
+                    name
                     (TeamData.getTeam2 model.teamData
                         |> Result.map String.fromInt
                         |> merge
                     )
-                <|
-                    Element.map AutonomousDataMsg <|
-                        Autonomous.view model.autonomousData
+    in
+    case model.pages of
+        TeamDataPage ->
+            middlePage
+                "Registeration"
+                << Element.map TeamDataMsg
+            <|
+                TeamData.view model.teamData
+
+        AutonomousPage ->
+            middlePage
+                "Autonomous"
+                << Element.map AutonomousDataMsg
+            <|
+                Autonomous.view model.autonomousData
 
         TeleopPage ->
             el
