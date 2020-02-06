@@ -205,8 +205,8 @@ update msg model =
 view : Model -> Element.Element Msg
 view model =
     let
-        middlePage : String -> Element.Element Msg -> Element.Element Msg
-        middlePage name =
+        page : String -> PagePosition -> Element.Element Msg -> Element.Element Msg
+        page name pagePosition =
             el
                 [ Background.color <| findColor (TeamData.stationToString model.teamData.station)
                 , padding 105
@@ -218,7 +218,7 @@ view model =
                 ]
                 << stylishPage
                     (TeamData.stationToString model.teamData.station)
-                    MiddlePage
+                    pagePosition
                     name
                     (TeamData.getTeam2 model.teamData
                         |> Result.map String.fromInt
@@ -227,53 +227,36 @@ view model =
     in
     case model.pages of
         TeamDataPage ->
-            middlePage
+            page
                 "Registeration"
+                FirstPage
                 << Element.map TeamDataMsg
             <|
                 TeamData.view model.teamData
 
         AutonomousPage ->
-            middlePage
+            page
                 "Autonomous"
+                MiddlePage
                 << Element.map AutonomousDataMsg
             <|
                 Autonomous.view model.autonomousData
 
         TeleopPage ->
-            el
-                [ Background.color <| findColor (TeamData.stationToString model.teamData.station)
-                , padding 155
-                , spacing 10
-                , width fill
-                , height fill
-                , centerY
-                ]
+            page
+                "Teleop"
+                MiddlePage
+                << Element.map TeleopDataMsg
             <|
-                stylishPage
-                    (TeamData.stationToString model.teamData.station)
-                    MiddlePage
-                    "Teleop"
-                    (TeamData.getTeam2 model.teamData
-                        |> Result.map String.fromInt
-                        |> merge
-                    )
-                <|
-                    Element.map TeleopDataMsg <|
-                        Teleop.view model.teleopData
+                Teleop.view model.teleopData
 
         ClimbingPage ->
-            stylishPage
-                (TeamData.stationToString model.teamData.station)
-                LastPage
+            page
                 "End-game"
-                (TeamData.getTeam2 model.teamData
-                    |> Result.map String.fromInt
-                    |> merge
-                )
+                LastPage
+                << Element.map ClimbingDataMsg
             <|
-                Element.map ClimbingDataMsg <|
-                    Climbing.view model.climbingData
+                Climbing.view model.climbingData
 
 
 buttonStyle : List (Element.Attribute Msg)
