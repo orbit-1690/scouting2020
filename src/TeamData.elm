@@ -2,12 +2,12 @@ module TeamData exposing (Model, Msg, getMatch, getTeam2, init, stationToString,
 
 import Array exposing (Array)
 import Browser
-import Element exposing (centerX, centerY, column, el, fill, height, minimum, padding, spacing, text, width)
 import Colors exposing (blue, orange, sky, white)
+import Element exposing (centerX, centerY, column, el, fill, height, minimum, padding, spacing, text, width)
 import Element.Background as Background
 import Element.Border exposing (rounded)
 import Element.Font as Font exposing (center)
-import Element.Input as Input exposing (radioRow)
+import Element.Input as Input exposing (radio)
 import GetMatch exposing (AllianceColor, AllianceStation, Match, StationNumber, getTeam)
 import Maybe.Extra exposing (unwrap)
 import Result.Extra exposing (merge)
@@ -65,7 +65,7 @@ view model =
             , Font.size 60
             ]
             { onChange = Station
-            , selected = Just model.station
+            , selected = model.station
             , label = Input.labelAbove [ Font.size 60, padding 10, spacing 20 ] (text "Which station?")
             , options =
                 [ inputOption GetMatch.Blue GetMatch.One "Blue 1"
@@ -169,7 +169,7 @@ textInput modelValue nextButton name =
         { onChange = nextButton
         , text = modelValue
         , placeholder = Just <| Input.placeholder [] <| Element.text name
-        , label = labelHidden modelValue
+        , label = Input.labelHidden modelValue
         }
 
 
