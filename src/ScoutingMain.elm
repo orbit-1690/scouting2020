@@ -23,7 +23,7 @@ main =
     Browser.element
         { init = always ( init, Cmd.none )
         , view = view >> layout [ width fill, htmlAttribute <| style "touch-action" "manipulation" ]
-        , update = \msg model -> ( update msg model, Cmd.none )
+        , update = update
         , subscriptions = always Sub.none
         }
 
@@ -43,6 +43,7 @@ type Msg
     | ScreenSize Device
     | PrevPage
     | NextPage
+    | Submit
 
 
 type PagePosition
@@ -114,11 +115,19 @@ stylishPage station position title teamNumber page =
                     }
 
             LastPage ->
-                button
-                    buttonStyle
-                    { onPress = Just <| PrevPage
-                    , label = Element.text "Previous Page"
-                    }
+                column
+                    [ spacing 15, centerX, centerY ]
+                    [ button
+                        buttonStyle
+                        { onPress = Just <| PrevPage
+                        , label = Element.text "Previous Page"
+                        }
+                    , button
+                        buttonStyle
+                        { onPress = Just <| Submit
+                        , label = Element.text "Submit"
+                        }
+                    ]
 
             MiddlePage ->
                 column
@@ -148,26 +157,31 @@ init =
     }
 
 
-update : Msg -> Model -> Model
+dumpModel : Model -> Cmd Msg
+dumpModel model =
+    Cmd.none
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         ScreenSize device ->
-            { model | screenSize = device }
+            ( { model | screenSize = device }, Cmd.none )
 
         TeamDataMsg teamMsg ->
-            { model | teamData = TeamData.update teamMsg model.teamData }
+            ( { model | teamData = TeamData.update teamMsg model.teamData }, Cmd.none )
 
         AutonomousDataMsg autoMsg ->
-            { model | autonomousData = Autonomous.update autoMsg model.autonomousData }
+            ( { model | autonomousData = Autonomous.update autoMsg model.autonomousData }, Cmd.none )
 
         TeleopDataMsg telMsg ->
-            { model | teleopData = Teleop.update telMsg model.teleopData }
+            ( { model | teleopData = Teleop.update telMsg model.teleopData }, Cmd.none )
 
         ClimbingDataMsg climbMsg ->
-            { model | climbingData = Climbing.update climbMsg model.climbingData }
+            ( { model | climbingData = Climbing.update climbMsg model.climbingData }, Cmd.none )
 
         PrevPage ->
-            case model.pages of
+            ( case model.pages of
                 AutonomousPage ->
                     { model | pages = TeamDataPage }
 
@@ -179,6 +193,8 @@ update msg model =
 
                 TeamDataPage ->
                     model
+            , Cmd.none
+            )
 
         NextPage ->
             let
@@ -198,17 +214,22 @@ update msg model =
                         && (not << String.isEmpty << .scouterName << .teamData) model
                         || List.member model.teamData.scouterName [ "Itamar", "tom", "hadar", "shira" ]
             in
-            if model.pages == TeamDataPage && verifier then
+            ( if model.pages == TeamDataPage && verifier then
                 { model | pages = AutonomousPage }
 
-            else if model.pages == AutonomousPage then
+              else if model.pages == AutonomousPage then
                 { model | pages = TeleopPage }
 
-            else if model.pages == TeleopPage then
+              else if model.pages == TeleopPage then
                 { model | pages = ClimbingPage }
 
-            else
+              else
                 model
+            , Cmd.none
+            )
+
+        Submit ->
+            ( model, dumpModel model )
 
 
 view : Model -> Element.Element Msg
