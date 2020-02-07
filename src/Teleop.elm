@@ -28,7 +28,7 @@ type alias Model =
 
 init : Model
 init =
-    Model Counter.init Counter.init Counter.init False False
+    Model (Counter.Model 0) (Counter.Model 0) (Counter.Model 0) False False
 
 
 createButton : Msg -> String -> Element.Element Msg

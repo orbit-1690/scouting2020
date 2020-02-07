@@ -21,7 +21,7 @@ import Element exposing (Color)
 
 red : Color
 red =
-    Element.rgb255 200 0 0
+    Element.rgb255 255 0 0
 
 
 orange : Color
@@ -31,7 +31,7 @@ orange =
 
 yellow : Color
 yellow =
-    Element.rgb255 200 200 0
+    Element.rgb255 255 255 0
 
 
 grass : Color
@@ -41,7 +41,7 @@ grass =
 
 green : Color
 green =
-    Element.rgb255 0 200 0
+    Element.rgb255 0 255 0
 
 
 blueGreen : Color

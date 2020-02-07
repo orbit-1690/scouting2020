@@ -6,7 +6,7 @@ import Element.Input exposing (button)
 
 
 type alias Model =
-    Int
+    { counter : Int }
 
 
 type Msg
@@ -16,17 +16,21 @@ type Msg
 
 init : Model
 init =
-    0
+    Model 0
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
         Plus ->
-            model + 1
+            { model | counter = model.counter + 1 }
 
         Minus ->
-            max 0 <| model - 1
+            if model.counter == 0 then
+                model
+
+            else
+                { model | counter = model.counter - 1 }
 
 
 view : String -> Model -> Element.Element Msg
