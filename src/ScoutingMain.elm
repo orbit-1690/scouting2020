@@ -122,12 +122,6 @@ stylishPage station position title teamNumber page =
 
             MiddlePage ->
                 column
-                    [ spacing 10
-                    , width fill
-                    , height fill
-                    , centerY
-                    ]
-                    column
                     [ spacing 15, centerX, centerY ]
                     [ button
                         buttonStyle
