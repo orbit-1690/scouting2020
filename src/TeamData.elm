@@ -65,7 +65,7 @@ view model =
             , Font.size 60
             ]
             { onChange = Station
-            , selected = Just model.station
+            , selected = model.station
             , label = Input.labelAbove [ Font.size 60, padding 10, spacing 20 ] (text "Which station?")
             , options =
                 [ inputOption GetMatch.Blue GetMatch.One "Blue 1"
