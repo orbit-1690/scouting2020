@@ -6,7 +6,7 @@ import Browser
 import Browser.Events as BE
 import Climbing
 import Colors exposing (blue, purple, white)
-import Element exposing (centerX, centerY, column, el, fill, height, htmlAttribute, layout, maximum, padding, spacing, text, width)
+import Element exposing (Device, centerX, centerY, column, el, fill, height, layout, padding, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font exposing (center)
@@ -22,7 +22,7 @@ main : Program () Model Msg
 main =
     Browser.element
         { init = always ( init, Cmd.none )
-        , view = view >> layout [ htmlAttribute <| style "touch-action" "manipulation" ]
+        , view = view >> layout [ width fill, htmlAttribute <| style "touch-action" "manipulation" ]
         , update = \msg model -> ( update msg model, Cmd.none )
         , subscriptions = always Sub.none
         }
