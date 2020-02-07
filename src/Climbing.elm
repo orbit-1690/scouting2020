@@ -5,6 +5,10 @@ import Element exposing (centerX, centerY, column, el, fill, height, padding, ro
 import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
+import Element.Input as Input exposing (button, labelHidden, radioRow)
+import TeamData
+import GetMatch
+import Array
 import Element.Input as Input exposing (button, labelHidden, radio, radioRow)
 import GetMatch exposing (getMatch)
 import TeamData exposing (stationToString, team)
@@ -39,7 +43,7 @@ type Status
 
 init : Model
 init =
-    Model False Loser False False False "" TeamData.init
+    Model False Loser False False False "" (TeamData.init <| Array.fromList GetMatch.matches) 
 
 
 update : Msg -> Model -> Model
