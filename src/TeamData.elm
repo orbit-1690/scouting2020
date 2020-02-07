@@ -169,7 +169,7 @@ textInput modelValue nextButton name =
         { onChange = nextButton
         , text = modelValue
         , placeholder = Just <| Input.placeholder [] <| Element.text name
-        , label = labelHidden modelValue
+        , label = Input.labelHidden modelValue
         }
 
 
