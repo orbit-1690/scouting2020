@@ -11,6 +11,7 @@ import Element.Border as Border
 import Element.Font as Font exposing (center)
 import Element.Input exposing (button)
 import GetMatch exposing (getMatch)
+import Html.Attributes exposing (style)
 import TeamData exposing (nameCheck)
 import Teleop
 
@@ -19,7 +20,7 @@ main : Program () Model Msg
 main =
     Browser.element
         { init = always ( init, Cmd.none )
-        , view = view >> layout [ width fill ]
+        , view = view >> layout [ width fill, htmlAttribute <| style "touch-action" "manipulation" ]
         , update = \msg model -> ( update msg model, Cmd.none )
         , subscriptions = \model -> subscriptions
         }
