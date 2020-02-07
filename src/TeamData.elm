@@ -39,8 +39,8 @@ team model =
 
 
 station : Model -> String
-station model =
-    stationToString model.station
+station =
+    stationToString << model.station
 
 
 type Stations
