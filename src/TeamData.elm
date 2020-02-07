@@ -1,48 +1,51 @@
-module TeamData exposing (Model, Msg(..), Stations(..), init, nameCheck, stationToString, subscriptions, team, update, view)
+module TeamData exposing (Model, Msg, getMatch, getTeam2, init, stationToString, update, view)
 
+import Array exposing (Array)
+import Browser
+import Element exposing (centerX, centerY, column, el, fill, height, minimum, padding, spacing, text, width)
 import Colors exposing (blue, orange, sky, white)
-import Element exposing (centerX, centerY, column, fill, padding, spacing, text, width)
 import Element.Background as Background
 import Element.Border exposing (rounded)
 import Element.Font as Font exposing (center)
-import Element.Input as Input exposing (labelHidden, radio)
-import GetMatch exposing (getMatch, unwrapToString)
+import Element.Input as Input exposing (radioRow)
+import GetMatch exposing (AllianceColor, AllianceStation, Match, StationNumber, getTeam)
+import Maybe.Extra exposing (unwrap)
+import Result.Extra exposing (merge)
 import String
+
+
+main : Program () Model Msg
+main =
+    Browser.sandbox
+        { init = init <| Array.fromList GetMatch.matches
+        , view = Element.layout [] << view
+        , update = update
+        }
 
 
 type Msg
     = ScouterInput String
     | MatchInput String
-    | Station Stations
-    | Team
+    | Station AllianceStation
 
 
 type alias Model =
     { scouterName : String
-    , match : Maybe Int
-    , station : Stations
-    , team : String
+    , matchNumber : String
+    , station : Maybe AllianceStation
+    , team : Result String Int
+    , matches : Array Match
     }
 
 
-team : Model -> String
-team model =
-    getMatch model.match <| stationToString model.station
+init : Array Match -> Model
+init matches =
+    Model "" "" Nothing (Err "") matches
 
 
-type Stations
-    = Blue1
-    | Blue2
-    | Blue3
-    | Red1
-    | Red2
-    | Red3
-    | NotAStation
-
-
-init : Model
-init =
-    Model "" Nothing NotAStation "Not a team"
+inputOption : GetMatch.AllianceColor -> GetMatch.StationNumber -> String -> Input.Option ( AllianceColor, StationNumber ) msg
+inputOption allianceColor allianceNumber text =
+    Input.option ( allianceColor, allianceNumber ) (Element.text text)
 
 
 view : Model -> Element.Element Msg
@@ -65,16 +68,16 @@ view model =
             , selected = Just model.station
             , label = Input.labelAbove [ Font.size 60, padding 10, spacing 20 ] (text "Which station?")
             , options =
-                [ Input.option Blue1 (text "Blue 1")
-                , Input.option Blue2 (text "Blue 2")
-                , Input.option Blue3 (text "Blue 3")
-                , Input.option Red1 (text "Red 1")
-                , Input.option Red2 (text "Red 2")
-                , Input.option Red3 (text "Red 3")
+                [ inputOption GetMatch.Blue GetMatch.One "Blue 1"
+                , inputOption GetMatch.Blue GetMatch.Two "Blue 2"
+                , inputOption GetMatch.Blue GetMatch.Three "Blue 3"
+                , inputOption GetMatch.Red GetMatch.One "Red 1"
+                , inputOption GetMatch.Red GetMatch.Two "Red 2"
+                , inputOption GetMatch.Red GetMatch.Three "Red 3"
                 ]
             }
-        , textInput (unwrapToString model.match) MatchInput "Match number"
-        , Element.el
+        , textInput model.matchNumber MatchInput "Match number"
+        , el
             [ Background.color orange
             , width fill
             , center
@@ -89,42 +92,65 @@ view model =
                     }
                 ]
             ]
-            (Element.text <| team model)
+            (getTeam2 model
+                |> Result.map String.fromInt
+                |> merge
+                |> Element.text
+            )
         ]
 
 
-stationToString : Stations -> String
-stationToString station =
-    case station of
-        Blue1 ->
-            "Blue 1"
-
-        Blue2 ->
-            "Blue 2"
-
-        Blue3 ->
-            "Blue 3"
-
-        Red1 ->
-            "Red 1"
-
-        Red2 ->
-            "Red 2"
-
-        Red3 ->
-            "Red 3"
-
-        NotAStation ->
-            "none"
+getTeam2 : Model -> Result String Int
+getTeam2 model =
+    getMatch model
+        |> Result.andThen
+            (\match ->
+                model.station
+                    |> Result.fromMaybe "No station"
+                    |> Result.map
+                        (\station ->
+                            getTeam station match
+                        )
+            )
 
 
-nameCheck : Model -> Bool
-nameCheck model =
-    if model.scouterName == "" then
-        False
+getMatch : Model -> Result String Match
+getMatch { matchNumber, matches } =
+    String.toInt matchNumber
+        |> Result.fromMaybe "Match number must be a number"
+        |> Result.andThen
+            (\number ->
+                Array.get (number - 1) matches
+                    |> Result.fromMaybe "No such match"
+            )
 
-    else
-        True
+
+colorToString : AllianceColor -> String
+colorToString chosenColor =
+    case chosenColor of
+        GetMatch.Blue ->
+            "Blue"
+
+        GetMatch.Red ->
+            "Red"
+
+
+numberToString : StationNumber -> String
+numberToString chosenNumber =
+    case chosenNumber of
+        GetMatch.One ->
+            "1"
+
+        GetMatch.Two ->
+            "2"
+
+        GetMatch.Three ->
+            "3"
+
+
+stationToString : Maybe AllianceStation -> String
+stationToString alliance =
+    unwrap "Now station selected" (\( color, number ) -> String.join " " [ colorToString color, numberToString number ]) alliance
 
 
 textInput : String -> (String -> Msg) -> String -> Element.Element Msg
@@ -153,16 +179,14 @@ update msg model =
         ScouterInput name ->
             { model | scouterName = name }
 
-        Station station ->
-            { model | station = station }
+        Station chosenStation ->
+            { model
+                | station = Just chosenStation
+                , team = getTeam2 model
+            }
 
-        MatchInput match ->
-            { model | match = String.toInt match }
-
-        Team ->
-            { model | team = getMatch model.match <| stationToString model.station }
-
-
-subscriptions : Sub Msg
-subscriptions =
-    Sub.none
+        MatchInput matchNumber ->
+            { model
+                | matchNumber = matchNumber
+                , team = getTeam2 model
+            }
