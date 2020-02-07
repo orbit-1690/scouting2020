@@ -158,9 +158,43 @@ init =
     }
 
 
+type CalledModel
+    = CalledTeamData
+    | CalledAutonomous
+    | CalledTeleop
+    | CalledClimbing
+
+
 dumpModel : Model -> Cmd Msg
 dumpModel model =
-    Cmd.none
+    Download.string
+        (modelToString model CalledTeamData)
+        "content/text"
+    <|
+        String.concat
+            --needs to be able to run in a loop on a dict instead
+            [ modelToString model CalledTeamData
+            , modelToString model CalledAutonomous
+            , modelToString model CalledTeleop
+            , modelToString model CalledClimbing
+            ]
+
+
+modelToString : Model -> CalledModel -> String
+modelToString model subModel =
+    case subModel of
+        CalledTeamData ->
+            String.concat
+                [ "" ]
+
+        CalledAutonomous ->
+            ""
+
+        CalledTeleop ->
+            ""
+
+        CalledClimbing ->
+            ""
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
