@@ -5,12 +5,13 @@ import Browser
 import Colors exposing (black, blue, orange, sky, white)
 import Element exposing (centerX, centerY, column, fill, height, minimum, padding, spacing, text, width)
 import Element.Background as Background
-import Element.Border exposing (rounded)
+import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
-import Element.Input as Input exposing (labelHidden, radioRow, radio)
+import Element.Input as Input exposing (labelHidden, radioRow)
 import GetMatch exposing (AllianceColor, AllianceStation, Match, StationNumber, getTeam)
 import Maybe.Extra exposing (unwrap)
 import Result.Extra exposing (merge)
+import String
 
 
 main : Program () Model Msg
@@ -51,21 +52,24 @@ view : Model -> Element.Element Msg
 view model =
     column
         [ Background.color sky
+        , Border.color black
         , padding 50
-        , spacing 40
+        , spacing 20
+        , widthXY 5 5
+        , rounded 10
         , centerX
         , centerY
         , Element.scale 1.5
         ]
         [ textInput model.scouterName ScouterInput "Scouter's name"
-        , radio
+        , radioRow
             [ padding 10
             , spacing 20
-            , Font.size 60
+            , Font.size 10
             ]
             { onChange = Station
             , selected = model.station
-            , label = Input.labelAbove [Font.size 60, padding 10, spacing 20] (text "stations")
+            , label = Input.labelAbove [] (text "stations")
             , options =
                 [ inputOption GetMatch.Blue GetMatch.One "Blue 1"
                 , inputOption GetMatch.Blue GetMatch.Two "Blue 2"
@@ -78,12 +82,14 @@ view model =
         , textInput model.matchNumber MatchInput "Match number"
         , Element.el
             [ Background.color orange
-            , width fill
+            , width <| minimum 350 <| fill
+            , height fill
             , center
-            , rounded 10
             , Font.color white
             , Font.glow blue 5
-            , Font.size 60
+            , Font.size 10
+            , rounded 3
+            , Font.size 15
             , Font.family
                 [ Font.external
                     { name = "Open Sans"
@@ -156,7 +162,8 @@ textInput : String -> (String -> Msg) -> String -> Element.Element Msg
 textInput modelValue nextButton name =
     Input.text
         [ Font.color sky
-        , Font.size 60
+        , Font.size 10
+        , height fill
         , Font.family
             [ Font.external
                 { name = "Open Sans"
