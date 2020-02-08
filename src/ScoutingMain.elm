@@ -19,7 +19,7 @@ main : Program () Model Msg
 main =
     Browser.element
         { init = always ( init, Cmd.none )
-        , view = view >> layout [ width fill ]
+        , view = view >> layout []
         , update = \msg model -> ( update msg model, Cmd.none )
         , subscriptions = \model -> subscriptions
         }
