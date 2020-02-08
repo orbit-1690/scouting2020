@@ -1,4 +1,4 @@
-module TeamData exposing (Model, Msg, Stations, init, stationToString, subscriptions, update, view)
+module TeamData exposing (Model, Msg(..), Stations(..), init, nameCheck, stationToString, subscriptions, team, update, view)
 
 import Colors exposing (blue, orange, sky, white)
 import Element exposing (centerX, centerY, column, fill, padding, spacing, text, width)
@@ -14,13 +14,20 @@ type Msg
     = ScouterInput String
     | MatchInput String
     | Station Stations
+    | Team
 
 
 type alias Model =
     { scouterName : String
     , match : Maybe Int
     , station : Stations
+    , team : String
     }
+
+
+team : Model -> String
+team model =
+    getMatch model.match <| stationToString model.station
 
 
 type Stations
@@ -31,6 +38,11 @@ type Stations
     | Red2
     | Red3
     | NotAStation
+
+
+init : Model
+init =
+    Model "" Nothing NotAStation "Not a team"
 
 
 view : Model -> Element.Element Msg
@@ -77,7 +89,7 @@ view model =
                     }
                 ]
             ]
-            (Element.text <| getMatch model.match <| stationToString model.station)
+            (Element.text <| team model)
         ]
 
 
@@ -106,6 +118,15 @@ stationToString station =
             "none"
 
 
+nameCheck : Model -> Bool
+nameCheck model =
+    if model.scouterName == "" then
+        False
+
+    else
+        True
+
+
 textInput : String -> (String -> Msg) -> String -> Element.Element Msg
 textInput modelValue nextButton name =
     Input.text
@@ -126,11 +147,6 @@ textInput modelValue nextButton name =
         }
 
 
-init : Model
-init =
-    Model "" Nothing NotAStation
-
-
 update : Msg -> Model -> Model
 update msg model =
     case msg of
@@ -142,6 +158,9 @@ update msg model =
 
         MatchInput match ->
             { model | match = String.toInt match }
+
+        Team ->
+            { model | team = getMatch model.match <| stationToString model.station }
 
 
 subscriptions : Sub Msg

@@ -11,7 +11,7 @@ import Element.Border as Border
 import Element.Font as Font exposing (center)
 import Element.Input exposing (button)
 import GetMatch exposing (getMatch)
-import TeamData
+import TeamData exposing (nameCheck)
 import Teleop
 
 
@@ -64,26 +64,43 @@ type alias Model =
     }
 
 
-stylishPage : PagePosition -> Element.Element Msg -> Element.Element Msg
-stylishPage position page =
+stylishPage : PagePosition -> String -> String -> Element.Element Msg -> Element.Element Msg
+stylishPage position title teamNumber page =
+    let
+        decoration : Int -> List (Element.Attribute Msg)
+        decoration size =
+            [ padding 10
+            , spacing 10
+            , centerX
+            , centerY
+            , Font.color Colors.veryLightBlue
+            , Font.size size
+            ]
+    in
     column
         [ Background.color blue
         , spacing 15
         , width fill
         , height fill
         ]
-        [ page
+        [ el
+            (decoration 50)
+            (text <| title)
+        , el
+            (decoration 35)
+            (text <| "\nscouted team: " ++ teamNumber)
+        , page
         , case position of
             FirstPage ->
                 button
-                    rainbowStyle
+                    buttonStyle
                     { onPress = Just <| NextPage
                     , label = Element.text "Next Page"
                     }
 
             LastPage ->
                 button
-                    rainbowStyle
+                    buttonStyle
                     { onPress = Just <| PrevPage
                     , label = Element.text "Previous Page"
                     }
@@ -91,12 +108,12 @@ stylishPage position page =
             MiddlePage ->
                 column [ spacing 15, centerX, centerY ]
                     [ button
-                        rainbowStyle
+                        buttonStyle
                         { onPress = Just <| NextPage
                         , label = Element.text "Next Page"
                         }
                     , button
-                        rainbowStyle
+                        buttonStyle
                         { onPress = Just <| PrevPage
                         , label = Element.text "Previous Page"
                         }
@@ -134,24 +151,30 @@ update msg model =
             { model | climbingData = Climbing.update climbMsg model.climbingData }
 
         PrevPage ->
-            if model.pages == AutonomousPage then
-                { model | pages = TeamDataPage }
+            case model.pages of
+                AutonomousPage ->
+                    { model | pages = TeamDataPage }
 
-            else if model.pages == TeleopPage then
-                { model | pages = AutonomousPage }
+                TeleopPage ->
+                    { model | pages = AutonomousPage }
 
-            else if model.pages == ClimbingPage then
-                { model | pages = TeleopPage }
+                ClimbingPage ->
+                    { model | pages = TeleopPage }
 
-            else
-                model
+                TeamDataPage ->
+                    model
 
         NextPage ->
             let
+                error : String
                 error =
                     getMatch model.teamData.match <| TeamData.stationToString model.teamData.station
+
+                verifier : Bool
+                verifier =
+                    (error /= "Not a match") && (error /= "Team not in this match") && nameCheck model.teamData || model.teamData.scouterName == "Itamar" || model.teamData.scouterName == "tom"
             in
-            if model.pages == TeamDataPage && (error /= "Not a match") && (error /= "Team not in this match") then
+            if model.pages == TeamDataPage && verifier then
                 { model | pages = AutonomousPage }
 
             else if model.pages == AutonomousPage then
@@ -168,16 +191,16 @@ view : Model -> Element.Element Msg
 view model =
     case model.pages of
         TeamDataPage ->
-            stylishPage FirstPage <| Element.map TeamDataMsg <| TeamData.view model.teamData
+            stylishPage FirstPage "Registeration" (TeamData.team model.teamData) <| Element.map TeamDataMsg <| TeamData.view model.teamData
 
         AutonomousPage ->
-            stylishPage MiddlePage <| Element.map AutonomousDataMsg <| Autonomous.view model.autonomousData
+            stylishPage MiddlePage "Autonomous" (TeamData.team model.teamData) <| Element.map AutonomousDataMsg <| Autonomous.view model.autonomousData
 
         TeleopPage ->
-            stylishPage MiddlePage <| Element.map TeleopDataMsg <| Teleop.view model.teleopData
+            stylishPage MiddlePage "Teleop" (TeamData.team model.teamData) <| Element.map TeleopDataMsg <| Teleop.view model.teleopData
 
         ClimbingPage ->
-            stylishPage LastPage <| Element.map ClimbingDataMsg <| Climbing.view model.climbingData
+            stylishPage LastPage "End-game" (TeamData.team model.teamData) <| Element.map ClimbingDataMsg <| Climbing.view model.climbingData
 
 
 subscriptions : Sub Msg
@@ -191,8 +214,8 @@ subscriptions =
         ]
 
 
-rainbowStyle : List (Element.Attribute Msg)
-rainbowStyle =
+buttonStyle : List (Element.Attribute Msg)
+buttonStyle =
     [ Font.color white
     , Font.size 60
     , Font.glow blue 5

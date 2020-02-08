@@ -5,8 +5,10 @@ import Element exposing (centerX, centerY, column, el, fill, height, padding, ro
 import Element.Background as Background
 import Element.Border as Border exposing (rounded)
 import Element.Font as Font exposing (center)
-import Element.Input as Input exposing (button, labelHidden, radio)
+import Element.Input as Input exposing (button, labelHidden, radio, radioRow)
 import Teleop exposing (boolToText)
+import GetMatch exposing (getMatch)
+import TeamData exposing (stationToString, team)
 
 
 type Msg
@@ -16,7 +18,6 @@ type Msg
     | Defended
     | WasDefended
     | Comment String
-    | Rate
 
 
 type alias Model =
@@ -26,7 +27,7 @@ type alias Model =
     , defended : Bool
     , wasDefended : Bool
     , comment : String
-    , rate : Bool
+    , localTeam : TeamData.Model
     }
 
 
@@ -36,64 +37,31 @@ type Status
     | Loser
 
 
-view : Model -> Element.Element Msg
-view model =
-    column
-        [ Background.color sky
-        , padding 50
-        , spacing 20
-        , rounded 20
-        , centerX
-        , centerY
-        ]
-        [ column yophyTophy
-            [ row
-                yophyTophy
-                [ column yophyTophy
-                    [ el yophyTophy
-                        (text "Tried hanging?")
-                    , createButton TriedClimb <| boolToText model.triedClimb
-                    ]
-                , column yophyTophy
-                    [ el yophyTophy
-                        (text "Balanced?")
-                    , createButton Balanced <| boolToText model.balanced
-                    ]
-                ]
-            , radio
-                [ padding 10
-                , spacing 20
-                ]
-                { onChange = ClimbStatus
-                , selected = Just model.climbStatus
-                , label = Input.labelAbove [] (text " climb status:")
-                , options =
-                    [ Input.option Loser (text "loser")
-                    , Input.option Parked (text "parked")
-                    , Input.option Hanged (text "hanged")
-                    ]
-                }
-            , row yophyTophy
-                [ column yophyTophy
-                    [ el yophyTophy
-                        (text "Defended?")
-                    , createButton Defended <| boolToText model.defended
-                    ]
-                , column yophyTophy
-                    [ el yophyTophy
-                        (text "Was defended?")
-                    , createButton WasDefended <| boolToText model.wasDefended
-                    ]
-                ]
-            , textInput model.comment Comment "any comments?"
-            , text "rate us plz"
-            , column yophyTophy
-                [ el yophyTophy
-                    (text "rate?")
-                , createButton Rate "enjoyed very very"
-                ]
-            ]
-        ]
+init : Model
+init =
+    Model False Loser False False False "" TeamData.init
+
+
+update : Msg -> Model -> Model
+update msg model =
+    case msg of
+        TriedClimb ->
+            { model | triedClimb = not model.triedClimb }
+
+        ClimbStatus status ->
+            { model | climbStatus = status }
+
+        Balanced ->
+            { model | balanced = not model.balanced }
+
+        Defended ->
+            { model | defended = not model.defended }
+
+        WasDefended ->
+            { model | wasDefended = not model.wasDefended }
+
+        Comment string ->
+            { model | comment = string }
 
 
 textInput : String -> (String -> Msg) -> String -> Element.Element Msg
@@ -148,34 +116,58 @@ yophyTophy =
     ]
 
 
-init : Model
-init =
-    Model False Loser False False False "" False
 
-
-update : Msg -> Model -> Model
-update msg model =
-    case msg of
-        TriedClimb ->
-            { model | triedClimb = not model.triedClimb }
-
-        ClimbStatus status ->
-            { model | climbStatus = status }
-
-        Balanced ->
-            { model | balanced = not model.balanced }
-
-        Defended ->
-            { model | defended = not model.defended }
-
-        WasDefended ->
-            { model | wasDefended = not model.wasDefended }
-
-        Comment string ->
-            { model | comment = string }
-
-        Rate ->
-            { model | rate = not model.rate }
+view : Model -> Element.Element Msg
+view model =
+    column
+        [ Background.color sky
+        , Border.color black
+        , padding 50
+        , spacing 20
+        , widthXY 5 5
+        , rounded 10
+        , centerX
+        , centerY
+        ]
+        [ column yophyTophy
+            [ row
+                yophyTophy
+                [ column yophyTophy
+                    [ createButton TriedClimb "Tried hanging?"
+                    , printButton "no" "yes" model.triedClimb
+                    ]
+                , column yophyTophy
+                    [ createButton Balanced "Balanced?"
+                    , printButton "no" "yes" model.balanced
+                    ]
+                ]
+            , radioRow
+                [ padding 10
+                , spacing 20
+                ]
+                { onChange = ClimbStatus
+                , selected = Just model.climbStatus
+                , label = Input.labelAbove [] (text " climb status:")
+                , options =
+                    [ Input.option Loser (text "loser")
+                    , Input.option Parked (text "parked")
+                    , Input.option Hanged (text "hanged")
+                    ]
+                }
+            , row
+                yophyTophy
+                [ column yophyTophy
+                    [ createButton Defended "Defended?"
+                    , printButton "no" "yes" model.defended
+                    ]
+                , column yophyTophy
+                    [ createButton WasDefended "Was defended?"
+                    , printButton "no" "yes" model.wasDefended
+                    ]
+                ]
+            , textInput model.comment Comment "any comments?"
+            ]
+        ]
 
 
 subscriptions : Sub Msg
