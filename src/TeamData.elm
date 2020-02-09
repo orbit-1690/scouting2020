@@ -1,4 +1,4 @@
-module TeamData exposing (Model, Msg, getMatch, getTeam2, init, stationToString, update, view)
+module TeamData exposing (Model, Msg, getMatch, getTeam2, getter, init, stationToString, update, view)
 
 import Array exposing (Array)
 import Browser
@@ -36,6 +36,17 @@ type alias Model =
     , team : Result String Int
     , matches : Array Match
     }
+
+
+getter : Model -> List String
+getter model =
+    [ model.matchNumber
+    , stationToString model.station
+    , getTeam2 model
+        |> Result.map String.fromInt
+        |> merge
+    , model.scouterName
+    ]
 
 
 init : Array Match -> Model
