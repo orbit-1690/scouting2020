@@ -45,7 +45,7 @@ getter model =
     , getTeam2 model
         |> Result.map String.fromInt
         |> merge
-    , model.scouterName
+    , "'" ++ model.scouterName ++ "'"
     ]
 
 

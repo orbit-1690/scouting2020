@@ -60,7 +60,7 @@ getter model =
         , statusToString model.climbStatus
         , boolToString model.defended
         , boolToString model.wasDefended
-        , model.comment
+        , "'" ++ model.comment ++ "'"
         ]
 
 
