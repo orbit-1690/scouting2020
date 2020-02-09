@@ -12,7 +12,8 @@ import Element.Input as Input exposing (button, radio)
 type Msg
     = Moved
     | LowLevel Counter.Msg
-    | HighLevel Counter.Msg
+    | LevelTwo Counter.Msg
+    | LevelThree Counter.Msg
     | Missed Counter.Msg
     | TrenchCollection Counter.Msg
     | EnemyTrenchCollection Counter.Msg
@@ -24,7 +25,8 @@ type alias Model =
     { ballsAmount : BallsInitAmount
     , moved : Bool
     , lowlevel : Counter.Model
-    , highlevel : Counter.Model
+    , levelTwo : Counter.Model
+    , levelThree : Counter.Model
     , missed : Counter.Model
     , trenchCollection : Counter.Model
     , enemyTrenchCollection : Counter.Model
@@ -92,7 +94,8 @@ view model =
             else
                 "moved?"
         , Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
-        , Element.map HighLevel <| Counter.view "high Level:" model.highlevel
+        , Element.map LevelTwo <| Counter.view "second Level:" model.levelTwo
+        , Element.map LevelThree <| Counter.view "third Level:" model.levelThree
         , Element.map Missed <| Counter.view "missed:" model.missed
         , el [ Font.size 60, padding 10 ] (text "Collected from:")
         , Element.map TrenchCollection <| Counter.view "their trench:" model.trenchCollection
@@ -103,7 +106,7 @@ view model =
 
 init : Model
 init =
-    Model NoBalls False Counter.init Counter.init Counter.init Counter.init Counter.init <| Counter.init
+    Model NoBalls False Counter.init Counter.init Counter.init Counter.init Counter.init Counter.init <| Counter.init
 
 
 update : Msg -> Model -> Model
@@ -120,8 +123,11 @@ update msg model =
         LowLevel count ->
             { model | lowlevel = counterUpdate count model.lowlevel }
 
-        HighLevel count ->
-            { model | highlevel = counterUpdate count model.highlevel }
+        LevelTwo count ->
+            { model | levelTwo = counterUpdate count model.levelTwo }
+
+        LevelThree count ->
+            { model | levelThree = counterUpdate count model.levelThree }
 
         Missed count ->
             { model | missed = counterUpdate count model.missed }

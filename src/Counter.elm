@@ -38,6 +38,6 @@ view title model =
         [ el [ Font.size 60 ] (text title)
         , button [ Font.size 60 ] { onPress = Just Minus, label = text "-" }
         , el [ Font.size 60 ]
-            (text <| String.fromInt model.counter)
+            (text <| String.fromInt model)
         , button [ Font.size 60 ] { onPress = Just Plus, label = text "+" }
         ]

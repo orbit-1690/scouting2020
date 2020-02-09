@@ -1,21 +1,18 @@
 module Climbing exposing (Model, Msg, init, subscriptions, update, view)
 
+import Array
 import Colors exposing (black, blue, purple, sky, white)
 import Element exposing (centerX, centerY, column, el, fill, height, padding, row, spacing, text)
 import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
-import Element.Input as Input exposing (button, labelHidden, radio, radioRow)
-import GetMatch exposing (getMatch)
-import TeamData exposing (stationToString, team)
-import Teleop exposing (boolToText)
+import TeamData
 
 
 type Msg
     = TriedClimb
     | ClimbStatus Status
     | Balanced
-    | Defended
     | WasDefended
     | Comment String
 
@@ -39,7 +36,7 @@ type Status
 
 init : Model
 init =
-    Model False Loser False False False "" TeamData.init
+    Model False Loser False False False "" (TeamData.init <| Array.fromList GetMatch.matches)
 
 
 update : Msg -> Model -> Model

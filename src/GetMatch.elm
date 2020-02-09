@@ -1,8 +1,4 @@
-module GetMatch exposing (getMatch, maybeIntToInt, stationIndex, unwrapToString)
-
-import List.Extra exposing (getAt)
-import Maybe exposing (andThen)
-import Maybe.Extra exposing (unwrap)
+module GetMatch exposing (AllianceColor(..), AllianceStation, Match, StationNumber(..), getTeam, matches)
 
 
 type alias Alliance =
@@ -27,55 +23,43 @@ matches =
     ]
 
 
-checkMatch : Maybe Int -> Maybe Match
-checkMatch match =
-    andThen (\n -> getAt (n - 1) matches) match
+type AllianceColor
+    = Blue
+    | Red
 
 
-unwrapToString : Maybe Int -> String
-unwrapToString maybeInt =
-    unwrap "" String.fromInt maybeInt
+type StationNumber
+    = One
+    | Two
+    | Three
 
 
-maybeIntToInt : Maybe Int -> Int
-maybeIntToInt mi =
-    case mi of
-        Nothing ->
-            0
-
-        Just n ->
-            n
+type alias AllianceStation =
+    ( AllianceColor, StationNumber )
 
 
-getMatch : Maybe Int -> String -> String
-getMatch match station =
-    stationIndex match <| station
+getTeam : AllianceStation -> Match -> Int
+getTeam chosenStation =
+    let
+        alliance : Match -> Alliance
+        alliance =
+            case chosenStation of
+                ( Red, _ ) ->
+                    .red
 
+                ( Blue, _ ) ->
+                    .blue
 
-stationIndex : Maybe Int -> String -> String
-stationIndex match station =
-    case checkMatch match of
-        Nothing ->
-            "Not a match"
+        number : Alliance -> Int
+        number =
+            case chosenStation of
+                ( _, One ) ->
+                    .one
 
-        Just matchData ->
-            if station == "Blue 1" then
-                String.fromInt matchData.blue.one
+                ( _, Two ) ->
+                    .two
 
-            else if station == "Blue 2" then
-                String.fromInt matchData.blue.two
-
-            else if station == "Blue 3" then
-                String.fromInt matchData.blue.three
-
-            else if station == "Red 1" then
-                String.fromInt matchData.red.one
-
-            else if station == "Red 2" then
-                String.fromInt matchData.red.two
-
-            else if station == "Red 3" then
-                String.fromInt matchData.red.three
-
-            else
-                "Not a station"
+                ( _, Three ) ->
+                    .three
+    in
+    number << alliance
