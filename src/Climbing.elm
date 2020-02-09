@@ -106,7 +106,7 @@ textInput modelValue nextButton name =
         , height fill
         , Font.family
             [ Font.external
-                { name = "Pacifico"
+                { name = "open-sans"
                 , url = "https://fonts.googleapis.com/css?family=Pacifico"
                 }
             ]
