@@ -161,7 +161,7 @@ init =
 dumpModel : Model -> Cmd Msg
 dumpModel model =
     Download.string
-        (String.join "-" <| TeamData.getter model.teamData)
+        (String.concat [ String.join "-" <| TeamData.getter model.teamData, ".txt" ])
         "content/text"
     <|
         String.join "\n"
