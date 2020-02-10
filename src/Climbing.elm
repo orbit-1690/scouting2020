@@ -1,4 +1,4 @@
-module Climbing exposing (Model, Msg, init, subscriptions, update, view)
+module Climbing exposing (Model, Msg, getter, init, subscriptions, update, view)
 
 import Array
 import Colors exposing (black, blue, purple, sky, white)
@@ -6,8 +6,6 @@ import Element exposing (centerX, centerY, column, el, fill, height, padding, ro
 import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
-import Element.Input as Input exposing (button, labelHidden, radioRow)
-import GetMatch
 import TeamData
 
 
@@ -15,7 +13,6 @@ type Msg
     = TriedClimb
     | ClimbStatus Status
     | Balanced
-    | Defended
     | WasDefended
     | Comment String
 
@@ -29,6 +26,39 @@ type alias Model =
     , comment : String
     , localTeam : TeamData.Model
     }
+
+
+getter : Model -> String
+getter model =
+    let
+        boolToString : Bool -> String
+        boolToString bool =
+            if bool then
+                "true"
+
+            else
+                "false"
+
+        statusToString : Status -> String
+        statusToString status =
+            case status of
+                Hanged ->
+                    "Hanged"
+
+                Parked ->
+                    "Parked"
+
+                Loser ->
+                    "Loser"
+    in
+    String.join ","
+        [ boolToString model.triedClimb
+        , boolToString model.balanced
+        , statusToString model.climbStatus
+        , boolToString model.defended
+        , boolToString model.wasDefended
+        , "'" ++ model.comment ++ "'"
+        ]
 
 
 type Status
