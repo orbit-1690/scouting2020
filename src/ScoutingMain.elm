@@ -67,6 +67,11 @@ type alias Model =
     }
 
 
+type BackGroundColorOptions
+    = Blue Color
+    | Red Color
+
+
 findColor : String -> Element.Color
 findColor alliance =
     if String.contains "Blue" alliance then
@@ -213,59 +218,64 @@ update msg model =
 
 view : Model -> Element.Element Msg
 view model =
-    let
-        page : String -> PagePosition -> Element.Element Msg -> Element.Element Msg
-        page name pagePosition =
-            el
-                [ Background.color <| findColor (TeamData.stationToString model.teamData.station)
-                , padding 105
-                , spacing 10
-                , width fill
-                , height fill
-                , centerY
-                , centerX
-                ]
-                << stylishPage
-                    (TeamData.stationToString model.teamData.station)
-                    pagePosition
-                    name
-                    (TeamData.getTeam2 model.teamData
-                        |> Result.map String.fromInt
-                        |> merge
-                    )
-    in
     case model.pages of
         TeamDataPage ->
-            page
-                "Registeration"
-                FirstPage
-                << Element.map TeamDataMsg
-            <|
-                TeamData.view model.teamData
+            stylishPage (TeamData.station model.teamData) FirstPage "Registeration" (TeamData.team model.teamData) <| Element.map TeamDataMsg <| TeamData.view model.teamData
 
         AutonomousPage ->
-            page
-                "Autonomous"
-                MiddlePage
-                << Element.map AutonomousDataMsg
-            <|
-                Autonomous.view model.autonomousData
+            let
+                page : String -> PagePosition -> Element.Element Msg -> Element.Element Msg
+                page name pagePosition =
+                    el
+                        [ Background.color <| findColor (TeamData.stationToString model.teamData.station)
+                        , padding 105
+                        , spacing 10
+                        , width fill
+                        , height fill
+                        , centerY
+                        , centerX
+                        ]
+                        << stylishPage
+                            (TeamData.stationToString model.teamData.station)
+                            pagePosition
+                            name
+                            (TeamData.getTeam2 model.teamData
+                                |> Result.map String.fromInt
+                                |> merge
+                            )
+            in
+            case model.pages of
+                TeamDataPage ->
+                    page
+                        "Registeration"
+                        FirstPage
+                        << Element.map TeamDataMsg
+                    <|
+                        TeamData.view model.teamData
 
-        TeleopPage ->
-            page
-                "Teleop"
-                MiddlePage
-                << Element.map TeleopDataMsg
-            <|
-                Teleop.view model.teleopData
+                AutonomousPage ->
+                    page
+                        "Autonomous"
+                        MiddlePage
+                        << Element.map AutonomousDataMsg
+                    <|
+                        Autonomous.view model.autonomousData
 
-        ClimbingPage ->
-            page
-                "End-game"
-                LastPage
-                << Element.map ClimbingDataMsg
-            <|
-                Climbing.view model.climbingData
+                TeleopPage ->
+                    page
+                        "Teleop"
+                        MiddlePage
+                        << Element.map TeleopDataMsg
+                    <|
+                        Teleop.view model.teleopData
+
+                ClimbingPage ->
+                    page
+                        "End-game"
+                        LastPage
+                        << Element.map ClimbingDataMsg
+                    <|
+                        Climbing.view model.climbingData
 
 
 buttonStyle : List (Element.Attribute Msg)

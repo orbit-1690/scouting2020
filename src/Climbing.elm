@@ -6,8 +6,6 @@ import Element exposing (centerX, centerY, column, el, fill, height, padding, ro
 import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
-import Element.Input as Input exposing (button, labelHidden, radioRow)
-import GetMatch
 import TeamData
 
 
@@ -15,7 +13,6 @@ type Msg
     = TriedClimb
     | ClimbStatus Status
     | Balanced
-    | Defended
     | WasDefended
     | Comment String
 
