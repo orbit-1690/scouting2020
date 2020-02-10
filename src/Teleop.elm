@@ -1,4 +1,4 @@
-module Teleop exposing (Model, Msg, boolToText, createButton, getter, init, subscriptions, update, view, yophyTophy)
+module Teleop exposing (Model, Msg, boolToText, createButton, init, subscriptions, update, view, yophyTophy)
 
 import Colors exposing (blue, purple, sky, white)
 import Counter
@@ -26,27 +26,6 @@ type alias Model =
     , colorRoulette : Bool
     , spunRoulette : Bool
     }
-
-
-getter : Model -> String
-getter model =
-    let
-        boolToString : Bool -> String
-        boolToString bool =
-            if bool then
-                "true"
-
-            else
-                "false"
-    in
-    String.join ","
-        [ boolToString model.colorRoulette
-        , boolToString model.spunRoulette
-        , String.fromInt model.lowlevel
-        , String.fromInt model.levelTwo
-        , String.fromInt model.levelThree
-        , String.fromInt model.missed
-        ]
 
 
 init : Model

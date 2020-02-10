@@ -1,4 +1,4 @@
-module Climbing exposing (Model, Msg, getter, init, subscriptions, update, view)
+module Climbing exposing (Model, Msg, init, subscriptions, update, view)
 
 import Array
 import Colors exposing (black, blue, purple, sky, white)

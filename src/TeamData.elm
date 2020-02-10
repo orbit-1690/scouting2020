@@ -1,4 +1,4 @@
-module TeamData exposing (Model, Msg, getMatch, getTeam2, getter, init, stationToString, update, view)
+module TeamData exposing (Model, Msg, getMatch, getTeam2, init, stationToString, update, view)
 
 import Array exposing (Array)
 import Browser

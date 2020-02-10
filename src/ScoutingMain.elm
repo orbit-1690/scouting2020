@@ -149,21 +149,46 @@ init =
     }
 
 
+type CalledModel
+    = CalledTeamData
+    | CalledAutonomous
+    | CalledTeleop
+    | CalledClimbing
+
+
 dumpModel : Model -> Cmd Msg
 dumpModel model =
     Download.string
         (String.concat [ String.join "-" <| TeamData.getter model.teamData, ".txt" ])
         "content/text"
     <|
-        String.join "\n"
-            [ String.join "," <| TeamData.getter model.teamData
-            , Autonomous.getter model.autonomousData
-            , Teleop.getter model.teleopData
-            , Climbing.getter model.climbingData
+        String.concat
+            --needs to be able to run in a loop on a dict instead
+            [ modelToString model CalledTeamData
+            , modelToString model CalledAutonomous
+            , modelToString model CalledTeleop
+            , modelToString model CalledClimbing
             ]
 
 
-update : Msg -> Model -> Model
+modelToString : Model -> CalledModel -> String
+modelToString model subModel =
+    case subModel of
+        CalledTeamData ->
+            String.concat
+                [ "" ]
+
+        CalledAutonomous ->
+            ""
+
+        CalledTeleop ->
+            ""
+
+        CalledClimbing ->
+            ""
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         ScreenSize device ->
