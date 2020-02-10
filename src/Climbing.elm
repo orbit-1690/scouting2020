@@ -105,8 +105,8 @@ createButton msg name =
         { onPress = Just msg, label = text name }
 
 
-yophyTophy : List (Element.Attribute Msg)
-yophyTophy =
+decortion : List (Element.Attribute Msg)
+decortion =
     [ padding 10
     , spacing 5
     , centerX
@@ -126,14 +126,14 @@ view model =
         , centerX
         , centerY
         ]
-        [ column yophyTophy
+        [ column decortion
             [ row
-                yophyTophy
-                [ column yophyTophy
+                decortion
+                [ column decortion
                     [ createButton TriedClimb "Tried hanging?"
                     , printButton "no" "yes" model.triedClimb
                     ]
-                , column yophyTophy
+                , column decortion
                     [ createButton Balanced "Balanced?"
                     , printButton "no" "yes" model.balanced
                     ]
@@ -152,12 +152,12 @@ view model =
                     ]
                 }
             , row
-                yophyTophy
-                [ column yophyTophy
+                decortion
+                [ column decortion
                     [ createButton Defended "Defended?"
                     , printButton "no" "yes" model.defended
                     ]
-                , column yophyTophy
+                , column decortion
                     [ createButton WasDefended "Was defended?"
                     , printButton "no" "yes" model.wasDefended
                     ]

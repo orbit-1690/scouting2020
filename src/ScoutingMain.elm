@@ -175,7 +175,7 @@ update msg model =
 
                 stationError : Result String Int
                 stationError =
-                    TeamData.getTeam2 model.teamData
+                    TeamData.getTeam model.teamData
 
                 verifier : Bool
                 verifier =
@@ -216,7 +216,7 @@ view model =
                     (TeamData.stationToString model.teamData.station)
                     pagePosition
                     name
-                    (TeamData.getTeam2 model.teamData
+                    (TeamData.getTeam model.teamData
                         |> Result.map String.fromInt
                         |> merge
                     )

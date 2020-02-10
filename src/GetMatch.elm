@@ -1,4 +1,4 @@
-module GetMatch exposing (AllianceColor(..), AllianceStation, Match, StationNumber(..), getTeam, matches)
+module GetMatch exposing (AllianceColor(..), Match, StationNumber(..), TeamStation, getTeamNum, matches)
 
 
 type alias Alliance =
@@ -34,12 +34,12 @@ type StationNumber
     | Three
 
 
-type alias AllianceStation =
+type alias TeamStation =
     ( AllianceColor, StationNumber )
 
 
-getTeam : AllianceStation -> Match -> Int
-getTeam chosenStation =
+getTeamNum : TeamStation -> Match -> Int
+getTeamNum chosenStation =
     let
         alliance : Match -> Alliance
         alliance =

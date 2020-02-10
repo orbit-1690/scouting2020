@@ -1,4 +1,4 @@
-module Teleop exposing (Model, Msg, createButton, init, printButton, subscriptions, update, view, yophyTophy)
+module Teleop exposing (Model, Msg, createButton, decoration, init, printButton, subscriptions, update, view)
 
 import Colors exposing (black, blue, purple, sky, white)
 import Counter
@@ -109,12 +109,12 @@ view model =
         , centerX
         , centerY
         ]
-        [ row yophyTophy
-            [ column yophyTophy
+        [ row decoration
+            [ column decoration
                 [ createButton ColorRoulette "spun to\ncorrect color?"
                 , printButton "no" "yes" model.colorRoulette
                 ]
-            , column yophyTophy
+            , column decoration
                 [ createButton SpunRoulette "spun cycles 3-5?"
                 , printButton "no" "yes" model.spunRoulette
                 ]
@@ -131,8 +131,8 @@ subscriptions =
     Sub.none
 
 
-yophyTophy : List (Element.Attribute Msg)
-yophyTophy =
+decoration : List (Element.Attribute Msg)
+decoration =
     [ padding 10
     , spacing 5
     , centerX
