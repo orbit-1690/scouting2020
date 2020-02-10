@@ -11,8 +11,7 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font exposing (center)
 import Element.Input exposing (button)
-import File.Download as Download
-import GetMatch exposing (stationToString)
+import GetMatch
 import Html.Attributes exposing (style)
 import Result.Extra exposing (merge)
 import TeamData
