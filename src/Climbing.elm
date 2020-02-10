@@ -7,12 +7,15 @@ import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
 import TeamData
+import GetMatch
+import Element.Input as Input exposing (button, labelHidden, radioRow)
 
 
 type Msg
     = TriedClimb
     | ClimbStatus Status
     | Balanced
+    | Defended
     | WasDefended
     | Comment String
 
