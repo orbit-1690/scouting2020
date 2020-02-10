@@ -1,4 +1,4 @@
-module Autonomous exposing (Model, Msg, init, subscriptions, update, view)
+module Autonomous exposing (Model, Msg, getter, init, subscriptions, update, view)
 
 import Colors exposing (blue, purple, sky, white)
 import Counter
@@ -32,6 +32,45 @@ type alias Model =
     , enemyTrenchCollection : Counter.Model
     , rendezvousCollection : Counter.Model
     }
+
+
+getter : Model -> String
+getter model =
+    let
+        boolToString : Bool -> String
+        boolToString bool =
+            if bool then
+                "true"
+
+            else
+                "false"
+
+        ballsAmountToString : BallsInitAmount -> String
+        ballsAmountToString ball =
+            case ball of
+                NoBalls ->
+                    "none"
+
+                OneBall ->
+                    "1"
+
+                TwoBalls ->
+                    "2"
+
+                ThreeBalls ->
+                    "3"
+    in
+    String.join ","
+        [ ballsAmountToString model.ballsAmount
+        , boolToString model.moved
+        , String.fromInt model.lowlevel
+        , String.fromInt model.levelTwo
+        , String.fromInt model.levelThree
+        , String.fromInt model.missed
+        , String.fromInt model.trenchCollection
+        , String.fromInt model.enemyTrenchCollection
+        , String.fromInt model.rendezvousCollection
+        ]
 
 
 type BallsInitAmount

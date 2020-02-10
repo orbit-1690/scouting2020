@@ -1,4 +1,4 @@
-module GetMatch exposing (AllianceColor(..), AllianceStation, Match, StationNumber(..), getTeam, matches)
+module GetMatch exposing (AllianceColor(..), AllianceStation, Match, StationNumber(..), getTeam, matches, stationToString)
 
 
 type alias Alliance =
@@ -36,6 +36,33 @@ type StationNumber
 
 type alias AllianceStation =
     ( AllianceColor, StationNumber )
+
+
+stationToString : AllianceStation -> String
+stationToString chosenStation =
+    let
+        alliance : String
+        alliance =
+            case chosenStation of
+                ( Red, _ ) ->
+                    "red "
+
+                ( Blue, _ ) ->
+                    "blue "
+
+        number : String
+        number =
+            case chosenStation of
+                ( _, One ) ->
+                    "1"
+
+                ( _, Two ) ->
+                    "2"
+
+                ( _, Three ) ->
+                    "3"
+    in
+    number ++ alliance
 
 
 getTeam : AllianceStation -> Match -> Int
