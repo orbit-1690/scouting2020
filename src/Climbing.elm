@@ -1,14 +1,14 @@
 module Climbing exposing (Model, Msg, init, subscriptions, update, view)
 
+import Array
 import Colors exposing (black, blue, purple, sky, white)
 import Element exposing (centerX, centerY, column, el, fill, height, padding, row, spacing, text)
 import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
 import Element.Input as Input exposing (button, labelHidden, radioRow)
-import TeamData
 import GetMatch
-import Array
+import TeamData
 
 
 type Msg
@@ -39,7 +39,7 @@ type Status
 
 init : Model
 init =
-    Model False Loser False False False "" (TeamData.init <| Array.fromList GetMatch.matches) 
+    Model False Loser False False False "" (TeamData.init <| Array.fromList GetMatch.matches)
 
 
 update : Msg -> Model -> Model

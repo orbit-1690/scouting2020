@@ -1,9 +1,9 @@
-module TeamData exposing (Model, Msg, init, stationToString, update, view, getTeam2, getMatch)
+module TeamData exposing (Model, Msg, getMatch, getTeam2, init, stationToString, update, view)
 
 import Array exposing (Array)
 import Browser
 import Colors exposing (black, blue, orange, sky, white)
-import Element exposing (centerX, centerY, column, fill, height, minimum, padding, spacing, text, width)
+import Element exposing (centerX, centerY, column, el, fill, height, minimum, padding, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
@@ -59,7 +59,7 @@ view model =
         , rounded 10
         , centerX
         , centerY
-        , Element.scale 1.5
+        , rounded 20
         ]
         [ textInput model.scouterName ScouterInput "Scouter's name"
         , radioRow
@@ -80,16 +80,14 @@ view model =
                 ]
             }
         , textInput model.matchNumber MatchInput "Match number"
-        , Element.el
+        , el
             [ Background.color orange
             , width <| minimum 350 <| fill
             , height fill
             , center
             , Font.color white
             , Font.glow blue 5
-            , Font.size 10
-            , rounded 3
-            , Font.size 15
+            , Font.size 60
             , Font.family
                 [ Font.external
                     { name = "Open Sans"
@@ -162,8 +160,8 @@ textInput : String -> (String -> Msg) -> String -> Element.Element Msg
 textInput modelValue nextButton name =
     Input.text
         [ Font.color sky
-        , Font.size 10
-        , height fill
+        , Font.size 60
+        , rounded 10
         , Font.family
             [ Font.external
                 { name = "Open Sans"
@@ -174,7 +172,7 @@ textInput modelValue nextButton name =
         { onChange = nextButton
         , text = modelValue
         , placeholder = Just <| Input.placeholder [] <| Element.text name
-        , label = labelHidden modelValue
+        , label = Input.labelHidden modelValue
         }
 
 

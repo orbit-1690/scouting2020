@@ -1,18 +1,20 @@
 module ScoutingMain exposing (Model, Msg, init, update, view)
 
+import Array
 import Autonomous
 import Browser
 import Climbing
-import TeamData
 import Colors exposing (blue, purple, white)
-import Element exposing (centerX, centerY, column, el, fill, height, layout, maximum, padding, spacing, text, width)
+import Element exposing (Device, centerX, centerY, column, el, fill, height, htmlAttribute, layout, padding, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font exposing (center)
 import Element.Input exposing (button)
 import GetMatch
+import Html.Attributes exposing (style)
+import Result.Extra exposing (merge)
+import TeamData
 import Teleop
-import Array
 
 
 main : Program () Model Msg
@@ -83,7 +85,7 @@ stylishPage station position title teamNumber page =
     in
     column
         [ Background.color <| findColor station
-        , spacing 10
+        , spacing 15
         , width fill
         , height fill
         , centerY
@@ -112,11 +114,7 @@ stylishPage station position title teamNumber page =
 
             MiddlePage ->
                 column
-                    [ spacing 10
-                    , width fill
-                    , height fill
-                    , centerY
-                    ]
+                    [ spacing 15, centerX, centerY ]
                     [ button
                         buttonStyle
                         { onPress = Just <| NextPage
@@ -182,7 +180,8 @@ update msg model =
                 verifier : Bool
                 verifier =
                     (not <| List.member matchError [ Err "No such match", Err "Match number must be a number" ])
-                    && stationError /= Err "No station"
+                        && stationError
+                        /= Err "No station"
                         && (not << String.isEmpty << .scouterName << .teamData) model
                         || List.member model.teamData.scouterName [ "Itamar", "tom", "hadar", "shira" ]
             in
@@ -201,11 +200,9 @@ update msg model =
 
 view : Model -> Element.Element Msg
 view model =
-    case model.pages of
-        TeamDataPage ->
-            stylishPage (TeamData.stationToString model.teamData.station) FirstPage "Registeration" (TeamData.stationToString model.teamData.station) <| Element.map TeamDataMsg <| TeamData.view model.teamData
-
-        AutonomousPage ->
+    let
+        page : String -> PagePosition -> Element.Element Msg -> Element.Element Msg
+        page name pagePosition =
             el
                 [ Background.color <| findColor (TeamData.stationToString model.teamData.station)
                 , padding 105
@@ -215,27 +212,47 @@ view model =
                 , centerY
                 , centerX
                 ]
+                << stylishPage
+                    (TeamData.stationToString model.teamData.station)
+                    pagePosition
+                    name
+                    (TeamData.getTeam2 model.teamData
+                        |> Result.map String.fromInt
+                        |> merge
+                    )
+    in
+    case model.pages of
+        TeamDataPage ->
+            page
+                "Registeration"
+                FirstPage
+                << Element.map TeamDataMsg
             <|
-                stylishPage (TeamData.stationToString model.teamData.station) MiddlePage "Autonomous"  (TeamData.stationToString model.teamData.station) <|
-                    Element.map AutonomousDataMsg <|
-                        Autonomous.view model.autonomousData
+                TeamData.view model.teamData
+
+        AutonomousPage ->
+            page
+                "Autonomous"
+                MiddlePage
+                << Element.map AutonomousDataMsg
+            <|
+                Autonomous.view model.autonomousData
 
         TeleopPage ->
-            el
-                [ Background.color <| findColor (TeamData.stationToString model.teamData.station)
-                , padding 155
-                , spacing 10
-                , width fill
-                , height fill
-                , centerY
-                ]
+            page
+                "Teleop"
+                MiddlePage
+                << Element.map TeleopDataMsg
             <|
-                stylishPage (TeamData.stationToString model.teamData.station) MiddlePage "Teleop" (TeamData.stationToString model.teamData.station) <|
-                    Element.map TeleopDataMsg <|
-                        Teleop.view model.teleopData
+                Teleop.view model.teleopData
 
         ClimbingPage ->
-            stylishPage (TeamData.stationToString model.teamData.station) LastPage "End-game" (TeamData.stationToString model.teamData.station) <| Element.map ClimbingDataMsg <| Climbing.view model.climbingData
+            page
+                "End-game"
+                LastPage
+                << Element.map ClimbingDataMsg
+            <|
+                Climbing.view model.climbingData
 
 
 buttonStyle : List (Element.Attribute Msg)
@@ -254,7 +271,4 @@ buttonStyle =
     , center
     , centerX
     , centerY
-    , width <|
-        maximum 350 <|
-            fill
     ]

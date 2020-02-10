@@ -1,6 +1,7 @@
 module Counter exposing (Model, Msg, init, update, view)
 
-import Element exposing (padding, row, spacing, text)
+import Element exposing (el, padding, row, spacing, text)
+import Element.Font as Font
 import Element.Input exposing (button)
 
 
@@ -34,8 +35,9 @@ view title model =
         [ padding 3
         , spacing 20
         ]
-        [ text title
-        , button [] { onPress = Just Minus, label = text "-" }
-        , text <| String.fromInt model
-        , button [] { onPress = Just Plus, label = text "+" }
+        [ el [ Font.size 60 ] (text title)
+        , button [ Font.size 60 ] { onPress = Just Minus, label = text "-" }
+        , el [ Font.size 60 ]
+            (text <| String.fromInt model)
+        , button [ Font.size 60 ] { onPress = Just Plus, label = text "+" }
         ]
