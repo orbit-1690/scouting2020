@@ -3,7 +3,7 @@ module TeamData exposing (Model, Msg, getMatch, getTeam2, getter, init, stationT
 import Array exposing (Array)
 import Browser
 import Colors exposing (blue, orange, sky, white)
-import Element exposing (centerX, centerY, column, el, fill, height, minimum, padding, spacing, text, width)
+import Element exposing (centerX, centerY, column, el, fill, fillPortion, height, minimum, padding, spacing, text, width)
 import Element.Background as Background
 import Element.Border exposing (rounded)
 import Element.Font as Font exposing (center)
@@ -64,20 +64,22 @@ view model =
     column
         [ Background.color sky
         , padding 50
-        , spacing 40
+        , spacing 100
         , centerX
         , centerY
-        , rounded 20
+        , rounded 37
+        , width fill
+        , height <| fillPortion 5
         ]
         [ textInput model.scouterName ScouterInput "Scouter's name"
         , radio
             [ padding 10
-            , spacing 20
-            , Font.size 60
+            , spacing 50
+            , Font.size 90
             ]
             { onChange = Station
             , selected = model.station
-            , label = Input.labelAbove [ Font.size 60, padding 10, spacing 20 ] (text "Which station?")
+            , label = Input.labelAbove [ Font.size 90, padding 10, spacing 20 ] (text "Which station?")
             , options =
                 [ inputOption GetMatch.Blue GetMatch.One "Blue 1"
                 , inputOption GetMatch.Blue GetMatch.Two "Blue 2"
@@ -91,10 +93,10 @@ view model =
         , el
             [ Background.color orange
             , width fill
-            , center
             , rounded 10
-            , Font.color white
-            , Font.glow blue 5
+            , center
+            , Font.color Colors.black
+            , Font.glow Colors.gray 5
             , Font.size 60
             , Font.family
                 [ Font.external
@@ -161,14 +163,14 @@ numberToString chosenNumber =
 
 stationToString : Maybe AllianceStation -> String
 stationToString alliance =
-    unwrap "Now station selected" (\( color, number ) -> String.join " " [ colorToString color, numberToString number ]) alliance
+    unwrap "No station selected" (\( color, number ) -> String.join " " [ colorToString color, numberToString number ]) alliance
 
 
 textInput : String -> (String -> Msg) -> String -> Element.Element Msg
 textInput modelValue nextButton name =
     Input.text
         [ Font.color sky
-        , Font.size 60
+        , Font.size 70
         , rounded 10
         , Font.family
             [ Font.external

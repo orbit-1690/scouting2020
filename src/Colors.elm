@@ -1,11 +1,14 @@
 module Colors exposing
-    ( black
+    ( backgroundBlue
+    , backgroundRed
+    , black
     , blue
     , blueGreen
     , grass
     , gray
     , green
     , lightBlue
+    , naturalColor
     , orange
     , pink
     , purple
@@ -56,7 +59,7 @@ lightBlue =
 
 sky : Color
 sky =
-    Element.rgb255 0 127 255
+    Element.rgb255 0 180 255
 
 
 blue : Color
@@ -71,7 +74,7 @@ purple =
 
 pink : Color
 pink =
-    Element.rgb255 255 107 178
+    Element.rgb255 221 136 221
 
 
 white : Color
@@ -86,9 +89,24 @@ black =
 
 gray : Color
 gray =
-    Element.rgb255 128 128 128
+    Element.rgb255 102 102 102
 
 
 veryLightBlue : Color
 veryLightBlue =
     Element.rgb255 153 204 255
+
+
+backgroundBlue : Color
+backgroundBlue =
+    Element.rgb255 68 122 186
+
+
+backgroundRed : Color
+backgroundRed =
+    Element.rgb255 255 77 77
+
+
+naturalColor : Color
+naturalColor =
+    Element.rgb255 178 102 255

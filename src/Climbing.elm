@@ -6,9 +6,9 @@ import Element exposing (centerX, centerY, column, el, fill, height, padding, ro
 import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
-import TeamData
+import Element.Input as Input exposing (button, labelHidden, radio)
 import GetMatch
-import Element.Input as Input exposing (button, labelHidden, radioRow)
+import TeamData
 
 
 type Msg
@@ -101,7 +101,7 @@ textInput : String -> (String -> Msg) -> String -> Element.Element Msg
 textInput modelValue nextButton name =
     Input.text
         [ Font.color sky
-        , Font.size 60
+        , Font.size 90
         , rounded 10
         , height fill
         , Font.family
@@ -139,11 +139,10 @@ createButton msg name =
         { onPress = Just msg, label = text name }
 
 
-yophyTophy : List (Element.Attribute Msg)
-yophyTophy =
-    [ padding 10
-    , spacing 5
-    , Font.size 60
+decoration : List (Element.Attribute Msg)
+decoration =
+    [ spacing 60
+    , Font.size 90
     , centerX
     , centerY
     ]
@@ -155,27 +154,28 @@ view model =
         [ Background.color sky
         , Border.color black
         , padding 50
-        , spacing 20
+        , spacing 50
+        , height <| Element.fillPortion 5
         , widthXY 5 5
-        , rounded 10
+        , rounded 37
         , centerX
         , centerY
         ]
-        [ column yophyTophy
+        [ column decoration
             [ row
-                yophyTophy
-                [ column yophyTophy
+                decoration
+                [ column decoration
                     [ createButton TriedClimb "Tried hanging?"
                     , printButton "no" "yes" model.triedClimb
                     ]
-                , column yophyTophy
+                , column decoration
                     [ createButton Balanced "Balanced?"
                     , printButton "no" "yes" model.balanced
                     ]
                 ]
-            , radioRow
+            , radio
                 [ padding 10
-                , spacing 20
+                , spacing 70
                 ]
                 { onChange = ClimbStatus
                 , selected = Just model.climbStatus
@@ -187,12 +187,12 @@ view model =
                     ]
                 }
             , row
-                yophyTophy
-                [ column yophyTophy
+                decoration
+                [ column decoration
                     [ createButton Defended "Defended?"
                     , printButton "no" "yes" model.defended
                     ]
-                , column yophyTophy
+                , column decoration
                     [ createButton WasDefended "Was defended?"
                     , printButton "no" "yes" model.wasDefended
                     ]

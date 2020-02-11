@@ -6,7 +6,7 @@ import Browser
 import Browser.Events as BE
 import Climbing
 import Colors exposing (blue, purple, white)
-import Element exposing (Color, Device, centerX, centerY, column, el, fill, height, htmlAttribute, layout, padding, spacing, text, width)
+import Element exposing (Color, Device, centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, layout, padding, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font exposing (center)
@@ -23,7 +23,7 @@ main : Program () Model Msg
 main =
     Browser.element
         { init = always ( init, Cmd.none )
-        , view = view >> layout [ width fill, htmlAttribute <| style "touch-action" "manipulation" ]
+        , view = view >> layout [ width fill, height fill, htmlAttribute <| style "touch-action" "manipulation" ]
         , update = update
         , subscriptions = always Sub.none
         }
@@ -77,13 +77,13 @@ type BackGroundColorOptions
 findColor : String -> Element.Color
 findColor alliance =
     if String.contains "Blue" alliance then
-        Colors.blue
+        Colors.backgroundBlue
 
     else if String.contains "Red" alliance then
-        Colors.red
+        Colors.backgroundRed
 
     else
-        Colors.yellow
+        Colors.naturalColor
 
 
 stylishPage : String -> PagePosition -> String -> String -> Element.Element Msg -> Element.Element Msg
@@ -95,7 +95,8 @@ stylishPage station position title teamNumber page =
             , spacing 10
             , centerX
             , centerY
-            , Font.color Colors.veryLightBlue
+            , Element.alignLeft
+            , Font.color Colors.black
             , Font.size size
             ]
     in
@@ -105,12 +106,14 @@ stylishPage station position title teamNumber page =
         , width fill
         , height fill
         ]
-        [ el
-            (decoration 20)
-            (text <| title)
-        , el
-            (decoration 15)
-            (text <| "\nscouted team: " ++ teamNumber)
+        [ column [ height <| fillPortion 1 ]
+            [ el
+                (decoration 80)
+                (text <| title)
+            , el
+                (decoration 50)
+                (text <| "\nscouted team: " ++ teamNumber)
+            ]
         , page
         , case position of
             FirstPage ->
@@ -121,7 +124,7 @@ stylishPage station position title teamNumber page =
                     }
 
             LastPage ->
-                column
+                Element.row
                     [ spacing 15, centerX, centerY ]
                     [ button
                         buttonStyle
@@ -136,17 +139,17 @@ stylishPage station position title teamNumber page =
                     ]
 
             MiddlePage ->
-                column
+                Element.row
                     [ spacing 15, centerX, centerY ]
                     [ button
                         buttonStyle
-                        { onPress = Just <| NextPage
-                        , label = Element.text "Next Page"
+                        { onPress = Just <| PrevPage
+                        , label = Element.text "Previous Page"
                         }
                     , button
                         buttonStyle
-                        { onPress = Just <| PrevPage
-                        , label = Element.text "Previous Page"
+                        { onPress = Just <| NextPage
+                        , label = Element.text "Next Page"
                         }
                     ]
         ]
@@ -254,12 +257,10 @@ view model =
         page name pagePosition =
             el
                 [ Background.color <| findColor (TeamData.stationToString model.teamData.station)
-                , padding 105
+                , padding 50
                 , spacing 10
                 , width fill
                 , height fill
-                , centerY
-                , centerX
                 ]
                 << stylishPage
                     (TeamData.stationToString model.teamData.station)
@@ -306,9 +307,10 @@ view model =
 
 buttonStyle : List (Element.Attribute Msg)
 buttonStyle =
-    [ Font.color white
-    , Font.size 60
-    , Font.glow blue 5
+    [ Font.color Colors.white
+    , Font.size 80
+    , height <| fillPortion 1
+    , Font.glow Colors.gray 5
     , Border.rounded 10
     , Font.family
         [ Font.external
@@ -316,7 +318,7 @@ buttonStyle =
             , url = "https://fonts.googleapis.com/css?family=Open+Sans:700i&display=swap"
             }
         ]
-    , Background.color purple
+    , Background.color Colors.gray
     , center
     , centerX
     , centerY

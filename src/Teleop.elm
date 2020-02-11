@@ -1,4 +1,4 @@
-module Teleop exposing (Model, Msg, boolToText, createButton, getter, init, subscriptions, update, view, yophyTophy)
+module Teleop exposing (Model, Msg, boolToText, createButton, decoration, getter, init, subscriptions, update, view)
 
 import Colors exposing (blue, purple, sky, white)
 import Counter
@@ -58,7 +58,7 @@ createButton : Msg -> String -> Element.Element Msg
 createButton msg name =
     button
         [ Font.color white
-        , Font.size 60
+        , Font.size 90
         , Font.glow blue 5
         , rounded 10
         , Font.family
@@ -107,15 +107,16 @@ view model =
     column
         [ Background.color sky
         , padding 50
-        , spacing 20
-        , rounded 20
+        , spacing 70
+        , rounded 37
         , centerX
+        , Element.height <| Element.fillPortion 3
         , centerY
         ]
-        [ el yophyTophy
+        [ el decoration
             (text "spun to\ncorrect color?")
         , createButton ColorRoulette <| boolToText model.colorRoulette
-        , el yophyTophy
+        , el decoration
             (text "spun cycles 3-5?")
         , createButton SpunRoulette <| boolToText model.spunRoulette
         , Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
@@ -134,13 +135,13 @@ boolToText bool =
         "No"
 
 
-yophyTophy : List (Element.Attribute Msg)
-yophyTophy =
+decoration : List (Element.Attribute Msg)
+decoration =
     [ padding 10
     , spacing 5
     , centerX
     , centerY
-    , Font.size 60
+    , Font.size 90
     ]
 
 

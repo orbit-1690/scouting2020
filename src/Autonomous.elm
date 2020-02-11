@@ -106,10 +106,11 @@ view model =
     column
         [ Background.color sky
         , padding 50
-        , spacing 20
-        , rounded 20
+        , spacing 50
+        , rounded 37
         , centerX
         , centerY
+        , Element.height <| Element.fillPortion 5
         ]
         [ radio
             [ padding 10
