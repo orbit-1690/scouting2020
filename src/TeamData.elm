@@ -128,7 +128,7 @@ getTeam2 model =
 getMatch : Model -> Result String Match
 getMatch { matchNumber, matches } =
     String.toInt matchNumber
-        |> Result.fromMaybe "Match number must be a number"
+        |> Result.fromMaybe "Invalid match number"
         |> Result.andThen
             (\number ->
                 Array.get (number - 1) matches
