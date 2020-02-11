@@ -6,9 +6,10 @@ import Element exposing (centerX, centerY, column, el, fill, height, padding, ro
 import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
-import TeamData
-import GetMatch
 import Element.Input as Input exposing (button, labelHidden, radioRow)
+import GetMatch
+import TeamData
+import Teleop exposing (boolToText)
 
 
 type Msg
@@ -189,12 +190,14 @@ view model =
             , row
                 yophyTophy
                 [ column yophyTophy
-                    [ createButton Defended "Defended?"
-                    , printButton "no" "yes" model.defended
+                    [ el yophyTophy
+                        (text "Defended?")
+                    , createButton Defended <| boolToText model.defended
                     ]
                 , column yophyTophy
-                    [ createButton WasDefended "Was defended?"
-                    , printButton "no" "yes" model.wasDefended
+                    [ el yophyTophy
+                        (text "Was defended?")
+                    , createButton WasDefended <| boolToText model.wasDefended
                     ]
                 ]
             , textInput model.comment Comment "any comments?"
