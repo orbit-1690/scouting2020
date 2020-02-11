@@ -4,7 +4,7 @@ import Array
 import Colors exposing (black, blue, purple, sky, white)
 import Element exposing (centerX, centerY, column, el, fill, height, padding, row, spacing, text)
 import Element.Background as Background
-import Element.Border as Border exposing (rounded, widthXY)
+import Element.Border as Border exposing (rounded)
 import Element.Font as Font exposing (center)
 import Element.Input as Input exposing (button, labelHidden, radio)
 import GetMatch
@@ -152,7 +152,6 @@ view : Model -> Element.Element Msg
 view model =
     column
         [ Background.color sky
-        , Border.color black
         , padding 50
         , spacing 50
         , height <| Element.fillPortion 5
