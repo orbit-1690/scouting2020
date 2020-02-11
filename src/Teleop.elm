@@ -1,4 +1,4 @@
-module Teleop exposing (Model, Msg, boolToText, createButton, init, subscriptions, update, view, yophyTophy)
+module Teleop exposing (Model, Msg, boolToText, createButton, getter, init, subscriptions, update, view, yophyTophy)
 
 import Colors exposing (blue, purple, sky, white)
 import Counter
@@ -11,7 +11,8 @@ import Element.Input exposing (button)
 
 type Msg
     = LowLevel Counter.Msg
-    | HighLevel Counter.Msg
+    | LevelTwo Counter.Msg
+    | LevelThree Counter.Msg
     | Missed Counter.Msg
     | ColorRoulette
     | SpunRoulette
@@ -19,16 +20,38 @@ type Msg
 
 type alias Model =
     { lowlevel : Counter.Model
-    , highlevel : Counter.Model
+    , levelTwo : Counter.Model
+    , levelThree : Counter.Model
     , missed : Counter.Model
     , colorRoulette : Bool
     , spunRoulette : Bool
     }
 
 
+getter : Model -> String
+getter model =
+    let
+        boolToString : Bool -> String
+        boolToString bool =
+            if bool then
+                "true"
+
+            else
+                "false"
+    in
+    String.join ","
+        [ boolToString model.colorRoulette
+        , boolToString model.spunRoulette
+        , String.fromInt model.lowlevel
+        , String.fromInt model.levelTwo
+        , String.fromInt model.levelThree
+        , String.fromInt model.missed
+        ]
+
+
 init : Model
 init =
-    Model (Counter.Model 0) (Counter.Model 0) (Counter.Model 0) False False
+    Model Counter.init Counter.init Counter.init Counter.init False False
 
 
 createButton : Msg -> String -> Element.Element Msg
@@ -63,8 +86,11 @@ update msg model =
         LowLevel count ->
             { model | lowlevel = counterUpdate count model.lowlevel }
 
-        HighLevel count ->
-            { model | highlevel = counterUpdate count model.highlevel }
+        LevelTwo count ->
+            { model | levelTwo = counterUpdate count model.levelTwo }
+
+        LevelThree count ->
+            { model | levelThree = counterUpdate count model.levelThree }
 
         ColorRoulette ->
             { model | colorRoulette = not model.colorRoulette }
@@ -93,7 +119,8 @@ view model =
             (text "spun cycles 3-5?")
         , createButton SpunRoulette <| boolToText model.spunRoulette
         , Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
-        , Element.map HighLevel <| Counter.view "high Level:" model.highlevel
+        , Element.map LevelTwo <| Counter.view "second Level:" model.levelTwo
+        , Element.map LevelThree <| Counter.view "third Level:" model.levelThree
         , Element.map Missed <| Counter.view "missed:" model.missed
         ]
 

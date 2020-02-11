@@ -1,17 +1,21 @@
-module ScoutingMain exposing (Model, Msg, init, subscriptions, update, view)
+module ScoutingMain exposing (Model, Msg, init, update, view)
 
+import Array
 import Autonomous
 import Browser
 import Browser.Events as BE
 import Climbing
 import Colors exposing (blue, purple, white)
-import Element exposing (Device, centerX, centerY, column, el, fill, height, layout, padding, spacing, text, width)
+import Element exposing (Color, Device, centerX, centerY, column, el, fill, height, htmlAttribute, layout, padding, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font exposing (center)
 import Element.Input exposing (button)
-import GetMatch exposing (getMatch)
-import TeamData exposing (nameCheck)
+import File.Download as Download
+import GetMatch exposing (stationToString)
+import Html.Attributes exposing (style)
+import Result.Extra exposing (merge)
+import TeamData
 import Teleop
 
 
@@ -19,9 +23,9 @@ main : Program () Model Msg
 main =
     Browser.element
         { init = always ( init, Cmd.none )
-        , view = view >> layout []
-        , update = \msg model -> ( update msg model, Cmd.none )
-        , subscriptions = \model -> subscriptions
+        , view = view >> layout [ width fill, htmlAttribute <| style "touch-action" "manipulation" ]
+        , update = update
+        , subscriptions = always Sub.none
         }
 
 
@@ -40,6 +44,7 @@ type Msg
     | ScreenSize Device
     | PrevPage
     | NextPage
+    | Submit
 
 
 type PagePosition
@@ -64,8 +69,25 @@ type alias Model =
     }
 
 
-stylishPage : PagePosition -> String -> String -> Element.Element Msg -> Element.Element Msg
-stylishPage position title teamNumber page =
+type BackGroundColorOptions
+    = Blue Color
+    | Red Color
+
+
+findColor : String -> Element.Color
+findColor alliance =
+    if String.contains "Blue" alliance then
+        Colors.blue
+
+    else if String.contains "Red" alliance then
+        Colors.red
+
+    else
+        Colors.yellow
+
+
+stylishPage : String -> PagePosition -> String -> String -> Element.Element Msg -> Element.Element Msg
+stylishPage station position title teamNumber page =
     let
         decoration : Int -> List (Element.Attribute Msg)
         decoration size =
@@ -78,16 +100,16 @@ stylishPage position title teamNumber page =
             ]
     in
     column
-        [ Background.color blue
+        [ Background.color <| findColor station
         , spacing 15
         , width fill
         , height fill
         ]
         [ el
-            (decoration 60)
+            (decoration 20)
             (text <| title)
         , el
-            (decoration 40)
+            (decoration 15)
             (text <| "\nscouted team: " ++ teamNumber)
         , page
         , case position of
@@ -99,14 +121,23 @@ stylishPage position title teamNumber page =
                     }
 
             LastPage ->
-                button
-                    buttonStyle
-                    { onPress = Just <| PrevPage
-                    , label = Element.text "Previous Page"
-                    }
+                column
+                    [ spacing 15, centerX, centerY ]
+                    [ button
+                        buttonStyle
+                        { onPress = Just <| PrevPage
+                        , label = Element.text "Previous Page"
+                        }
+                    , button
+                        buttonStyle
+                        { onPress = Just <| Submit
+                        , label = Element.text "Submit"
+                        }
+                    ]
 
             MiddlePage ->
-                column [ spacing 15, centerX, centerY ]
+                column
+                    [ spacing 15, centerX, centerY ]
                     [ button
                         buttonStyle
                         { onPress = Just <| NextPage
@@ -123,7 +154,7 @@ stylishPage position title teamNumber page =
 
 init : Model
 init =
-    { teamData = TeamData.init
+    { teamData = TeamData.init <| Array.fromList GetMatch.matches
     , autonomousData = Autonomous.init
     , teleopData = Teleop.init
     , climbingData = Climbing.init
@@ -132,26 +163,40 @@ init =
     }
 
 
-update : Msg -> Model -> Model
+dumpModel : Model -> Cmd Msg
+dumpModel model =
+    Download.string
+        (String.concat [ String.join "-" <| TeamData.getter model.teamData, ".txt" ])
+        "content/text"
+    <|
+        String.join "\n"
+            [ String.join "," <| TeamData.getter model.teamData
+            , Autonomous.getter model.autonomousData
+            , Teleop.getter model.teleopData
+            , Climbing.getter model.climbingData
+            ]
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         ScreenSize device ->
-            { model | screenSize = device }
+            ( { model | screenSize = device }, Cmd.none )
 
         TeamDataMsg teamMsg ->
-            { model | teamData = TeamData.update teamMsg model.teamData }
+            ( { model | teamData = TeamData.update teamMsg model.teamData }, Cmd.none )
 
         AutonomousDataMsg autoMsg ->
-            { model | autonomousData = Autonomous.update autoMsg model.autonomousData }
+            ( { model | autonomousData = Autonomous.update autoMsg model.autonomousData }, Cmd.none )
 
         TeleopDataMsg telMsg ->
-            { model | teleopData = Teleop.update telMsg model.teleopData }
+            ( { model | teleopData = Teleop.update telMsg model.teleopData }, Cmd.none )
 
         ClimbingDataMsg climbMsg ->
-            { model | climbingData = Climbing.update climbMsg model.climbingData }
+            ( { model | climbingData = Climbing.update climbMsg model.climbingData }, Cmd.none )
 
         PrevPage ->
-            case model.pages of
+            ( case model.pages of
                 AutonomousPage ->
                     { model | pages = TeamDataPage }
 
@@ -163,55 +208,100 @@ update msg model =
 
                 TeamDataPage ->
                     model
+            , Cmd.none
+            )
 
         NextPage ->
             let
-                error : String
-                error =
-                    getMatch model.teamData.match <| TeamData.stationToString model.teamData.station
+                matchError : Result String GetMatch.Match
+                matchError =
+                    TeamData.getMatch model.teamData
+
+                stationError : Result String Int
+                stationError =
+                    TeamData.getTeam2 model.teamData
 
                 verifier : Bool
                 verifier =
-                    (error /= "Not a match") && (error /= "Team not in this match") && nameCheck model.teamData || model.teamData.scouterName == "Itamar" || model.teamData.scouterName == "tom"
+                    (not <| List.member matchError [ Err "No such match", Err "Match number must be a number" ])
+                        && stationError
+                        /= Err "No station"
+                        && (not << String.isEmpty << .scouterName << .teamData) model
+                        || List.member model.teamData.scouterName [ "Itamar", "tom", "hadar", "shira" ]
             in
-            if model.pages == TeamDataPage && verifier then
+            ( if model.pages == TeamDataPage && verifier then
                 { model | pages = AutonomousPage }
 
-            else if model.pages == AutonomousPage then
+              else if model.pages == AutonomousPage then
                 { model | pages = TeleopPage }
 
-            else if model.pages == TeleopPage then
+              else if model.pages == TeleopPage then
                 { model | pages = ClimbingPage }
 
-            else
+              else
                 model
+            , Cmd.none
+            )
+
+        Submit ->
+            ( model, dumpModel model )
 
 
 view : Model -> Element.Element Msg
 view model =
+    let
+        page : String -> PagePosition -> Element.Element Msg -> Element.Element Msg
+        page name pagePosition =
+            el
+                [ Background.color <| findColor (TeamData.stationToString model.teamData.station)
+                , padding 105
+                , spacing 10
+                , width fill
+                , height fill
+                , centerY
+                , centerX
+                ]
+                << stylishPage
+                    (TeamData.stationToString model.teamData.station)
+                    pagePosition
+                    name
+                    (TeamData.getTeam2 model.teamData
+                        |> Result.map String.fromInt
+                        |> merge
+                    )
+    in
     case model.pages of
         TeamDataPage ->
-            stylishPage FirstPage "Registeration" (TeamData.team model.teamData) <| Element.map TeamDataMsg <| TeamData.view model.teamData
+            page
+                "Registeration"
+                FirstPage
+                << Element.map TeamDataMsg
+            <|
+                TeamData.view model.teamData
 
         AutonomousPage ->
-            stylishPage MiddlePage "Autonomous" (TeamData.team model.teamData) <| Element.map AutonomousDataMsg <| Autonomous.view model.autonomousData
+            page
+                "Autonomous"
+                MiddlePage
+                << Element.map AutonomousDataMsg
+            <|
+                Autonomous.view model.autonomousData
 
         TeleopPage ->
-            stylishPage MiddlePage "Teleop" (TeamData.team model.teamData) <| Element.map TeleopDataMsg <| Teleop.view model.teleopData
+            page
+                "Teleop"
+                MiddlePage
+                << Element.map TeleopDataMsg
+            <|
+                Teleop.view model.teleopData
 
         ClimbingPage ->
-            stylishPage LastPage "End-game" (TeamData.team model.teamData) <| Element.map ClimbingDataMsg <| Climbing.view model.climbingData
-
-
-subscriptions : Sub Msg
-subscriptions =
-    Sub.batch
-        [ Sub.map AutonomousDataMsg <| Autonomous.subscriptions
-        , Sub.map TeamDataMsg <| TeamData.subscriptions
-        , Sub.map TeleopDataMsg <| Teleop.subscriptions
-        , Sub.map ClimbingDataMsg <| Climbing.subscriptions
-        , BE.onResize (\w h -> ScreenSize <| Element.classifyDevice <| DeviceSize w h)
-        ]
+            page
+                "End-game"
+                LastPage
+                << Element.map ClimbingDataMsg
+            <|
+                Climbing.view model.climbingData
 
 
 buttonStyle : List (Element.Attribute Msg)

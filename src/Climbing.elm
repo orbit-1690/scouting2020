@@ -1,14 +1,14 @@
-module Climbing exposing (Model, Msg, init, subscriptions, update, view)
+module Climbing exposing (Model, Msg, getter, init, subscriptions, update, view)
 
+import Array
 import Colors exposing (black, blue, purple, sky, white)
 import Element exposing (centerX, centerY, column, el, fill, height, padding, row, spacing, text)
 import Element.Background as Background
-import Element.Border as Border exposing (rounded)
+import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
-import Element.Input as Input exposing (button, labelHidden, radio, radioRow)
-import GetMatch exposing (getMatch)
-import TeamData exposing (stationToString, team)
-import Teleop exposing (boolToText)
+import Element.Input as Input exposing (button, labelHidden, radioRow)
+import GetMatch
+import TeamData
 
 
 type Msg
@@ -31,6 +31,39 @@ type alias Model =
     }
 
 
+getter : Model -> String
+getter model =
+    let
+        boolToString : Bool -> String
+        boolToString bool =
+            if bool then
+                "true"
+
+            else
+                "false"
+
+        statusToString : Status -> String
+        statusToString status =
+            case status of
+                Hanged ->
+                    "Hanged"
+
+                Parked ->
+                    "Parked"
+
+                Loser ->
+                    "Loser"
+    in
+    String.join ","
+        [ boolToString model.triedClimb
+        , boolToString model.balanced
+        , statusToString model.climbStatus
+        , boolToString model.defended
+        , boolToString model.wasDefended
+        , "'" ++ model.comment ++ "'"
+        ]
+
+
 type Status
     = Hanged
     | Parked
@@ -39,7 +72,7 @@ type Status
 
 init : Model
 init =
-    Model False Loser False False False "" TeamData.init
+    Model False Loser False False False "" (TeamData.init <| Array.fromList GetMatch.matches)
 
 
 update : Msg -> Model -> Model
@@ -168,6 +201,22 @@ view model =
             , textInput model.comment Comment "any comments?"
             ]
         ]
+
+
+printButton : String -> String -> Bool -> Element.Element Msg
+printButton onFalse onTrue modelBool =
+    el
+        [ center
+        , centerX
+        , centerY
+        ]
+        (text <|
+            if modelBool then
+                onTrue
+
+            else
+                onFalse
+        )
 
 
 subscriptions : Sub Msg
