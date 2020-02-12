@@ -106,7 +106,7 @@ stylishPage station position title teamNumber page =
         , width fill
         , height fill
         ]
-        [ column [ height <| fillPortion 1 ]
+        [ column [ height <| fillPortion 1, centerX ]
             [ el
                 (decoration 80)
                 (text <| title)
