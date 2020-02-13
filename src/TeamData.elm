@@ -66,12 +66,10 @@ view model =
         , padding 50
         , spacing 100
         , centerX
-        , centerY
-        , rounded 37
-        , width fill
-        , height <| fillPortion 5
+        , width <| fillPortion 4
+        , height fill
         ]
-        [ textInput model.scouterName ScouterInput "Scouter's name"
+        [ textInput model.scouterName ScouterInput "your name"
         , radio
             [ padding 10
             , spacing 50

@@ -94,8 +94,6 @@ stylishPage station position title teamNumber page =
             [ padding 10
             , spacing 10
             , centerX
-            , centerY
-            , Element.alignLeft
             , Font.color Colors.black
             , Font.size size
             ]
@@ -106,7 +104,7 @@ stylishPage station position title teamNumber page =
         , width fill
         , height fill
         ]
-        [ column [ height <| fillPortion 1, centerX ]
+        [ column [ height <| fillPortion 1 ]
             [ el
                 (decoration 80)
                 (text <| title)
@@ -120,7 +118,7 @@ stylishPage station position title teamNumber page =
                 button
                     buttonStyle
                     { onPress = Just <| NextPage
-                    , label = Element.text "Next Page"
+                    , label = Element.text "Next"
                     }
 
             LastPage ->
@@ -129,7 +127,7 @@ stylishPage station position title teamNumber page =
                     [ button
                         buttonStyle
                         { onPress = Just <| PrevPage
-                        , label = Element.text "Previous Page"
+                        , label = Element.text "Previous"
                         }
                     , button
                         buttonStyle
@@ -140,16 +138,16 @@ stylishPage station position title teamNumber page =
 
             MiddlePage ->
                 Element.row
-                    [ spacing 15, centerX, centerY ]
+                    [ spacing 100, centerX, centerY ]
                     [ button
                         buttonStyle
                         { onPress = Just <| PrevPage
-                        , label = Element.text "Previous Page"
+                        , label = Element.text "Previous"
                         }
                     , button
                         buttonStyle
                         { onPress = Just <| NextPage
-                        , label = Element.text "Next Page"
+                        , label = Element.text "Next"
                         }
                     ]
         ]
@@ -230,7 +228,7 @@ update msg model =
                         && stationError
                         /= Err "No station"
                         && (not << String.isEmpty << .scouterName << .teamData) model
-                        || List.member model.teamData.scouterName [ "Itamar", "tom", "hadar", "shira" ]
+                        && List.member model.teamData.scouterName [ "Itamar", "tom", "hadar", "shira" ]
             in
             ( if model.pages == TeamDataPage && verifier then
                 { model | pages = AutonomousPage }
@@ -257,9 +255,9 @@ view model =
         page name pagePosition =
             el
                 [ Background.color <| findColor (TeamData.stationToString model.teamData.station)
-                , padding 50
                 , spacing 10
-                , width fill
+                , padding 70
+                , width <| fillPortion 3
                 , height fill
                 ]
                 << stylishPage
@@ -309,7 +307,6 @@ buttonStyle : List (Element.Attribute Msg)
 buttonStyle =
     [ Font.color Colors.white
     , Font.size 80
-    , height <| fillPortion 1
     , Font.glow Colors.gray 5
     , Border.rounded 10
     , Font.family
@@ -319,7 +316,5 @@ buttonStyle =
             }
         ]
     , Background.color Colors.gray
-    , center
     , centerX
-    , centerY
     ]

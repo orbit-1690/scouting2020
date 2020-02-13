@@ -4,6 +4,7 @@ module Colors exposing
     , black
     , blue
     , blueGreen
+    , brown
     , grass
     , gray
     , green
@@ -110,3 +111,8 @@ backgroundRed =
 naturalColor : Color
 naturalColor =
     Element.rgb255 178 102 255
+
+
+brown : Color
+brown =
+    Element.rgb255 179 111 74
