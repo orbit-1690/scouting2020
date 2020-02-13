@@ -4,7 +4,7 @@ import Array
 import Colors exposing (black, blue, purple, sky, white)
 import Element exposing (centerX, centerY, column, el, fill, height, padding, row, spacing, text)
 import Element.Background as Background
-import Element.Border as Border exposing (rounded, widthXY)
+import Element.Border as Border exposing (rounded)
 import Element.Font as Font exposing (center)
 import Element.Input as Input exposing (button, labelHidden, radioRow)
 import GetMatch
@@ -154,11 +154,9 @@ view : Model -> Element.Element Msg
 view model =
     column
         [ Background.color sky
-        , Border.color black
         , padding 50
         , spacing 20
-        , widthXY 5 5
-        , rounded 10
+        , rounded 20
         , centerX
         , centerY
         ]
@@ -166,15 +164,17 @@ view model =
             [ row
                 yophyTophy
                 [ column yophyTophy
-                    [ createButton TriedClimb "Tried hanging?"
-                    , printButton "no" "yes" model.triedClimb
+                    [ el yophyTophy
+                        (text "Tried hanging?")
+                    , createButton TriedClimb <| boolToText model.triedClimb
                     ]
                 , column yophyTophy
-                    [ createButton Balanced "Balanced?"
-                    , printButton "no" "yes" model.balanced
+                    [ el yophyTophy
+                        (text "Balanced?")
+                    , createButton Balanced <| boolToText model.balanced
                     ]
                 ]
-            , radioRow
+            , radio
                 [ padding 10
                 , spacing 20
                 ]
@@ -187,8 +187,7 @@ view model =
                     , Input.option Hanged (text "hanged")
                     ]
                 }
-            , row
-                yophyTophy
+            , row yophyTophy
                 [ column yophyTophy
                     [ el yophyTophy
                         (text "Defended?")
