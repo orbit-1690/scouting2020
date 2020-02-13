@@ -1,4 +1,4 @@
-module Match exposing (Model, Msg, init, update, view)
+module ScoutingMain exposing (Model, Msg, init, update, view)
 
 import Array
 import Autonomous
