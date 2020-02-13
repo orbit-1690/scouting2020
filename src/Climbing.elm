@@ -4,11 +4,10 @@ import Array
 import Colors exposing (black, blue, purple, sky, white)
 import Element exposing (centerX, centerY, column, el, fill, height, padding, row, spacing, text)
 import Element.Background as Background
-import Element.Border as Border exposing (rounded, widthXY)
+import Element.Border as Border exposing (rounded)
 import Element.Font as Font exposing (center)
-import Element.Input as Input exposing (button, labelHidden, radioRow)
-import GetMatch
-import TeamData
+import Element.Input as Input exposing (button, labelHidden, radio)
+import Teleop exposing (boolToText)
 
 
 type Msg
@@ -155,6 +154,7 @@ view model =
         [ Background.color sky
         , padding 50
         , spacing 20
+        , rounded 20
         , centerX
         , centerY
         ]
@@ -172,7 +172,7 @@ view model =
                     , createButton Balanced <| boolToText model.balanced
                     ]
                 ]
-            , radioRow
+            , radio
                 [ padding 10
                 , spacing 20
                 ]
@@ -185,8 +185,7 @@ view model =
                     , Input.option Hanged (text "hanged")
                     ]
                 }
-            , row
-                yophyTophy
+            , row yophyTophy
                 [ column yophyTophy
                     [ el yophyTophy
                         (text "Defended?")
