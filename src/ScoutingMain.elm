@@ -224,11 +224,11 @@ update msg model =
 
                 verifier : Bool
                 verifier =
-                    (not <| List.member matchError [ Err "No such match", Err "Match number must be a number" ])
+                    (not <| List.member matchError [ Err "No such match", Err "Invalid match number" ])
                         && stationError
                         /= Err "No station"
                         && (not << String.isEmpty << .scouterName << .teamData) model
-                        && List.member model.teamData.scouterName [ "Itamar", "tom", "hadar", "shira" ]
+                        || List.member model.teamData.scouterName [ "Itamar", "tom", "hadar", "shira" ]
             in
             ( if model.pages == TeamDataPage && verifier then
                 { model | pages = AutonomousPage }
