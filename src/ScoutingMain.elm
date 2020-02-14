@@ -224,85 +224,73 @@ update msg model =
             ( model, dumpModel model )
 
 
+teamDataToString : Model -> String
+teamDataToString model =
+    model.teamData
+        |> TeamData.getTeam2
+        |> Result.map String.fromInt
+        |> merge
+
+
 view : Model -> Element.Element Msg
 view model =
     let
         page : String -> PagePosition -> Element.Element Msg -> Element.Element Msg
         page name pagePosition msg =
-            let
-                decoration : Int -> List (Element.Attribute Msg)
-                decoration size =
-                    [ centerX
-                    , Font.color Colors.white
-                    , Font.glow Colors.black 10
-                    , Font.size size
-                    ]
-            in
             column
-                [ height fill
-                , centerX
+                [ centerX
+                , width fill
+                , spacing 30
+                , Background.color purple
+                , height fill
                 ]
-                [ column [ width fill, centerX, height <| fillPortion 1, Border.widthXY 10 10, Background.color purple ]
-                    [ el
-                        (decoration 80)
-                        (text <|
-                            name
-                        )
-                    , el
-                        (decoration 50)
-                        (text <|
-                            "\nscouted team: "
-                                ++ (TeamData.getTeam2 model.teamData
-                                        |> Result.map String.fromInt
-                                        |> merge
-                                   )
-                        )
-                    ]
-                , el
-                    [ Background.color <| findColor (TeamData.stationToString model.teamData.station)
-                    , Element.paddingXY 70 0
-                    , width <| fillPortion 3
-                    , height fill
-                    , centerX
-                    ]
-                  <|
-                    stylishPage
-                        pagePosition
-                        msg
+                [ text name
+                    |> el
+                        [ Font.size 80
+                        , Font.color Colors.white
+                        , Font.glow Colors.black 10
+                        , centerX
+                        ]
+                , text ("scouted team: " ++ teamDataToString model)
+                    |> el
+                        [ Font.size 50
+                        , Font.color Colors.white
+                        , Font.glow Colors.black 10
+                        , centerX
+                        ]
+                , stylishPage
+                    pagePosition
+                    msg
+                    |> el
+                        [ Background.color <| findColor (TeamData.stationToString model.teamData.station)
+                        , Element.paddingXY 70 0
+                        , width <| fillPortion 3
+                        , height fill
+                        , centerX
+                        ]
                 ]
     in
     case model.pages of
         TeamDataPage ->
-            page
-                "Registeration"
-                FirstPage
-                << Element.map TeamDataMsg
-            <|
-                TeamData.view model.teamData
+            model.teamData
+                |> TeamData.view
+                |> Element.map TeamDataMsg
+                |> page "Registeration" FirstPage
 
         AutonomousPage ->
-            page
-                "Autonomous"
-                MiddlePage
-                << Element.map AutonomousDataMsg
-            <|
-                Autonomous.view model.autonomousData
+            Autonomous.view model.autonomousData
+                |> Element.map AutonomousDataMsg
+                |> page "Autonomous" MiddlePage
 
         TeleopPage ->
-            page
-                "Teleop"
-                MiddlePage
-                << Element.map TeleopDataMsg
-            <|
-                Teleop.view model.teleopData
+            Teleop.view model.teleopData
+                |> Element.map TeleopDataMsg
+                |> page "Teleop" MiddlePage
 
         ClimbingPage ->
-            page
-                "End-game"
-                LastPage
-                << Element.map ClimbingDataMsg
-            <|
-                Climbing.view model.climbingData
+            Climbing.view model.climbingData
+                |> Element.map ClimbingDataMsg
+                |> page "End-game" LastPage
 
 
 buttonStyle : List (Element.Attribute Msg)

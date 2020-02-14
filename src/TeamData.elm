@@ -65,9 +65,6 @@ view model =
         [ Background.color blue
         , padding 50
         , spacing 100
-        , centerX
-        , width <| fillPortion 4
-        , height fill
         ]
         [ textInput model.scouterName ScouterInput "your name"
         , radio
