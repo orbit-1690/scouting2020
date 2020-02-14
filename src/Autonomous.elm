@@ -103,6 +103,29 @@ createButton msg name =
 
 view : Model -> Element.Element Msg
 view model =
+    let
+        radios :
+            Input.Label Msg
+            -> BallsInitAmount
+            -> Element.Element Msg
+            -> BallsInitAmount
+            -> Element.Element Msg
+            -> Element.Element Msg
+        radios label ballAmount1 txtMsg1 ballAmount2 txtMsg2 =
+            radioRow
+                [ padding 10
+                , spacing 50
+                , Font.size 50
+                ]
+                { onChange = BallsAmount
+                , selected = Just model.ballsAmount
+                , label = label
+                , options =
+                    [ Input.option ballAmount1 <| txtMsg1
+                    , Input.option ballAmount2 <| txtMsg2
+                    ]
+                }
+    in
     column
         [ Background.color sky
         , padding 50
@@ -112,32 +135,18 @@ view model =
         , centerY
         , Element.height <| Element.fillPortion 5
         ]
-        [ radioRow
-            [ padding 10
-            , spacing 50
-            , Font.size 60
-            ]
-            { onChange = BallsAmount
-            , selected = Just model.ballsAmount
-            , label = Input.labelAbove [ Font.size 60, padding 10, spacing 20 ] <| text "started with:"
-            , options =
-                [ Input.option NoBalls <| text "0 balls"
-                , Input.option OneBall <| text "1 ball"
-                ]
-            }
-        , radioRow
-            [ padding 10
-            , spacing 50
-            , Font.size 60
-            ]
-            { onChange = BallsAmount
-            , selected = Just model.ballsAmount
-            , label = Input.labelHidden "option2"
-            , options =
-                [ Input.option TwoBalls <| text "2 balls"
-                , Input.option ThreeBalls <| text "3 balls"
-                ]
-            }
+        [ radios
+            (Input.labelAbove [ Font.size 60, padding 10, spacing 20 ] <| text "started with:")
+            NoBalls
+            (text "0 balls")
+            OneBall
+            (text "1 ball")
+        , radios
+            (Input.labelHidden "option2")
+            TwoBalls
+            (text "2 balls")
+            ThreeBalls
+            (text "3 balls")
         , createButton Moved <|
             if model.moved then
                 "moved."
