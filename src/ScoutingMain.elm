@@ -81,52 +81,54 @@ findColor alliance =
         purple
 
 
-stylishPage : PagePosition -> Element.Element Msg -> Element.Element Msg
-stylishPage position page =
-    column
-        [ Background.color Colors.blue
-        , padding 15
-        , centerX
-        ]
-        [ page
-        , case position of
-            FirstPage ->
-                button
+stylishPage : PagePosition -> Element.Element Msg
+stylishPage position =
+    (case position of
+        FirstPage ->
+            button
+                buttonStyle
+                { onPress = Just <| NextPage
+                , label = Element.text "Next"
+                }
+
+        LastPage ->
+            Element.row
+                [ spacing 15, centerX, centerY ]
+                [ button
+                    buttonStyle
+                    { onPress = Just <| PrevPage
+                    , label = Element.text "Previous"
+                    }
+                , button
+                    buttonStyle
+                    { onPress = Just <| Submit
+                    , label = Element.text "Submit"
+                    }
+                ]
+
+        MiddlePage ->
+            Element.row
+                [ spacing 100, centerX, centerY ]
+                [ button
+                    buttonStyle
+                    { onPress = Just <| PrevPage
+                    , label = Element.text "Previous"
+                    }
+                , button
                     buttonStyle
                     { onPress = Just <| NextPage
                     , label = Element.text "Next"
                     }
-
-            LastPage ->
-                Element.row
-                    [ spacing 15, centerX, centerY ]
-                    [ button
-                        buttonStyle
-                        { onPress = Just <| PrevPage
-                        , label = Element.text "Previous"
-                        }
-                    , button
-                        buttonStyle
-                        { onPress = Just <| Submit
-                        , label = Element.text "Submit"
-                        }
-                    ]
-
-            MiddlePage ->
-                Element.row
-                    [ spacing 100, centerX, centerY ]
-                    [ button
-                        buttonStyle
-                        { onPress = Just <| PrevPage
-                        , label = Element.text "Previous"
-                        }
-                    , button
-                        buttonStyle
-                        { onPress = Just <| NextPage
-                        , label = Element.text "Next"
-                        }
-                    ]
-        ]
+                ]
+    )
+        |> el
+            [ padding 15
+            , centerX
+            , centerY
+            , Element.paddingXY 70 0
+            , width fill
+            , centerX
+            ]
 
 
 init : Model
@@ -258,16 +260,8 @@ view model =
                         , Font.glow Colors.black 10
                         , centerX
                         ]
-                , stylishPage
-                    pagePosition
-                    msg
-                    |> el
-                        [ Background.color <| findColor (TeamData.stationToString model.teamData.station)
-                        , Element.paddingXY 70 0
-                        , width <| fillPortion 3
-                        , height fill
-                        , centerX
-                        ]
+                , msg
+                , stylishPage pagePosition
                 ]
     in
     case model.pages of
