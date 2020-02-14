@@ -63,18 +63,25 @@ view : Model -> Element.Element Msg
 view model =
     column
         [ Background.color blue
-        , padding 50
+        , padding 20
         , spacing 100
         ]
         [ textInput model.scouterName ScouterInput "your name"
         , radio
             [ padding 10
             , spacing 50
-            , Font.size 90
+            , Font.size 50
             ]
             { onChange = Station
             , selected = model.station
-            , label = Input.labelAbove [ Font.size 90, padding 10, spacing 20, Font.underline ] (text "Station")
+            , label =
+                Input.labelAbove
+                    [ Font.size 50
+                    , padding 10
+                    , spacing 20
+                    , Font.underline
+                    ]
+                    (text "Station")
             , options =
                 [ inputOption GetMatch.Blue GetMatch.One "Blue 1"
                 , inputOption GetMatch.Blue GetMatch.Two "Blue 2"

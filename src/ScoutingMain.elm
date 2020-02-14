@@ -246,14 +246,14 @@ view model =
                 ]
                 [ text name
                     |> el
-                        [ Font.size 80
+                        [ Font.size 50
                         , Font.color Colors.white
                         , Font.glow Colors.black 10
                         , centerX
                         ]
                 , text ("scouted team: " ++ teamDataToString model)
                     |> el
-                        [ Font.size 50
+                        [ Font.size 40
                         , Font.color Colors.white
                         , Font.glow Colors.black 10
                         , centerX
