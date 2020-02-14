@@ -78,7 +78,7 @@ findColor alliance =
         Colors.backgroundRed
 
     else
-        Colors.purple
+        purple
 
 
 stylishPage : PagePosition -> Element.Element Msg -> Element.Element Msg

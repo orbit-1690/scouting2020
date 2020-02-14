@@ -65,6 +65,8 @@ view model =
         [ Background.color blue
         , padding 20
         , spacing 100
+        , width fill
+        , height fill
         ]
         [ textInput model.scouterName ScouterInput "your name"
         , radio
@@ -172,7 +174,7 @@ textInput : String -> (String -> Msg) -> String -> Element.Element Msg
 textInput modelValue nextButton name =
     Input.text
         [ Font.color sky
-        , Font.size 70
+        , Font.size 50
         , rounded 10
         , Font.family
             [ Font.external
