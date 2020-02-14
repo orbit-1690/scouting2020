@@ -9,7 +9,6 @@ module Colors exposing
     , gray
     , green
     , lightBlue
-    , naturalColor
     , orange
     , pink
     , purple
@@ -25,7 +24,7 @@ import Element exposing (Color)
 
 red : Color
 red =
-    Element.rgb255 200 0 0
+    Element.rgb255 255 182 173
 
 
 orange : Color
@@ -65,12 +64,12 @@ sky =
 
 blue : Color
 blue =
-    Element.rgb255 0 0 200
+    Element.rgb255 177 210 219
 
 
 purple : Color
 purple =
-    Element.rgb255 127 0 255
+    Element.rgb255 181 130 191
 
 
 pink : Color
@@ -100,17 +99,12 @@ veryLightBlue =
 
 backgroundBlue : Color
 backgroundBlue =
-    Element.rgb255 68 122 186
+    Element.rgb255 45 45 200
 
 
 backgroundRed : Color
 backgroundRed =
-    Element.rgb255 255 77 77
-
-
-naturalColor : Color
-naturalColor =
-    Element.rgb255 178 102 255
+    Element.rgb255 255 50 50
 
 
 brown : Color

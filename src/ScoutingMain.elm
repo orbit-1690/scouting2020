@@ -69,11 +69,6 @@ type alias Model =
     }
 
 
-type BackGroundColorOptions
-    = Blue Color
-    | Red Color
-
-
 findColor : String -> Element.Color
 findColor alliance =
     if String.contains "Blue" alliance then
@@ -83,36 +78,17 @@ findColor alliance =
         Colors.backgroundRed
 
     else
-        Colors.naturalColor
+        Colors.purple
 
 
-stylishPage : String -> PagePosition -> String -> String -> Element.Element Msg -> Element.Element Msg
-stylishPage station position title teamNumber page =
-    let
-        decoration : Int -> List (Element.Attribute Msg)
-        decoration size =
-            [ padding 10
-            , spacing 10
-            , centerX
-            , Font.color Colors.black
-            , Font.size size
-            ]
-    in
+stylishPage : PagePosition -> Element.Element Msg -> Element.Element Msg
+stylishPage position page =
     column
-        [ Background.color <| findColor station
-        , spacing 15
-        , width fill
-        , height fill
+        [ Background.color Colors.blue
+        , padding 15
+        , centerX
         ]
-        [ column [ height <| fillPortion 1 ]
-            [ el
-                (decoration 80)
-                (text <| title)
-            , el
-                (decoration 50)
-                (text <| "\nscouted team: " ++ teamNumber)
-            ]
-        , page
+        [ page
         , case position of
             FirstPage ->
                 button
@@ -170,7 +146,7 @@ dumpModel model =
         (String.concat [ String.join "-" <| TeamData.getter model.teamData, ".txt" ])
         "content/text"
     <|
-        String.join "\n"
+        String.join ","
             [ String.join "," <| TeamData.getter model.teamData
             , Autonomous.getter model.autonomousData
             , Teleop.getter model.teleopData
@@ -252,22 +228,48 @@ view : Model -> Element.Element Msg
 view model =
     let
         page : String -> PagePosition -> Element.Element Msg -> Element.Element Msg
-        page name pagePosition =
-            el
-                [ Background.color <| findColor (TeamData.stationToString model.teamData.station)
-                , spacing 10
-                , padding 70
-                , width <| fillPortion 3
-                , height fill
+        page name pagePosition msg =
+            let
+                decoration : Int -> List (Element.Attribute Msg)
+                decoration size =
+                    [ centerX
+                    , Font.color Colors.white
+                    , Font.glow Colors.black 10
+                    , Font.size size
+                    ]
+            in
+            column
+                [ height fill
+                , centerX
                 ]
-                << stylishPage
-                    (TeamData.stationToString model.teamData.station)
-                    pagePosition
-                    name
-                    (TeamData.getTeam2 model.teamData
-                        |> Result.map String.fromInt
-                        |> merge
-                    )
+                [ column [ width fill, centerX, height <| fillPortion 1, Border.widthXY 10 10, Background.color purple ]
+                    [ el
+                        (decoration 80)
+                        (text <|
+                            name
+                        )
+                    , el
+                        (decoration 50)
+                        (text <|
+                            "\nscouted team: "
+                                ++ (TeamData.getTeam2 model.teamData
+                                        |> Result.map String.fromInt
+                                        |> merge
+                                   )
+                        )
+                    ]
+                , el
+                    [ Background.color <| findColor (TeamData.stationToString model.teamData.station)
+                    , Element.paddingXY 70 0
+                    , width <| fillPortion 3
+                    , height fill
+                    , centerX
+                    ]
+                  <|
+                    stylishPage
+                        pagePosition
+                        msg
+                ]
     in
     case model.pages of
         TeamDataPage ->

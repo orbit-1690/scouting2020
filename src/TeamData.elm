@@ -62,7 +62,7 @@ inputOption allianceColor allianceNumber text =
 view : Model -> Element.Element Msg
 view model =
     column
-        [ Background.color sky
+        [ Background.color blue
         , padding 50
         , spacing 100
         , centerX
@@ -77,7 +77,7 @@ view model =
             ]
             { onChange = Station
             , selected = model.station
-            , label = Input.labelAbove [ Font.size 90, padding 10, spacing 20 ] (text "Which station?")
+            , label = Input.labelAbove [ Font.size 90, padding 10, spacing 20, Font.underline ] (text "Station")
             , options =
                 [ inputOption GetMatch.Blue GetMatch.One "Blue 1"
                 , inputOption GetMatch.Blue GetMatch.Two "Blue 2"

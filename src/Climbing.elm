@@ -153,9 +153,7 @@ view model =
     column
         [ Background.color sky
         , padding 50
-        , spacing 50
         , height <| Element.fillPortion 5
-        , widthXY 5 5
         , rounded 37
         , centerX
         , centerY
