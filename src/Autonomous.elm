@@ -6,7 +6,7 @@ import Element exposing (centerX, centerY, column, el, padding, spacing, text)
 import Element.Background as Background
 import Element.Border as Border exposing (rounded)
 import Element.Font as Font exposing (center)
-import Element.Input as Input exposing (button, radioRow)
+import Element.Input as Input exposing (button, radio)
 
 
 type Msg
@@ -111,9 +111,9 @@ view model =
         , centerX
         , centerY
         ]
-        [ radioRow
+        [ radio
             [ padding 10
-            , spacing 50
+            , spacing 20
             , Font.size 60
             ]
             { onChange = BallsAmount
@@ -121,19 +121,8 @@ view model =
             , label = Input.labelAbove [ Font.size 60, padding 10, spacing 20 ] <| text "started with:"
             , options =
                 [ Input.option NoBalls <| text "0 balls"
-                , Input.option OneBall <| text "1 ball"
-                ]
-            }
-        , radioRow
-            [ padding 10
-            , spacing 50
-            , Font.size 60
-            ]
-            { onChange = BallsAmount
-            , selected = Just model.ballsAmount
-            , label = Input.labelHidden "option2"
-            , options =
-                [ Input.option TwoBalls <| text "2 balls"
+                , Input.option OneBall <| text "1 balls"
+                , Input.option TwoBalls <| text "2 balls"
                 , Input.option ThreeBalls <| text "3 balls"
                 ]
             }
