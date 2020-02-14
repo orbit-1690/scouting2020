@@ -241,7 +241,7 @@ view model =
                 [ centerX
                 , width fill
                 , spacing 30
-                , Background.color purple
+                , Background.color << findColor <| TeamData.stationToString model.teamData.station
                 , height fill
                 ]
                 [ text name
