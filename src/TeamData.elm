@@ -1,4 +1,4 @@
-module TeamData exposing (Model, Msg, getMatch, getTeam, init, stationToString, update, view)
+module TeamData exposing (Model, Msg, getMatch, getTeam, getter, init, stationToString, update, view)
 
 import Array exposing (Array)
 import Browser
@@ -42,7 +42,7 @@ getter : Model -> List String
 getter model =
     [ model.matchNumber
     , stationToString model.station
-    , getTeam2 model
+    , getTeam model
         |> Result.map String.fromInt
         |> merge
     , "'" ++ model.scouterName ++ "'"

@@ -1,4 +1,4 @@
-module Climbing exposing (Model, Msg, getter, init, subscriptions, update, view)
+module Climbing exposing (Model, Msg, getter, init, update, view)
 
 import Array
 import Colors exposing (black, blue, purple, sky, white)
@@ -9,7 +9,7 @@ import Element.Font as Font exposing (center)
 import Element.Input as Input exposing (button, labelHidden, radio)
 import GetMatch
 import TeamData
-import Teleop exposing (boolToText)
+import Teleop
 
 
 type Msg

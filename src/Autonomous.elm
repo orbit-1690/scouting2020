@@ -1,4 +1,4 @@
-module Autonomous exposing (Model, Msg, getter, init, subscriptions, update, view)
+module Autonomous exposing (Model, Msg, getter, init, update, view)
 
 import Colors exposing (black, blue, purple, sky, white)
 import Counter

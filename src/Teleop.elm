@@ -1,4 +1,4 @@
-module Teleop exposing (Model, Msg, createButton, decoration, init, printButton, subscriptions, update, view)
+module Teleop exposing (Model, Msg, createButton, decoration, getter, init, printButton, update, view)
 
 import Colors exposing (black, blue, purple, sky, white)
 import Counter
