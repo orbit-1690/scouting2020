@@ -11,7 +11,7 @@ import Element.Border as Border
 import Element.Font as Font exposing (center)
 import Element.Input exposing (button)
 import File.Download as Download
-import GetMatch exposing (stationToString)
+import GetMatch
 import Html.Attributes exposing (style)
 import Result.Extra exposing (merge)
 import TeamData
@@ -166,9 +166,6 @@ dumpModel model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ScreenSize device ->
-            ( { model | screenSize = device }, Cmd.none )
-
         TeamDataMsg teamMsg ->
             ( { model | teamData = TeamData.update teamMsg model.teamData }, Cmd.none )
 
@@ -182,17 +179,20 @@ update msg model =
             ( { model | climbingData = Climbing.update climbMsg model.climbingData }, Cmd.none )
 
         PrevPage ->
-            if model.pages == AutonomousPage then
-                { model | pages = TeamDataPage }
+            ( case model.pages of
+                AutonomousPage ->
+                    { model | pages = TeamDataPage }
 
-            else if model.pages == TeleopPage then
-                { model | pages = AutonomousPage }
+                TeleopPage ->
+                    { model | pages = AutonomousPage }
 
-            else if model.pages == ClimbingPage then
-                { model | pages = TeleopPage }
+                ClimbingPage ->
+                    { model | pages = TeleopPage }
 
-            else
-                model
+                default ->
+                    model
+            , Cmd.none
+            )
 
         NextPage ->
             let
@@ -248,7 +248,7 @@ view model =
                     (TeamData.stationToString model.teamData.station)
                     pagePosition
                     name
-                    (TeamData.getTeam2 model.teamData
+                    (TeamData.getTeam model.teamData
                         |> Result.map String.fromInt
                         |> merge
                     )
