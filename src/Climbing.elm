@@ -38,10 +38,10 @@ getter model =
         boolToString : Bool -> String
         boolToString bool =
             if bool then
-                "true"
+                "1"
 
             else
-                "false"
+                "0"
 
         statusToString : Status -> String
         statusToString status =
@@ -55,13 +55,13 @@ getter model =
                 Loser ->
                     "Loser"
     in
-    String.join ","
-        [ boolToString model.triedClimb
-        , boolToString model.balanced
-        , statusToString model.climbStatus
-        , boolToString model.defended
-        , boolToString model.wasDefended
-        , "'" ++ model.comment ++ "'"
+    String.join "\n"
+        [ "triedClimb" ++ "," ++ boolToString model.triedClimb
+        , "balanced?" ++ "," ++ boolToString model.balanced
+        , "final state" ++ "," ++ statusToString model.climbStatus
+        , "defended?" ++ "," ++ boolToString model.defended
+        , "was defended?" ++ "," ++ boolToString model.wasDefended
+        , "comments" ++ "," ++ "'" ++ model.comment ++ "'"
         ]
 
 

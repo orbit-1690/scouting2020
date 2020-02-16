@@ -40,10 +40,10 @@ getter model =
         boolToString : Bool -> String
         boolToString bool =
             if bool then
-                "true"
+                "1"
 
             else
-                "false"
+                "0"
 
         ballsAmountToString : BallsInitAmount -> String
         ballsAmountToString ball =
@@ -60,16 +60,16 @@ getter model =
                 ThreeBalls ->
                     "3"
     in
-    String.join ","
-        [ ballsAmountToString model.ballsAmount
-        , boolToString model.moved
-        , String.fromInt model.lowlevel
-        , String.fromInt model.levelTwo
-        , String.fromInt model.levelThree
-        , String.fromInt model.missed
-        , String.fromInt model.trenchCollection
-        , String.fromInt model.enemyTrenchCollection
-        , String.fromInt model.rendezvousCollection
+    String.join "\n"
+        [ "started with" ++ "," ++ ballsAmountToString model.ballsAmount
+        , "moved?" ++ "," ++ boolToString model.moved
+        , "level 1" ++ "," ++ String.fromInt model.lowlevel
+        , "level 2" ++ "," ++ String.fromInt model.levelTwo
+        , "level 3" ++ "," ++ String.fromInt model.levelThree
+        , "missed" ++ "," ++ String.fromInt model.missed
+        , "trenchCollection" ++ "," ++ String.fromInt model.trenchCollection
+        , "enemyTrenchCollection" ++ "," ++ String.fromInt model.enemyTrenchCollection
+        , "rendezvousCollection" ++ "," ++ String.fromInt model.rendezvousCollection
         ]
 
 
