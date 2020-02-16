@@ -1,10 +1,10 @@
-module Autonomous exposing (Model, Msg, getter, init, subscriptions, update, view)
+module Autonomous exposing (Model, Msg, getter, init, update, view)
 
-import Colors exposing (blue, purple, sky, white)
+import Colors exposing (black, blue, purple, sky, white)
 import Counter
 import Element exposing (centerX, centerY, column, el, padding, spacing, text)
 import Element.Background as Background
-import Element.Border as Border exposing (rounded)
+import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
 import Element.Input as Input exposing (button, radioRow)
 
@@ -40,10 +40,10 @@ getter model =
         boolToString : Bool -> String
         boolToString bool =
             if bool then
-                "true"
+                "1"
 
             else
-                "false"
+                "0"
 
         ballsAmountToString : BallsInitAmount -> String
         ballsAmountToString ball =
@@ -60,16 +60,16 @@ getter model =
                 ThreeBalls ->
                     "3"
     in
-    String.join ","
-        [ ballsAmountToString model.ballsAmount
-        , boolToString model.moved
-        , String.fromInt model.lowlevel
-        , String.fromInt model.levelTwo
-        , String.fromInt model.levelThree
-        , String.fromInt model.missed
-        , String.fromInt model.trenchCollection
-        , String.fromInt model.enemyTrenchCollection
-        , String.fromInt model.rendezvousCollection
+    String.join "\n"
+        [ "started with" ++ "," ++ ballsAmountToString model.ballsAmount
+        , "moved?" ++ "," ++ boolToString model.moved
+        , "level 1" ++ "," ++ String.fromInt model.lowlevel
+        , "level 2" ++ "," ++ String.fromInt model.levelTwo
+        , "level 3" ++ "," ++ String.fromInt model.levelThree
+        , "missed" ++ "," ++ String.fromInt model.missed
+        , "trenchCollection" ++ "," ++ String.fromInt model.trenchCollection
+        , "enemyTrenchCollection" ++ "," ++ String.fromInt model.enemyTrenchCollection
+        , "rendezvousCollection" ++ "," ++ String.fromInt model.rendezvousCollection
         ]
 
 
@@ -84,7 +84,7 @@ createButton : Msg -> String -> Element.Element Msg
 createButton msg name =
     button
         [ Font.color white
-        , Font.size 60
+        , Font.size 25
         , Font.glow blue 5
         , Border.rounded 4
         , Font.bold
@@ -100,6 +100,22 @@ createButton msg name =
         , centerY
         ]
         { onPress = Just msg, label = text name }
+
+
+buttonInfo : String -> String -> Bool -> Element.Element Msg
+buttonInfo onFalse onTrue modelBool =
+    el
+        [ center
+        , centerX
+        , centerY
+        ]
+        (text <|
+            if modelBool then
+                onTrue
+
+            else
+                onFalse
+        )
 
 
 view : Model -> Element.Element Msg
@@ -203,8 +219,3 @@ update msg model =
 
         RendezvousCollection count ->
             { model | rendezvousCollection = counterUpdate count model.rendezvousCollection }
-
-
-subscriptions : Sub Msg
-subscriptions =
-    Sub.none

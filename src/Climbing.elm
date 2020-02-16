@@ -1,4 +1,4 @@
-module Climbing exposing (Model, Msg, getter, init, subscriptions, update, view)
+module Climbing exposing (Model, Msg, getter, init, update, view)
 
 import Array
 import Colors exposing (black, blue, purple, sky, white)
@@ -9,6 +9,7 @@ import Element.Font as Font exposing (center)
 import Element.Input as Input exposing (button, labelHidden, radio)
 import GetMatch
 import TeamData
+import Teleop
 
 
 type Msg
@@ -37,10 +38,10 @@ getter model =
         boolToString : Bool -> String
         boolToString bool =
             if bool then
-                "true"
+                "1"
 
             else
-                "false"
+                "0"
 
         statusToString : Status -> String
         statusToString status =
@@ -54,13 +55,13 @@ getter model =
                 Loser ->
                     "Loser"
     in
-    String.join ","
-        [ boolToString model.triedClimb
-        , boolToString model.balanced
-        , statusToString model.climbStatus
-        , boolToString model.defended
-        , boolToString model.wasDefended
-        , "'" ++ model.comment ++ "'"
+    String.join "\n"
+        [ "triedClimb" ++ "," ++ boolToString model.triedClimb
+        , "balanced?" ++ "," ++ boolToString model.balanced
+        , "final state" ++ "," ++ statusToString model.climbStatus
+        , "defended?" ++ "," ++ boolToString model.defended
+        , "was defended?" ++ "," ++ boolToString model.wasDefended
+        , "comments" ++ "," ++ "'" ++ model.comment ++ "'"
         ]
 
 
@@ -106,8 +107,8 @@ textInput modelValue nextButton name =
         , height fill
         , Font.family
             [ Font.external
-                { name = "Pacifico"
-                , url = "https://fonts.googleapis.com/css?family=Pacifico"
+                { name = "open-sans"
+                , url = "https://fonts.googleapis.com/css?family=open-sans"
                 }
             ]
         ]
@@ -122,7 +123,7 @@ createButton : Msg -> String -> Element.Element Msg
 createButton msg name =
     button
         [ Font.color white
-        , Font.size 60
+        , Font.size 25
         , Font.glow blue 5
         , Border.rounded 10
         , Font.bold
@@ -213,8 +214,3 @@ printButton onFalse onTrue modelBool =
             else
                 onFalse
         )
-
-
-subscriptions : Sub Msg
-subscriptions =
-    Sub.none
