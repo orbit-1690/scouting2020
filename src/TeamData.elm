@@ -3,12 +3,13 @@ module TeamData exposing (Model, Msg, getMatch, getTeam2, getter, init, stationT
 import Array exposing (Array)
 import Browser
 import Colors exposing (blue, orange, sky, white)
-import Element exposing (centerX, centerY, column, el, fill, fillPortion, height, minimum, padding, spacing, text, width)
+import Element exposing (centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, minimum, padding, spacing, text, width)
 import Element.Background as Background
 import Element.Border exposing (rounded)
 import Element.Font as Font exposing (center)
 import Element.Input as Input exposing (radio)
 import GetMatch exposing (AllianceColor, AllianceStation, Match, StationNumber, getTeam)
+import Html.Attributes exposing (style)
 import Maybe.Extra exposing (unwrap)
 import Result.Extra exposing (merge)
 import String
@@ -66,7 +67,7 @@ view model =
         , padding 20
         , spacing 100
         , width fill
-        , height fill
+        , htmlAttribute <| style "height" "88%"
         ]
         [ textInput model.scouterName ScouterInput "your name"
         , radio
@@ -94,26 +95,19 @@ view model =
                 ]
             }
         , textInput model.matchNumber MatchInput "Match number"
-        , el
-            [ Background.color orange
-            , width fill
-            , rounded 10
-            , center
-            , Font.color Colors.black
-            , Font.glow Colors.gray 5
-            , Font.size 60
-            , Font.family
-                [ Font.external
-                    { name = "Open Sans"
-                    , url = "https://fonts.googleapis.com/css?family=Open+Sans:700i&display=swap"
-                    }
+        , getTeam2 model
+            |> Result.map String.fromInt
+            |> merge
+            |> Element.text
+            |> el
+                [ Background.color orange
+                , width fill
+                , rounded 10
+                , center
+                , Font.color Colors.black
+                , Font.glow Colors.white 1
+                , Font.size 60
                 ]
-            ]
-            (getTeam2 model
-                |> Result.map String.fromInt
-                |> merge
-                |> Element.text
-            )
         ]
 
 
@@ -176,12 +170,7 @@ textInput modelValue nextButton name =
         [ Font.color sky
         , Font.size 50
         , rounded 10
-        , Font.family
-            [ Font.external
-                { name = "Open Sans"
-                , url = "https://fonts.googleapis.com/css?family=Open+Sans:700i&display=swap"
-                }
-            ]
+        , fontExternal
         ]
         { onChange = nextButton
         , text = modelValue
@@ -207,3 +196,13 @@ update msg model =
                 | matchNumber = matchNumber
                 , team = getTeam2 model
             }
+
+
+fontExternal : Element.Attr () Msg
+fontExternal =
+    Font.family
+        [ Font.external
+            { name = "Open Sans"
+            , url = "https://fonts.googleapis.com/css?family=Open+Sans:700i&display=swap"
+            }
+        ]

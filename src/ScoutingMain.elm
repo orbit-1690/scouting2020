@@ -6,10 +6,10 @@ import Browser
 import Browser.Events as BE
 import Climbing
 import Colors exposing (blue, purple, white)
-import Element exposing (Color, Device, centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, layout, padding, spacing, text, width)
+import Element exposing (Color, centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, layout, padding, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
-import Element.Font as Font exposing (center)
+import Element.Font as Font
 import Element.Input exposing (button)
 import File.Download as Download
 import GetMatch exposing (stationToString)
@@ -29,6 +29,16 @@ main =
         }
 
 
+widthPrecent : Int -> Element.Attribute Msg
+widthPrecent precent =
+    htmlAttribute << style "width" <| String.fromInt precent ++ "%"
+
+
+heightPrecent : Int -> Element.Attribute Msg
+heightPrecent precent =
+    htmlAttribute << style "height" <| String.fromInt precent ++ "%"
+
+
 type Pages
     = TeamDataPage
     | AutonomousPage
@@ -41,7 +51,6 @@ type Msg
     | AutonomousDataMsg Autonomous.Msg
     | TeleopDataMsg Teleop.Msg
     | ClimbingDataMsg Climbing.Msg
-    | ScreenSize Device
     | PrevPage
     | NextPage
     | Submit
@@ -53,19 +62,12 @@ type PagePosition
     | LastPage
 
 
-type alias DeviceSize =
-    { width : Int
-    , height : Int
-    }
-
-
 type alias Model =
     { teamData : TeamData.Model
     , autonomousData : Autonomous.Model
     , teleopData : Teleop.Model
     , climbingData : Climbing.Model
     , pages : Pages
-    , screenSize : Device
     }
 
 
@@ -93,7 +95,7 @@ stylishPage position =
 
         LastPage ->
             Element.row
-                [ spacing 15, centerX, centerY ]
+                [ spacing 15, centerX ]
                 [ button
                     buttonStyle
                     { onPress = Just <| PrevPage
@@ -108,7 +110,7 @@ stylishPage position =
 
         MiddlePage ->
             Element.row
-                [ spacing 100, centerX, centerY ]
+                [ spacing 100, centerX ]
                 [ button
                     buttonStyle
                     { onPress = Just <| PrevPage
@@ -122,12 +124,10 @@ stylishPage position =
                 ]
     )
         |> el
-            [ padding 15
-            , centerX
+            [ centerX
             , centerY
-            , Element.paddingXY 70 0
             , width fill
-            , centerX
+            , heightPrecent 100
             ]
 
 
@@ -138,7 +138,6 @@ init =
     , teleopData = Teleop.init
     , climbingData = Climbing.init
     , pages = TeamDataPage
-    , screenSize = Element.classifyDevice <| DeviceSize 0 0
     }
 
 
@@ -159,9 +158,6 @@ dumpModel model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ScreenSize device ->
-            ( { model | screenSize = device }, Cmd.none )
-
         TeamDataMsg teamMsg ->
             ( { model | teamData = TeamData.update teamMsg model.teamData }, Cmd.none )
 
@@ -242,24 +238,28 @@ view model =
             column
                 [ centerX
                 , width fill
-                , spacing 30
                 , Background.color << findColor <| TeamData.stationToString model.teamData.station
                 , height fill
                 ]
-                [ text name
-                    |> el
-                        [ Font.size 50
-                        , Font.color Colors.white
-                        , Font.glow Colors.black 10
-                        , centerX
-                        ]
-                , text ("scouted team: " ++ teamDataToString model)
-                    |> el
-                        [ Font.size 40
-                        , Font.color Colors.white
-                        , Font.glow Colors.black 10
-                        , centerX
-                        ]
+                [ column [ heightPrecent 7, width fill ]
+                    [ text name
+                        |> el
+                            [ Font.size 50
+                            , Font.color Colors.white
+                            , Font.glow Colors.black 10
+                            , centerX
+                            , height <| fillPortion 1
+                            , Font.underline
+                            ]
+                    , text ("scouted team: " ++ teamDataToString model)
+                        |> el
+                            [ Font.size 40
+                            , Font.color Colors.white
+                            , Font.glow Colors.black 10
+                            , centerX
+                            , height <| fillPortion 1
+                            ]
+                    ]
                 , msg
                 , stylishPage pagePosition
                 ]
@@ -290,15 +290,11 @@ view model =
 buttonStyle : List (Element.Attribute Msg)
 buttonStyle =
     [ Font.color Colors.white
-    , Font.size 80
-    , Font.glow Colors.gray 5
+    , Font.size 60
+    , Font.glow Colors.black 6
     , Border.rounded 10
-    , Font.family
-        [ Font.external
-            { name = "Open Sans"
-            , url = "https://fonts.googleapis.com/css?family=Open+Sans:700i&display=swap"
-            }
-        ]
     , Background.color Colors.gray
     , centerX
+    , centerY
+    , heightPrecent 70
     ]

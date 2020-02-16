@@ -61,6 +61,7 @@ createButton msg name =
         , Font.size 90
         , Font.glow blue 5
         , rounded 10
+        , Font.bold
         , Font.family
             [ Font.external
                 { name = "Open Sans"

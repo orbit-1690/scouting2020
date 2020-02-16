@@ -87,6 +87,7 @@ createButton msg name =
         , Font.size 60
         , Font.glow blue 5
         , Border.rounded 4
+        , Font.bold
         , Font.family
             [ Font.external
                 { name = "Open Sans"
@@ -135,7 +136,7 @@ view model =
         , Element.height <| Element.fillPortion 5
         ]
         [ radios
-            (Input.labelAbove [ Font.size 60, padding 10, spacing 20 ] <| text "started with:")
+            (Input.labelAbove [ Font.size 50, padding 10, spacing 20, Font.underline ] <| text "started with:")
             NoBalls
             (text "0 balls")
             OneBall
@@ -156,7 +157,7 @@ view model =
         , Element.map LevelTwo <| Counter.view "second Level:" model.levelTwo
         , Element.map LevelThree <| Counter.view "third Level:" model.levelThree
         , Element.map Missed <| Counter.view "missed:" model.missed
-        , el [ Font.size 60, padding 10 ] (text "Collected from:")
+        , el [ Font.size 50, padding 10, Font.underline ] (text "Collected from:")
         , Element.map TrenchCollection <| Counter.view "their trench:" model.trenchCollection
         , Element.map EnemyTrenchCollection <| Counter.view "enemy's trench:" model.enemyTrenchCollection
         , Element.map RendezvousCollection <| Counter.view "rendezvous:" model.rendezvousCollection
