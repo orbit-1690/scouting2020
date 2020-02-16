@@ -4,11 +4,12 @@ import Array
 import Colors exposing (black, blue, purple, sky, white)
 import Element exposing (centerX, centerY, column, el, fill, height, padding, row, spacing, text)
 import Element.Background as Background
-import Element.Border as Border exposing (rounded, widthXY)
+import Element.Border as Border exposing (rounded)
 import Element.Font as Font exposing (center)
-import Element.Input as Input exposing (button, labelHidden, radioRow)
+import Element.Input as Input exposing (button, labelHidden, radio)
 import GetMatch
 import TeamData
+import Teleop exposing (boolToText)
 
 
 type Msg
@@ -153,11 +154,9 @@ view : Model -> Element.Element Msg
 view model =
     column
         [ Background.color sky
-        , Border.color black
         , padding 50
         , spacing 20
-        , widthXY 5 5
-        , rounded 10
+        , rounded 20
         , centerX
         , centerY
         ]
@@ -165,15 +164,17 @@ view model =
             [ row
                 yophyTophy
                 [ column yophyTophy
-                    [ createButton TriedClimb "Tried hanging?"
-                    , printButton "no" "yes" model.triedClimb
+                    [ el yophyTophy
+                        (text "Tried hanging?")
+                    , createButton TriedClimb <| boolToText model.triedClimb
                     ]
                 , column yophyTophy
-                    [ createButton Balanced "Balanced?"
-                    , printButton "no" "yes" model.balanced
+                    [ el yophyTophy
+                        (text "Balanced?")
+                    , createButton Balanced <| boolToText model.balanced
                     ]
                 ]
-            , radioRow
+            , radio
                 [ padding 10
                 , spacing 20
                 ]
@@ -186,15 +187,16 @@ view model =
                     , Input.option Hanged (text "hanged")
                     ]
                 }
-            , row
-                yophyTophy
+            , row yophyTophy
                 [ column yophyTophy
-                    [ createButton Defended "Defended?"
-                    , printButton "no" "yes" model.defended
+                    [ el yophyTophy
+                        (text "Defended?")
+                    , createButton Defended <| boolToText model.defended
                     ]
                 , column yophyTophy
-                    [ createButton WasDefended "Was defended?"
-                    , printButton "no" "yes" model.wasDefended
+                    [ el yophyTophy
+                        (text "Was defended?")
+                    , createButton WasDefended <| boolToText model.wasDefended
                     ]
                 ]
             , textInput model.comment Comment "any comments?"
