@@ -40,12 +40,15 @@ type alias Model =
 
 getter : Model -> List String
 getter model =
-    [ model.matchNumber
-    , stationToString model.station
-    , getTeam2 model
-        |> Result.map String.fromInt
-        |> merge
-    , "'" ++ model.scouterName ++ "'"
+    [ "match" ++ "," ++ model.matchNumber
+    , "station" ++ "," ++ stationToString model.station
+    , "team"
+        ++ ","
+        ++ (getTeam2 model
+                |> Result.map String.fromInt
+                |> merge
+           )
+    , "scouterName" ++ "," ++ "'" ++ model.scouterName ++ "'"
     ]
 
 

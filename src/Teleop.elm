@@ -34,18 +34,18 @@ getter model =
         boolToString : Bool -> String
         boolToString bool =
             if bool then
-                "true"
+                "1"
 
             else
-                "false"
+                "0"
     in
-    String.join ","
-        [ boolToString model.colorRoulette
-        , boolToString model.spunRoulette
-        , String.fromInt model.lowlevel
-        , String.fromInt model.levelTwo
-        , String.fromInt model.levelThree
-        , String.fromInt model.missed
+    String.join "\n"
+        [ "colorRoulette" ++ "," ++ boolToString model.colorRoulette
+        , "spunRoulette?" ++ "," ++ boolToString model.spunRoulette
+        , "level 1." ++ "," ++ String.fromInt model.lowlevel
+        , "level 2." ++ "," ++ String.fromInt model.levelTwo
+        , "level 3." ++ "," ++ String.fromInt model.levelThree
+        , "missed." ++ "," ++ String.fromInt model.missed
         ]
 
 
