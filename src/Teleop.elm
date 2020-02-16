@@ -147,11 +147,6 @@ view model =
         ]
 
 
-subscriptions : Sub Msg
-subscriptions =
-    Sub.none
-
-
 decoration : List (Element.Attribute Msg)
 decoration =
     [ padding 10

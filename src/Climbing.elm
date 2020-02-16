@@ -199,11 +199,6 @@ view model =
         ]
 
 
-subscriptions : Sub Msg
-subscriptions =
-    Sub.none
-
-
 printButton : String -> String -> Bool -> Element.Element Msg
 printButton onFalse onTrue modelBool =
     el

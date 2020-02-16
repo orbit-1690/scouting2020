@@ -5,7 +5,7 @@ import Autonomous
 import Browser
 import Climbing
 import Colors exposing (blue, purple, white)
-import Element exposing (Color, Device, centerX, centerY, column, el, fill, height, htmlAttribute, layout, padding, spacing, text, width)
+import Element exposing (Color, centerX, centerY, column, el, fill, height, htmlAttribute, layout, padding, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font exposing (center)
@@ -58,11 +58,6 @@ type alias Model =
     , climbingData : Climbing.Model
     , pages : Pages
     }
-
-
-type BackGroundColorOptions
-    = Blue Color
-    | Red Color
 
 
 findColor : String -> Element.Color

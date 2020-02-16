@@ -206,8 +206,3 @@ update msg model =
 
         RendezvousCollection count ->
             { model | rendezvousCollection = counterUpdate count model.rendezvousCollection }
-
-
-subscriptions : Sub Msg
-subscriptions =
-    Sub.none
