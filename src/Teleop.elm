@@ -132,12 +132,12 @@ view model =
         ]
         [ row decoration
             [ column decoration
-                [ createButton ColorRoulette "spun to\ncorrect color?"
-                , printButton "no" "yes" model.colorRoulette
-                ]
-            , column decoration
                 [ createButton SpunRoulette "spun cycles 3-5?"
                 , printButton "no" "yes" model.spunRoulette
+                ]
+            , column decoration
+                [ createButton ColorRoulette "spun to\ncorrect color?"
+                , printButton "no" "yes" model.colorRoulette
                 ]
             ]
         , Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
