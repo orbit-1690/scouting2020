@@ -1,4 +1,4 @@
-module Climbing exposing (Model, Msg, getter, init, subscriptions, update, view)
+module Climbing exposing (Model, Msg, getter, init, update, view)
 
 import Array
 import Colors exposing (black, blue, purple, sky, white)
@@ -9,7 +9,7 @@ import Element.Font as Font exposing (center)
 import Element.Input as Input exposing (button, labelHidden, radio)
 import GetMatch
 import TeamData
-import Teleop exposing (boolToText)
+import Teleop
 
 
 type Msg
@@ -102,8 +102,7 @@ textInput : String -> (String -> Msg) -> String -> Element.Element Msg
 textInput modelValue nextButton name =
     Input.text
         [ Font.color sky
-        , Font.size 60
-        , rounded 10
+        , Font.size 20
         , height fill
         , Font.family
             [ Font.external
@@ -123,7 +122,7 @@ createButton : Msg -> String -> Element.Element Msg
 createButton msg name =
     button
         [ Font.color white
-        , Font.size 60
+        , Font.size 25
         , Font.glow blue 5
         , Border.rounded 10
         , Font.family
@@ -140,11 +139,10 @@ createButton msg name =
         { onPress = Just msg, label = text name }
 
 
-yophyTophy : List (Element.Attribute Msg)
-yophyTophy =
+decoration : List (Element.Attribute Msg)
+decoration =
     [ padding 10
     , spacing 5
-    , Font.size 60
     , centerX
     , centerY
     ]
@@ -160,18 +158,16 @@ view model =
         , centerX
         , centerY
         ]
-        [ column yophyTophy
+        [ column decoration
             [ row
-                yophyTophy
-                [ column yophyTophy
-                    [ el yophyTophy
-                        (text "Tried hanging?")
-                    , createButton TriedClimb <| boolToText model.triedClimb
+                decoration
+                [ column decoration
+                    [ createButton TriedClimb "Tried hanging?"
+                    , printButton "no" "yes" model.triedClimb
                     ]
-                , column yophyTophy
-                    [ el yophyTophy
-                        (text "Balanced?")
-                    , createButton Balanced <| boolToText model.balanced
+                , column decoration
+                    [ createButton Balanced "Balanced?"
+                    , printButton "no" "yes" model.balanced
                     ]
                 ]
             , radio
@@ -187,16 +183,15 @@ view model =
                     , Input.option Hanged (text "hanged")
                     ]
                 }
-            , row yophyTophy
-                [ column yophyTophy
-                    [ el yophyTophy
-                        (text "Defended?")
-                    , createButton Defended <| boolToText model.defended
+            , row
+                decoration
+                [ column decoration
+                    [ createButton Defended "Defended?"
+                    , printButton "no" "yes" model.defended
                     ]
-                , column yophyTophy
-                    [ el yophyTophy
-                        (text "Was defended?")
-                    , createButton WasDefended <| boolToText model.wasDefended
+                , column decoration
+                    [ createButton WasDefended "Was defended?"
+                    , printButton "no" "yes" model.wasDefended
                     ]
                 ]
             , textInput model.comment Comment "any comments?"
@@ -218,8 +213,3 @@ printButton onFalse onTrue modelBool =
             else
                 onFalse
         )
-
-
-subscriptions : Sub Msg
-subscriptions =
-    Sub.none

@@ -1,14 +1,14 @@
-module TeamData exposing (Model, Msg, getMatch, getTeam2, getter, init, stationToString, update, view)
+module TeamData exposing (Model, Msg, getMatch, getTeam, getter, init, stationToString, update, view)
 
 import Array exposing (Array)
 import Browser
-import Colors exposing (blue, orange, sky, white)
+import Colors exposing (black, blue, orange, sky, white)
 import Element exposing (centerX, centerY, column, el, fill, height, minimum, padding, spacing, text, width)
 import Element.Background as Background
-import Element.Border exposing (rounded)
+import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
-import Element.Input as Input exposing (radio)
-import GetMatch exposing (AllianceColor, AllianceStation, Match, StationNumber, getTeam)
+import Element.Input as Input exposing (labelHidden, radioRow)
+import GetMatch exposing (AllianceColor, Match, StationNumber, TeamStation, getTeamNum)
 import Maybe.Extra exposing (unwrap)
 import Result.Extra exposing (merge)
 import String
@@ -26,13 +26,13 @@ main =
 type Msg
     = ScouterInput String
     | MatchInput String
-    | Station AllianceStation
+    | Station TeamStation
 
 
 type alias Model =
     { scouterName : String
     , matchNumber : String
-    , station : Maybe AllianceStation
+    , station : Maybe TeamStation
     , team : Result String Int
     , matches : Array Match
     }
@@ -44,7 +44,7 @@ getter model =
     , "station" ++ "," ++ stationToString model.station
     , "team"
         ++ ","
-        ++ (getTeam2 model
+        ++ (getTeam model
                 |> Result.map String.fromInt
                 |> merge
            )
@@ -66,21 +66,24 @@ view : Model -> Element.Element Msg
 view model =
     column
         [ Background.color sky
+        , Border.color black
         , padding 50
-        , spacing 40
+        , spacing 20
+        , widthXY 5 5
+        , rounded 10
         , centerX
         , centerY
         , rounded 20
         ]
         [ textInput model.scouterName ScouterInput "Scouter's name"
-        , radio
+        , radioRow
             [ padding 10
             , spacing 20
-            , Font.size 60
+            , Font.size 10
             ]
             { onChange = Station
             , selected = model.station
-            , label = Input.labelAbove [ Font.size 60, padding 10, spacing 20 ] (text "Which station?")
+            , label = Input.labelAbove [] (text "stations")
             , options =
                 [ inputOption GetMatch.Blue GetMatch.One "Blue 1"
                 , inputOption GetMatch.Blue GetMatch.Two "Blue 2"
@@ -93,9 +96,9 @@ view model =
         , textInput model.matchNumber MatchInput "Match number"
         , el
             [ Background.color orange
-            , width fill
+            , width <| minimum 350 <| fill
+            , height fill
             , center
-            , rounded 10
             , Font.color white
             , Font.glow blue 5
             , Font.size 60
@@ -106,7 +109,7 @@ view model =
                     }
                 ]
             ]
-            (getTeam2 model
+            (getTeam model
                 |> Result.map String.fromInt
                 |> merge
                 |> Element.text
@@ -114,8 +117,8 @@ view model =
         ]
 
 
-getTeam2 : Model -> Result String Int
-getTeam2 model =
+getTeam : Model -> Result String Int
+getTeam model =
     getMatch model
         |> Result.andThen
             (\match ->
@@ -123,7 +126,7 @@ getTeam2 model =
                     |> Result.fromMaybe "No station"
                     |> Result.map
                         (\station ->
-                            getTeam station match
+                            getTeamNum station match
                         )
             )
 
@@ -162,7 +165,7 @@ numberToString chosenNumber =
             "3"
 
 
-stationToString : Maybe AllianceStation -> String
+stationToString : Maybe TeamStation -> String
 stationToString alliance =
     unwrap "Now station selected" (\( color, number ) -> String.join " " [ colorToString color, numberToString number ]) alliance
 
@@ -196,11 +199,11 @@ update msg model =
         Station chosenStation ->
             { model
                 | station = Just chosenStation
-                , team = getTeam2 model
+                , team = getTeam model
             }
 
         MatchInput matchNumber ->
             { model
                 | matchNumber = matchNumber
-                , team = getTeam2 model
+                , team = getTeam model
             }

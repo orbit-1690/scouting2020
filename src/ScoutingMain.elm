@@ -3,16 +3,15 @@ module ScoutingMain exposing (Model, Msg, init, update, view)
 import Array
 import Autonomous
 import Browser
-import Browser.Events as BE
 import Climbing
 import Colors exposing (blue, purple, white)
-import Element exposing (Color, Device, centerX, centerY, column, el, fill, height, htmlAttribute, layout, padding, spacing, text, width)
+import Element exposing (Color, centerX, centerY, column, el, fill, height, htmlAttribute, layout, padding, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font exposing (center)
 import Element.Input exposing (button)
 import File.Download as Download
-import GetMatch exposing (stationToString)
+import GetMatch
 import Html.Attributes exposing (style)
 import Result.Extra exposing (merge)
 import TeamData
@@ -43,7 +42,6 @@ type Msg
     | TeleopDataMsg Teleop.Msg
     | ClimbingDataMsg Climbing.Msg
     | SubmitDataMsg Msg
-    | ScreenSize Device
     | PrevPage
     | NextPage
     | Submit
@@ -58,25 +56,13 @@ type PagePosition
     | SubmitPosPage
 
 
-type alias DeviceSize =
-    { width : Int
-    , height : Int
-    }
-
-
 type alias Model =
     { teamData : TeamData.Model
     , autonomousData : Autonomous.Model
     , teleopData : Teleop.Model
     , climbingData : Climbing.Model
     , pages : Pages
-    , screenSize : Device
     }
-
-
-type BackGroundColorOptions
-    = Blue Color
-    | Red Color
 
 
 findColor : String -> Element.Color
@@ -125,6 +111,7 @@ stylishPage station position title teamNumber page =
         , spacing 15
         , width fill
         , height fill
+        , centerY
         ]
         [ el
             (decoration 20)
@@ -159,7 +146,6 @@ init =
     , teleopData = Teleop.init
     , climbingData = Climbing.init
     , pages = TeamDataPage
-    , screenSize = Element.classifyDevice <| DeviceSize 0 0
     }
 
 
@@ -180,9 +166,6 @@ dumpModel model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ScreenSize device ->
-            ( { model | screenSize = device }, Cmd.none )
-
         TeamDataMsg teamMsg ->
             ( { model | teamData = TeamData.update teamMsg model.teamData }, Cmd.none )
 
@@ -222,7 +205,7 @@ update msg model =
 
                 stationError : Result String Int
                 stationError =
-                    TeamData.getTeam2 model.teamData
+                    TeamData.getTeam model.teamData
 
                 verifier : Bool
                 verifier =
@@ -277,7 +260,7 @@ view model =
                     (TeamData.stationToString model.teamData.station)
                     pagePosition
                     name
-                    (TeamData.getTeam2 model.teamData
+                    (TeamData.getTeam model.teamData
                         |> Result.map String.fromInt
                         |> merge
                     )
@@ -332,7 +315,7 @@ view model =
 buttonStyle : List (Element.Attribute Msg)
 buttonStyle =
     [ Font.color white
-    , Font.size 60
+    , Font.size 40
     , Font.glow blue 5
     , Border.rounded 10
     , Font.family

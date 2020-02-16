@@ -1,10 +1,10 @@
-module Autonomous exposing (Model, Msg, getter, init, subscriptions, update, view)
+module Autonomous exposing (Model, Msg, getter, init, update, view)
 
-import Colors exposing (blue, purple, sky, white)
+import Colors exposing (black, blue, purple, sky, white)
 import Counter
 import Element exposing (centerX, centerY, column, el, padding, spacing, text)
 import Element.Background as Background
-import Element.Border as Border exposing (rounded)
+import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
 import Element.Input as Input exposing (button, radioRow)
 
@@ -84,7 +84,7 @@ createButton : Msg -> String -> Element.Element Msg
 createButton msg name =
     button
         [ Font.color white
-        , Font.size 60
+        , Font.size 25
         , Font.glow blue 5
         , Border.rounded 4
         , Font.family
@@ -101,13 +101,31 @@ createButton msg name =
         { onPress = Just msg, label = text name }
 
 
+buttonInfo : String -> String -> Bool -> Element.Element Msg
+buttonInfo onFalse onTrue modelBool =
+    el
+        [ center
+        , centerX
+        , centerY
+        ]
+        (text <|
+            if modelBool then
+                onTrue
+
+            else
+                onFalse
+        )
+
+
 view : Model -> Element.Element Msg
 view model =
     column
         [ Background.color sky
+        , Border.color black
         , padding 50
         , spacing 20
-        , rounded 20
+        , widthXY 5 5
+        , rounded 10
         , centerX
         , centerY
         ]
@@ -137,20 +155,15 @@ view model =
                 , Input.option ThreeBalls <| text "3 balls"
                 ]
             }
-        , createButton Moved <|
-            if model.moved then
-                "moved."
-
-            else
-                "moved?"
+        , createButton Moved "moved?"
+        , buttonInfo "didn't move" "moved" model.moved
         , Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
         , Element.map LevelTwo <| Counter.view "second Level:" model.levelTwo
         , Element.map LevelThree <| Counter.view "third Level:" model.levelThree
         , Element.map Missed <| Counter.view "missed:" model.missed
-        , el [ Font.size 60, padding 10 ] (text "Collected from:")
-        , Element.map TrenchCollection <| Counter.view "their trench:" model.trenchCollection
-        , Element.map EnemyTrenchCollection <| Counter.view "enemy's trench:" model.enemyTrenchCollection
-        , Element.map RendezvousCollection <| Counter.view "rendezvous:" model.rendezvousCollection
+        , Element.map TrenchCollection <| Counter.view "Collected from their trench:" model.trenchCollection
+        , Element.map EnemyTrenchCollection <| Counter.view "Collected from enemy's trench:" model.enemyTrenchCollection
+        , Element.map RendezvousCollection <| Counter.view "Collected from rendezvous:" model.rendezvousCollection
         ]
 
 
@@ -193,8 +206,3 @@ update msg model =
 
         RendezvousCollection count ->
             { model | rendezvousCollection = counterUpdate count model.rendezvousCollection }
-
-
-subscriptions : Sub Msg
-subscriptions =
-    Sub.none
