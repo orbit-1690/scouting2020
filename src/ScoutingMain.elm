@@ -189,7 +189,7 @@ update msg model =
                 ClimbingPage ->
                     { model | pages = TeleopPage }
 
-                default ->
+                TeamDataPage ->
                     model
             , Cmd.none
             )
