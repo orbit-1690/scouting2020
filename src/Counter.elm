@@ -32,8 +32,8 @@ update msg model =
 view : String -> Model -> Element.Element Msg
 view title model =
     row
-        [ padding 10
-        , spacing 30
+        [ padding 3
+        , spacing 20
         ]
         [ el [ Font.size 60 ] (text title)
         , button [ Font.size 60 ] { onPress = Just Minus, label = text "-" }

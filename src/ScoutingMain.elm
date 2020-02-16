@@ -3,16 +3,15 @@ module ScoutingMain exposing (Model, Msg, init, update, view)
 import Array
 import Autonomous
 import Browser
-import Browser.Events as BE
 import Climbing
 import Colors exposing (blue, purple, white)
-import Element exposing (Color, Device, centerX, centerY, column, el, fill, height, htmlAttribute, image, layout, padding, spacing, text, width)
+import Element exposing (Color, centerX, centerY, column, el, fill, height, htmlAttribute, layout, padding, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font exposing (center)
 import Element.Input exposing (button)
 import File.Download as Download
-import GetMatch exposing (stationToString)
+import GetMatch
 import Html.Attributes exposing (style)
 import Result.Extra exposing (merge)
 import TeamData
@@ -34,6 +33,7 @@ type Pages
     | AutonomousPage
     | TeleopPage
     | ClimbingPage
+    | SubmitPage
 
 
 type Msg
@@ -41,22 +41,19 @@ type Msg
     | AutonomousDataMsg Autonomous.Msg
     | TeleopDataMsg Teleop.Msg
     | ClimbingDataMsg Climbing.Msg
-    | ScreenSize Device
+    | SubmitDataMsg Msg
     | PrevPage
     | NextPage
     | Submit
+    | YesSubmit
+    | NoSubmit
 
 
 type PagePosition
     = FirstPage
     | MiddlePage
     | LastPage
-
-
-type alias DeviceSize =
-    { width : Int
-    , height : Int
-    }
+    | SubmitPosPage
 
 
 type alias Model =
@@ -65,13 +62,7 @@ type alias Model =
     , teleopData : Teleop.Model
     , climbingData : Climbing.Model
     , pages : Pages
-    , screenSize : Device
     }
-
-
-type BackGroundColorOptions
-    = Blue Color
-    | Red Color
 
 
 findColor : String -> Element.Color
@@ -98,12 +89,29 @@ stylishPage station position title teamNumber page =
             , Font.color Colors.veryLightBlue
             , Font.size size
             ]
+
+        createButtons : Msg -> String -> Msg -> String -> Element.Element Msg
+        createButtons b1Msg title1Msg b2Msg title2Msg =
+            column
+                [ spacing 15, centerX, centerY ]
+                [ button
+                    buttonStyle
+                    { onPress = Just <| b1Msg
+                    , label = Element.text title1Msg
+                    }
+                , button
+                    buttonStyle
+                    { onPress = Just <| b2Msg
+                    , label = Element.text title2Msg
+                    }
+                ]
     in
     column
         [ Background.color <| findColor station
         , spacing 15
         , width fill
         , height fill
+        , centerY
         ]
         [ el
             (decoration 20)
@@ -167,18 +175,17 @@ init =
     , teleopData = Teleop.init
     , climbingData = Climbing.init
     , pages = TeamDataPage
-    , screenSize = Element.classifyDevice <| DeviceSize 0 0
     }
 
 
 dumpModel : Model -> Cmd Msg
 dumpModel model =
     Download.string
-        (String.concat [ String.join "-" <| TeamData.getter model.teamData, ".txt" ])
+        (String.concat [ String.join "-" <| TeamData.getter model.teamData, ".csv" ])
         "content/text"
     <|
         String.join "\n"
-            [ String.join "," <| TeamData.getter model.teamData
+            [ String.join "\n" <| TeamData.getter model.teamData
             , Autonomous.getter model.autonomousData
             , Teleop.getter model.teleopData
             , Climbing.getter model.climbingData
@@ -188,9 +195,6 @@ dumpModel model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ScreenSize device ->
-            ( { model | screenSize = device }, Cmd.none )
-
         TeamDataMsg teamMsg ->
             ( { model | teamData = TeamData.update teamMsg model.teamData }, Cmd.none )
 
@@ -214,6 +218,9 @@ update msg model =
                 ClimbingPage ->
                     { model | pages = TeleopPage }
 
+                SubmitPage ->
+                    model
+
                 TeamDataPage ->
                     model
             , Cmd.none
@@ -227,7 +234,7 @@ update msg model =
 
                 stationError : Result String Int
                 stationError =
-                    TeamData.getTeam2 model.teamData
+                    TeamData.getTeam model.teamData
 
                 verifier : Bool
                 verifier =
@@ -251,8 +258,17 @@ update msg model =
             , Cmd.none
             )
 
-        Submit ->
+        YesSubmit ->
             ( model, dumpModel model )
+
+        NoSubmit ->
+            ( { model | pages = ClimbingPage }, Cmd.none )
+
+        Submit ->
+            ( { model | pages = SubmitPage }, Cmd.none )
+
+        SubmitDataMsg _ ->
+            ( model, Cmd.none )
 
 
 view : Model -> Element.Element Msg
@@ -273,7 +289,7 @@ view model =
                     (TeamData.stationToString model.teamData.station)
                     pagePosition
                     name
-                    (TeamData.getTeam2 model.teamData
+                    (TeamData.getTeam model.teamData
                         |> Result.map String.fromInt
                         |> merge
                     )
@@ -311,11 +327,24 @@ view model =
             <|
                 Climbing.view model.climbingData
 
+        SubmitPage ->
+            page
+                "Submit"
+                SubmitPosPage
+                << Element.map SubmitDataMsg
+            <|
+                column [ centerY, centerX ]
+                    [ el [ Font.size 70, centerX, centerY ]
+                        (text "Are you sure")
+                    , el [ Font.size 70, centerX, centerY ]
+                        (text "you want to submit?")
+                    ]
+
 
 buttonStyle : List (Element.Attribute Msg)
 buttonStyle =
     [ Font.color white
-    , Font.size 60
+    , Font.size 40
     , Font.glow blue 5
     , Border.rounded 10
     , Font.family
