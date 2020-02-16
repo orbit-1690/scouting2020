@@ -139,8 +139,8 @@ createButton msg name =
         { onPress = Just msg, label = text name }
 
 
-decortion : List (Element.Attribute Msg)
-decortion =
+decoration : List (Element.Attribute Msg)
+decoration =
     [ padding 10
     , spacing 5
     , centerX
@@ -158,14 +158,14 @@ view model =
         , centerX
         , centerY
         ]
-        [ column decortion
+        [ column decoration
             [ row
-                decortion
-                [ column decortion
+                decoration
+                [ column decoration
                     [ createButton TriedClimb "Tried hanging?"
                     , printButton "no" "yes" model.triedClimb
                     ]
-                , column decortion
+                , column decoration
                     [ createButton Balanced "Balanced?"
                     , printButton "no" "yes" model.balanced
                     ]
@@ -184,12 +184,12 @@ view model =
                     ]
                 }
             , row
-                decortion
-                [ column decortion
+                decoration
+                [ column decoration
                     [ createButton Defended "Defended?"
                     , printButton "no" "yes" model.defended
                     ]
-                , column decortion
+                , column decoration
                     [ createButton WasDefended "Was defended?"
                     , printButton "no" "yes" model.wasDefended
                     ]
