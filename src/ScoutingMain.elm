@@ -5,7 +5,7 @@ import Autonomous
 import Browser
 import Climbing
 import Colors exposing (blue, purple, white)
-import Element exposing (Color, centerX, centerY, column, el, fill, height, htmlAttribute, layout, padding, spacing, text, width)
+import Element exposing (Color, centerX, centerY, column, el, fill, height, htmlAttribute, image, layout, padding, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font exposing (center)
@@ -125,14 +125,46 @@ stylishPage station position title teamNumber page =
                 button
                     buttonStyle
                     { onPress = Just <| NextPage
-                    , label = Element.text "Next Page"
+                    , label =
+                        image [ Font.size 20, width <| Element.maximum 100 fill ]
+                            { description = "Next Page", src = "arrowRight.png" }
                     }
 
             LastPage ->
-                createButtons PrevPage "Previous Page" Submit "Submit"
+                column
+                    [ spacing 15, centerX, centerY ]
+                    [ button
+                        buttonStyle
+                        { onPress = Just <| PrevPage
+                        , label =
+                            image [ Font.size 20, width <| Element.maximum 100 fill ]
+                                { description = "Previous Page", src = "arrowLeft.png" }
+                        }
+                    , button
+                        buttonStyle
+                        { onPress = Just <| Submit
+                        , label = Element.text "Submit"
+                        }
+                    ]
 
             MiddlePage ->
-                createButtons NextPage "Next Page" PrevPage "Previous Page"
+                column
+                    [ spacing 15, centerX, centerY ]
+                    [ button
+                        buttonStyle
+                        { onPress = Just <| NextPage
+                        , label =
+                            image [ Font.size 20, width <| Element.maximum 100 fill ]
+                                { description = "Next Page", src = "arrowRight.png" }
+                        }
+                    , button
+                        buttonStyle
+                        { onPress = Just <| PrevPage
+                        , label =
+                            image [ Font.size 20, width <| Element.maximum 100 fill ]
+                                { description = "Previous Page", src = "arrowLeft.png" }
+                        }
+                    ]
 
             SubmitPosPage ->
                 createButtons YesSubmit "Yes" NoSubmit "No"
