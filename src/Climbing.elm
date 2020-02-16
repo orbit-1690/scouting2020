@@ -6,9 +6,9 @@ import Element exposing (centerX, centerY, column, el, fill, height, padding, ro
 import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
-import TeamData
-import GetMatch
 import Element.Input as Input exposing (button, labelHidden, radioRow)
+import GetMatch
+import TeamData
 
 
 type Msg
@@ -107,7 +107,7 @@ textInput modelValue nextButton name =
         , Font.family
             [ Font.external
                 { name = "open-sans"
-                , url = "https://fonts.googleapis.com/css?family=Pacifico"
+                , url = "https://fonts.googleapis.com/css?family=open-sans"
                 }
             ]
         ]
