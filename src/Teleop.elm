@@ -108,7 +108,6 @@ view model =
         [ Background.color blue
         , padding 50
         , spacing 70
-        , rounded 37
         , centerX
         , Element.height <| Element.fillPortion 3
         , centerY

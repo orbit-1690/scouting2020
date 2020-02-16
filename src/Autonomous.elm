@@ -130,7 +130,6 @@ view model =
         [ Background.color blue
         , padding 50
         , spacing 50
-        , rounded 37
         , centerX
         , centerY
         , Element.height <| Element.fillPortion 5

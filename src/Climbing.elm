@@ -154,7 +154,6 @@ view model =
         [ Background.color blue
         , padding 50
         , height <| Element.fillPortion 5
-        , rounded 37
         , centerX
         , centerY
         ]
