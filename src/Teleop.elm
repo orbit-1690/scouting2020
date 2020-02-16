@@ -1,10 +1,10 @@
-module Teleop exposing (Model, Msg, boolToText, createButton, getter, init, subscriptions, update, view, yophyTophy)
+module Teleop exposing (Model, Msg, createButton, decoration, getter, init, printButton, update, view)
 
-import Colors exposing (blue, purple, sky, white)
+import Colors exposing (black, blue, purple, sky, white)
 import Counter
-import Element exposing (centerX, centerY, column, el, padding, spacing, text)
+import Element exposing (centerX, centerY, column, el, padding, row, spacing, text)
 import Element.Background as Background
-import Element.Border exposing (rounded)
+import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
 import Element.Input exposing (button)
 
@@ -34,18 +34,18 @@ getter model =
         boolToString : Bool -> String
         boolToString bool =
             if bool then
-                "true"
+                "1"
 
             else
-                "false"
+                "0"
     in
-    String.join ","
-        [ boolToString model.colorRoulette
-        , boolToString model.spunRoulette
-        , String.fromInt model.lowlevel
-        , String.fromInt model.levelTwo
-        , String.fromInt model.levelThree
-        , String.fromInt model.missed
+    String.join "\n"
+        [ "colorRoulette" ++ "," ++ boolToString model.colorRoulette
+        , "spunRoulette?" ++ "," ++ boolToString model.spunRoulette
+        , "level 1." ++ "," ++ String.fromInt model.lowlevel
+        , "level 2." ++ "," ++ String.fromInt model.levelTwo
+        , "level 3." ++ "," ++ String.fromInt model.levelThree
+        , "missed." ++ "," ++ String.fromInt model.missed
         ]
 
 
@@ -58,9 +58,9 @@ createButton : Msg -> String -> Element.Element Msg
 createButton msg name =
     button
         [ Font.color white
-        , Font.size 60
+        , Font.size 25
         , Font.glow blue 5
-        , rounded 10
+        , Border.rounded 10
         , Font.family
             [ Font.external
                 { name = "Open Sans"
@@ -73,6 +73,22 @@ createButton msg name =
         , centerY
         ]
         { onPress = Just msg, label = text name }
+
+
+printButton : String -> String -> Bool -> Element.Element Msg
+printButton onFalse onTrue modelBool =
+    el
+        [ center
+        , centerX
+        , centerY
+        ]
+        (text <|
+            if modelBool then
+                onTrue
+
+            else
+                onFalse
+        )
 
 
 update : Msg -> Model -> Model
@@ -106,18 +122,24 @@ view : Model -> Element.Element Msg
 view model =
     column
         [ Background.color sky
+        , Border.color black
         , padding 50
         , spacing 20
-        , rounded 20
+        , widthXY 5 5
+        , rounded 10
         , centerX
         , centerY
         ]
-        [ el yophyTophy
-            (text "spun to\ncorrect color?")
-        , createButton ColorRoulette <| boolToText model.colorRoulette
-        , el yophyTophy
-            (text "spun cycles 3-5?")
-        , createButton SpunRoulette <| boolToText model.spunRoulette
+        [ row decoration
+            [ column decoration
+                [ createButton ColorRoulette "spun to\ncorrect color?"
+                , printButton "no" "yes" model.colorRoulette
+                ]
+            , column decoration
+                [ createButton SpunRoulette "spun cycles 3-5?"
+                , printButton "no" "yes" model.spunRoulette
+                ]
+            ]
         , Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
         , Element.map LevelTwo <| Counter.view "second Level:" model.levelTwo
         , Element.map LevelThree <| Counter.view "third Level:" model.levelThree
@@ -125,25 +147,10 @@ view model =
         ]
 
 
-boolToText : Bool -> String
-boolToText bool =
-    if bool then
-        "Yes"
-
-    else
-        "No"
-
-
-yophyTophy : List (Element.Attribute Msg)
-yophyTophy =
+decoration : List (Element.Attribute Msg)
+decoration =
     [ padding 10
     , spacing 5
     , centerX
     , centerY
-    , Font.size 60
     ]
-
-
-subscriptions : Sub Msg
-subscriptions =
-    Sub.none
