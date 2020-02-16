@@ -125,46 +125,17 @@ stylishPage station position title teamNumber page =
                 button
                     buttonStyle
                     { onPress = Just <| NextPage
-                    , label =
-                        image [ Font.size 20, width <| Element.maximum 100 fill ]
-                            { description = "Next Page", src = "arrowRight.png" }
+                    , label = Element.text "Next Page"
                     }
 
             LastPage ->
-                column
-                    [ spacing 15, centerX, centerY ]
-                    [ button
-                        buttonStyle
-                        { onPress = Just <| PrevPage
-                        , label =
-                            image [ Font.size 20, width <| Element.maximum 100 fill ]
-                                { description = "Previous Page", src = "arrowLeft.png" }
-                        }
-                    , button
-                        buttonStyle
-                        { onPress = Just <| Submit
-                        , label = Element.text "Submit"
-                        }
-                    ]
+                createButtons PrevPage "Previous Page" Submit "Submit"
 
             MiddlePage ->
-                column
-                    [ spacing 15, centerX, centerY ]
-                    [ button
-                        buttonStyle
-                        { onPress = Just <| NextPage
-                        , label =
-                            image [ Font.size 20, width <| Element.maximum 100 fill ]
-                                { description = "Next Page", src = "arrowRight.png" }
-                        }
-                    , button
-                        buttonStyle
-                        { onPress = Just <| PrevPage
-                        , label =
-                            image [ Font.size 20, width <| Element.maximum 100 fill ]
-                                { description = "Previous Page", src = "arrowLeft.png" }
-                        }
-                    ]
+                createButtons NextPage "Next Page" PrevPage "Previous Page"
+
+            SubmitPosPage ->
+                createButtons YesSubmit "Yes" NoSubmit "No"
         ]
 
 
