@@ -131,16 +131,28 @@ view model =
         ]
         [ radioRow
             [ padding 10
-            , spacing 20
+            , spacing 50
+            , Font.size 60
             ]
             { onChange = BallsAmount
             , selected = Just model.ballsAmount
-            , label = Input.labelAbove [] (text "started with:")
+            , label = Input.labelAbove [ Font.size 60, padding 10, spacing 20 ] <| text "started with:"
             , options =
-                [ Input.option NoBalls (text "0 balls")
-                , Input.option OneBall (text "1 ball")
-                , Input.option TwoBalls (text "2 balls")
-                , Input.option ThreeBalls (text "3 balls")
+                [ Input.option NoBalls <| text "0 balls"
+                , Input.option OneBall <| text "1 ball"
+                ]
+            }
+        , radioRow
+            [ padding 10
+            , spacing 50
+            , Font.size 60
+            ]
+            { onChange = BallsAmount
+            , selected = Just model.ballsAmount
+            , label = Input.labelHidden "option2"
+            , options =
+                [ Input.option TwoBalls <| text "2 balls"
+                , Input.option ThreeBalls <| text "3 balls"
                 ]
             }
         , createButton Moved "moved?"

@@ -5,7 +5,7 @@ import Autonomous
 import Browser
 import Climbing
 import Colors exposing (blue, purple, white)
-import Element exposing (Device, centerX, centerY, column, el, fill, height, htmlAttribute, layout, padding, spacing, text, width)
+import Element exposing (Color, Device, centerX, centerY, column, el, fill, height, htmlAttribute, layout, padding, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font exposing (center)
@@ -237,64 +237,59 @@ update msg model =
 
 view : Model -> Element.Element Msg
 view model =
+    let
+        page : String -> PagePosition -> Element.Element Msg -> Element.Element Msg
+        page name pagePosition =
+            el
+                [ Background.color <| findColor (TeamData.stationToString model.teamData.station)
+                , padding 105
+                , spacing 10
+                , width fill
+                , height fill
+                , centerY
+                , centerX
+                ]
+                << stylishPage
+                    (TeamData.stationToString model.teamData.station)
+                    pagePosition
+                    name
+                    (TeamData.getTeam2 model.teamData
+                        |> Result.map String.fromInt
+                        |> merge
+                    )
+    in
     case model.pages of
         TeamDataPage ->
-            stylishPage (TeamData.station model.teamData) FirstPage "Registeration" (TeamData.team model.teamData) <| Element.map TeamDataMsg <| TeamData.view model.teamData
+            page
+                "Registeration"
+                FirstPage
+                << Element.map TeamDataMsg
+            <|
+                TeamData.view model.teamData
 
         AutonomousPage ->
-            let
-                page : String -> PagePosition -> Element.Element Msg -> Element.Element Msg
-                page name pagePosition =
-                    el
-                        [ Background.color <| findColor (TeamData.stationToString model.teamData.station)
-                        , padding 105
-                        , spacing 10
-                        , width fill
-                        , height fill
-                        , centerY
-                        , centerX
-                        ]
-                        << stylishPage
-                            (TeamData.stationToString model.teamData.station)
-                            pagePosition
-                            name
-                            (TeamData.getTeam2 model.teamData
-                                |> Result.map String.fromInt
-                                |> merge
-                            )
-            in
-            case model.pages of
-                TeamDataPage ->
-                    page
-                        "Registeration"
-                        FirstPage
-                        << Element.map TeamDataMsg
-                    <|
-                        TeamData.view model.teamData
+            page
+                "Autonomous"
+                MiddlePage
+                << Element.map AutonomousDataMsg
+            <|
+                Autonomous.view model.autonomousData
 
-                AutonomousPage ->
-                    page
-                        "Autonomous"
-                        MiddlePage
-                        << Element.map AutonomousDataMsg
-                    <|
-                        Autonomous.view model.autonomousData
+        TeleopPage ->
+            page
+                "Teleop"
+                MiddlePage
+                << Element.map TeleopDataMsg
+            <|
+                Teleop.view model.teleopData
 
-                TeleopPage ->
-                    page
-                        "Teleop"
-                        MiddlePage
-                        << Element.map TeleopDataMsg
-                    <|
-                        Teleop.view model.teleopData
-
-                ClimbingPage ->
-                    page
-                        "End-game"
-                        LastPage
-                        << Element.map ClimbingDataMsg
-                    <|
-                        Climbing.view model.climbingData
+        ClimbingPage ->
+            page
+                "End-game"
+                LastPage
+                << Element.map ClimbingDataMsg
+            <|
+                Climbing.view model.climbingData
 
 
 buttonStyle : List (Element.Attribute Msg)
