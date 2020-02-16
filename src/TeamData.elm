@@ -1,14 +1,14 @@
-module TeamData exposing (Model, Msg, getMatch, getTeam2, getter, init, stationToString, update, view)
+module TeamData exposing (Model, Msg, getMatch, getTeam, getter, init, stationToString, update, view)
 
 import Array exposing (Array)
 import Browser
-import Colors exposing (blue, orange, sky, white)
+import Colors exposing (black, blue, orange, sky, white)
 import Element exposing (centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, minimum, padding, spacing, text, width)
 import Element.Background as Background
-import Element.Border exposing (rounded)
+import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
-import Element.Input as Input exposing (radio)
-import GetMatch exposing (AllianceColor, AllianceStation, Match, StationNumber, getTeam)
+import Element.Input as Input exposing (labelHidden, radio)
+import GetMatch exposing (AllianceColor, Match, StationNumber, TeamStation, getTeamNum)
 import Html.Attributes exposing (style)
 import Maybe.Extra exposing (unwrap)
 import Result.Extra exposing (merge)
@@ -27,13 +27,13 @@ main =
 type Msg
     = ScouterInput String
     | MatchInput String
-    | Station AllianceStation
+    | Station TeamStation
 
 
 type alias Model =
     { scouterName : String
     , matchNumber : String
-    , station : Maybe AllianceStation
+    , station : Maybe TeamStation
     , team : Result String Int
     , matches : Array Match
     }
@@ -41,12 +41,15 @@ type alias Model =
 
 getter : Model -> List String
 getter model =
-    [ model.matchNumber
-    , stationToString model.station
-    , getTeam2 model
-        |> Result.map String.fromInt
-        |> merge
-    , "'" ++ model.scouterName ++ "'"
+    [ "match" ++ "," ++ model.matchNumber
+    , "station" ++ "," ++ stationToString model.station
+    , "team"
+        ++ ","
+        ++ (getTeam model
+                |> Result.map String.fromInt
+                |> merge
+           )
+    , "scouterName" ++ "," ++ "'" ++ model.scouterName ++ "'"
     ]
 
 
@@ -95,7 +98,7 @@ view model =
                 ]
             }
         , textInput model.matchNumber MatchInput "Match number"
-        , getTeam2 model
+        , getTeam model
             |> Result.map String.fromInt
             |> merge
             |> Element.text
@@ -104,15 +107,15 @@ view model =
                 , width fill
                 , rounded 10
                 , center
-                , Font.color Colors.black
+                , Font.color black
                 , Font.glow Colors.white 1
                 , Font.size 60
                 ]
         ]
 
 
-getTeam2 : Model -> Result String Int
-getTeam2 model =
+getTeam : Model -> Result String Int
+getTeam model =
     getMatch model
         |> Result.andThen
             (\match ->
@@ -120,7 +123,7 @@ getTeam2 model =
                     |> Result.fromMaybe "No station"
                     |> Result.map
                         (\station ->
-                            getTeam station match
+                            getTeamNum station match
                         )
             )
 
@@ -159,7 +162,7 @@ numberToString chosenNumber =
             "3"
 
 
-stationToString : Maybe AllianceStation -> String
+stationToString : Maybe TeamStation -> String
 stationToString alliance =
     unwrap "No station selected" (\( color, number ) -> String.join " " [ colorToString color, numberToString number ]) alliance
 
@@ -188,13 +191,13 @@ update msg model =
         Station chosenStation ->
             { model
                 | station = Just chosenStation
-                , team = getTeam2 model
+                , team = getTeam model
             }
 
         MatchInput matchNumber ->
             { model
                 | matchNumber = matchNumber
-                , team = getTeam2 model
+                , team = getTeam model
             }
 
 

@@ -1,10 +1,10 @@
-module Teleop exposing (Model, Msg, boolToText, createButton, decoration, getter, init, subscriptions, update, view)
+module Teleop exposing (Model, Msg, createButton, decoration, getter, init, update, view)
 
-import Colors exposing (blue, purple, sky, white)
+import Colors exposing (black, blue, purple, sky, white)
 import Counter
-import Element exposing (centerX, centerY, column, el, padding, spacing, text)
+import Element exposing (centerX, centerY, column, el, padding, row, spacing, text)
 import Element.Background as Background
-import Element.Border exposing (rounded)
+import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
 import Element.Input exposing (button)
 
@@ -34,18 +34,18 @@ getter model =
         boolToString : Bool -> String
         boolToString bool =
             if bool then
-                "true"
+                "1"
 
             else
-                "false"
+                "0"
     in
-    String.join ","
-        [ boolToString model.colorRoulette
-        , boolToString model.spunRoulette
-        , String.fromInt model.lowlevel
-        , String.fromInt model.levelTwo
-        , String.fromInt model.levelThree
-        , String.fromInt model.missed
+    String.join "\n"
+        [ "colorRoulette" ++ "," ++ boolToString model.colorRoulette
+        , "spunRoulette?" ++ "," ++ boolToString model.spunRoulette
+        , "level 1." ++ "," ++ String.fromInt model.lowlevel
+        , "level 2." ++ "," ++ String.fromInt model.levelTwo
+        , "level 3." ++ "," ++ String.fromInt model.levelThree
+        , "missed." ++ "," ++ String.fromInt model.missed
         ]
 
 
@@ -58,7 +58,7 @@ createButton : Msg -> String -> Element.Element Msg
 createButton msg name =
     button
         [ Font.color white
-        , Font.size 90
+        , Font.size 25
         , Font.glow blue 5
         , rounded 10
         , Font.bold
@@ -74,6 +74,22 @@ createButton msg name =
         , centerY
         ]
         { onPress = Just msg, label = text name }
+
+
+printButton : String -> String -> Bool -> Element.Element Msg
+printButton onFalse onTrue modelBool =
+    el
+        [ center
+        , centerX
+        , centerY
+        ]
+        (text <|
+            if modelBool then
+                onTrue
+
+            else
+                onFalse
+        )
 
 
 update : Msg -> Model -> Model
@@ -113,26 +129,21 @@ view model =
         , Element.height <| Element.fillPortion 3
         , centerY
         ]
-        [ el decoration
-            (text "spun to\ncorrect color?")
-        , createButton ColorRoulette <| boolToText model.colorRoulette
-        , el decoration
-            (text "spun cycles 3-5?")
-        , createButton SpunRoulette <| boolToText model.spunRoulette
+        [ row decoration
+            [ column decoration
+                [ createButton SpunRoulette "spun cycles 3-5?"
+                , printButton "no" "yes" model.spunRoulette
+                ]
+            , column decoration
+                [ createButton ColorRoulette "spun to\ncorrect color?"
+                , printButton "no" "yes" model.colorRoulette
+                ]
+            ]
         , Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
         , Element.map LevelTwo <| Counter.view "second Level:" model.levelTwo
         , Element.map LevelThree <| Counter.view "third Level:" model.levelThree
         , Element.map Missed <| Counter.view "missed:" model.missed
         ]
-
-
-boolToText : Bool -> String
-boolToText bool =
-    if bool then
-        "Yes"
-
-    else
-        "No"
 
 
 decoration : List (Element.Attribute Msg)
@@ -141,10 +152,4 @@ decoration =
     , spacing 5
     , centerX
     , centerY
-    , Font.size 90
     ]
-
-
-subscriptions : Sub Msg
-subscriptions =
-    Sub.none

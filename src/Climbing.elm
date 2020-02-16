@@ -1,4 +1,4 @@
-module Climbing exposing (Model, Msg, getter, init, subscriptions, update, view)
+module Climbing exposing (Model, Msg, getter, init, update, view)
 
 import Array
 import Colors exposing (black, blue, purple, sky, white)
@@ -9,6 +9,7 @@ import Element.Font as Font exposing (center)
 import Element.Input as Input exposing (button, labelHidden, radio)
 import GetMatch
 import TeamData
+import Teleop
 
 
 type Msg
@@ -37,10 +38,10 @@ getter model =
         boolToString : Bool -> String
         boolToString bool =
             if bool then
-                "true"
+                "1"
 
             else
-                "false"
+                "0"
 
         statusToString : Status -> String
         statusToString status =
@@ -54,13 +55,13 @@ getter model =
                 Loser ->
                     "Loser"
     in
-    String.join ","
-        [ boolToString model.triedClimb
-        , boolToString model.balanced
-        , statusToString model.climbStatus
-        , boolToString model.defended
-        , boolToString model.wasDefended
-        , "'" ++ model.comment ++ "'"
+    String.join "\n"
+        [ "triedClimb" ++ "," ++ boolToString model.triedClimb
+        , "balanced?" ++ "," ++ boolToString model.balanced
+        , "final state" ++ "," ++ statusToString model.climbStatus
+        , "defended?" ++ "," ++ boolToString model.defended
+        , "was defended?" ++ "," ++ boolToString model.wasDefended
+        , "comments" ++ "," ++ "'" ++ model.comment ++ "'"
         ]
 
 
@@ -82,10 +83,18 @@ update msg model =
             { model | triedClimb = not model.triedClimb }
 
         ClimbStatus status ->
-            { model | climbStatus = status }
+            if model.balanced == True then
+                { model | climbStatus = Hanged }
+
+            else
+                { model | climbStatus = status }
 
         Balanced ->
-            { model | balanced = not model.balanced }
+            if model.climbStatus == Loser then
+                { model | balanced = False }
+
+            else
+                { model | balanced = not model.balanced }
 
         Defended ->
             { model | defended = not model.defended }
@@ -101,13 +110,12 @@ textInput : String -> (String -> Msg) -> String -> Element.Element Msg
 textInput modelValue nextButton name =
     Input.text
         [ Font.color sky
-        , Font.size 90
-        , rounded 10
+        , Font.size 20
         , height fill
         , Font.family
             [ Font.external
-                { name = "Pacifico"
-                , url = "https://fonts.googleapis.com/css?family=Pacifico"
+                { name = "open-sans"
+                , url = "https://fonts.googleapis.com/css?family=open-sans"
                 }
             ]
         ]
@@ -122,7 +130,7 @@ createButton : Msg -> String -> Element.Element Msg
 createButton msg name =
     button
         [ Font.color white
-        , Font.size 60
+        , Font.size 25
         , Font.glow blue 5
         , Border.rounded 10
         , Font.bold
@@ -142,8 +150,8 @@ createButton msg name =
 
 decoration : List (Element.Attribute Msg)
 decoration =
-    [ spacing 60
-    , Font.size 90
+    [ padding 10
+    , spacing 5
     , centerX
     , centerY
     ]
@@ -213,8 +221,3 @@ printButton onFalse onTrue modelBool =
             else
                 onFalse
         )
-
-
-subscriptions : Sub Msg
-subscriptions =
-    Sub.none

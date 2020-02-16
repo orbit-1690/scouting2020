@@ -3,16 +3,15 @@ module ScoutingMain exposing (Model, Msg, init, update, view)
 import Array
 import Autonomous
 import Browser
-import Browser.Events as BE
 import Climbing
 import Colors exposing (blue, purple, white)
-import Element exposing (Color, centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, layout, padding, spacing, text, width)
+import Element exposing (Color, centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, image, layout, padding, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input exposing (button)
 import File.Download as Download
-import GetMatch exposing (stationToString)
+import GetMatch
 import Html.Attributes exposing (style)
 import Result.Extra exposing (merge)
 import TeamData
@@ -44,6 +43,7 @@ type Pages
     | AutonomousPage
     | TeleopPage
     | ClimbingPage
+    | SubmitPage
 
 
 type Msg
@@ -51,15 +51,19 @@ type Msg
     | AutonomousDataMsg Autonomous.Msg
     | TeleopDataMsg Teleop.Msg
     | ClimbingDataMsg Climbing.Msg
+    | SubmitDataMsg Msg
     | PrevPage
     | NextPage
     | Submit
+    | YesSubmit
+    | NoSubmit
 
 
 type PagePosition
     = FirstPage
     | MiddlePage
     | LastPage
+    | SubmitPosPage
 
 
 type alias Model =
@@ -85,49 +89,63 @@ findColor alliance =
 
 stylishPage : PagePosition -> Element.Element Msg
 stylishPage position =
+    let
+        createButtons : Msg -> Element.Element Msg -> Msg -> Element.Element Msg -> Element.Element Msg
+        createButtons firstMsg firstLabelMsg secondMsg secondLabelMsg =
+            row
+                [ spacing 15, centerX, centerY ]
+                [ button
+                    buttonStyle
+                    { onPress = Just <| firstMsg
+                    , label = firstLabelMsg
+                    }
+                , button
+                    buttonStyle
+                    { onPress = Just <| secondMsg
+                    , label = secondLabelMsg
+                    }
+                ]
+
+        imageLabel : String -> String -> Element.Element Msg
+        imageLabel description src =
+            image [ Font.size 20, width <| Element.maximum 100 fill ]
+                { description = description, src = src }
+    in
     (case position of
         FirstPage ->
             button
                 buttonStyle
                 { onPress = Just <| NextPage
-                , label = Element.text "Next"
+                , label =
+                    imageLabel "Next Page" "arrowRight.png"
                 }
 
         LastPage ->
-            Element.row
-                [ spacing 15, centerX ]
-                [ button
-                    buttonStyle
-                    { onPress = Just <| PrevPage
-                    , label = Element.text "Previous"
-                    }
-                , button
-                    buttonStyle
-                    { onPress = Just <| Submit
-                    , label = Element.text "Submit"
-                    }
-                ]
+            createButtons
+                PrevPage
+                (imageLabel "Previous Page" "arrowLeft.png")
+                Submit
+            <|
+                text "Submit"
 
         MiddlePage ->
-            Element.row
-                [ spacing 100, centerX ]
-                [ button
-                    buttonStyle
-                    { onPress = Just <| PrevPage
-                    , label = Element.text "Previous"
-                    }
-                , button
-                    buttonStyle
-                    { onPress = Just <| NextPage
-                    , label = Element.text "Next"
-                    }
-                ]
+            createButtons PrevPage
+                (imageLabel "Previous Page" "arrowLeft.png")
+                NextPage
+                (imageLabel "Next Page" "arrowRight.png")
+
+        SubmitPosPage ->
+            createButtons YesSubmit
+                (Element.text "Yes")
+                NoSubmit
+            <|
+                Element.text "No"
     )
         |> el
             [ centerX
             , centerY
             , width fill
-            , heightPrecent 100
+            , height fill
             ]
 
 
@@ -144,11 +162,11 @@ init =
 dumpModel : Model -> Cmd Msg
 dumpModel model =
     Download.string
-        (String.concat [ String.join "-" <| TeamData.getter model.teamData, ".txt" ])
+        (String.concat [ String.join "-" <| TeamData.getter model.teamData, ".csv" ])
         "content/text"
     <|
-        String.join ","
-            [ String.join "," <| TeamData.getter model.teamData
+        String.join "\n"
+            [ String.join "\n" <| TeamData.getter model.teamData
             , Autonomous.getter model.autonomousData
             , Teleop.getter model.teleopData
             , Climbing.getter model.climbingData
@@ -181,6 +199,9 @@ update msg model =
                 ClimbingPage ->
                     { model | pages = TeleopPage }
 
+                SubmitPage ->
+                    model
+
                 TeamDataPage ->
                     model
             , Cmd.none
@@ -194,7 +215,7 @@ update msg model =
 
                 stationError : Result String Int
                 stationError =
-                    TeamData.getTeam2 model.teamData
+                    TeamData.getTeam model.teamData
 
                 verifier : Bool
                 verifier =
@@ -218,14 +239,23 @@ update msg model =
             , Cmd.none
             )
 
-        Submit ->
+        YesSubmit ->
             ( model, dumpModel model )
+
+        NoSubmit ->
+            ( { model | pages = ClimbingPage }, Cmd.none )
+
+        Submit ->
+            ( { model | pages = SubmitPage }, Cmd.none )
+
+        SubmitDataMsg _ ->
+            ( model, Cmd.none )
 
 
 teamDataToString : Model -> String
 teamDataToString model =
     model.teamData
-        |> TeamData.getTeam2
+        |> TeamData.getTeam
         |> Result.map String.fromInt
         |> merge
 
@@ -286,12 +316,25 @@ view model =
                 |> Element.map ClimbingDataMsg
                 |> page "End-game" LastPage
 
+        SubmitPage ->
+            page
+                "Submit"
+                SubmitPosPage
+                << Element.map SubmitDataMsg
+            <|
+                column [ centerY, centerX ]
+                    [ el [ Font.size 70, centerX, centerY ]
+                        (text "Are you sure")
+                    , el [ Font.size 70, centerX, centerY ]
+                        (text "you want to submit?")
+                    ]
+
 
 buttonStyle : List (Element.Attribute Msg)
 buttonStyle =
-    [ Font.color Colors.white
-    , Font.size 60
-    , Font.glow Colors.black 6
+    [ Font.color white
+    , Font.size 40
+    , Font.glow blue 5
     , Border.rounded 10
     , Background.color Colors.gray
     , centerX
