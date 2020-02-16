@@ -127,7 +127,7 @@ view model =
                 }
     in
     column
-        [ Background.color sky
+        [ Background.color blue
         , padding 50
         , spacing 50
         , rounded 37

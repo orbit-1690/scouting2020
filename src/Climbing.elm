@@ -151,7 +151,7 @@ decoration =
 view : Model -> Element.Element Msg
 view model =
     column
-        [ Background.color sky
+        [ Background.color blue
         , padding 50
         , height <| Element.fillPortion 5
         , rounded 37
