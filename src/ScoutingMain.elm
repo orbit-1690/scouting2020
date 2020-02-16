@@ -6,7 +6,7 @@ import Browser
 import Browser.Events as BE
 import Climbing
 import Colors exposing (blue, purple, white)
-import Element exposing (Color, Device, centerX, centerY, column, el, fill, height, htmlAttribute, layout, padding, spacing, text, width)
+import Element exposing (Color, Device, centerX, centerY, column, el, fill, height, htmlAttribute, image, layout, padding, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font exposing (center)
@@ -117,7 +117,9 @@ stylishPage station position title teamNumber page =
                 button
                     buttonStyle
                     { onPress = Just <| NextPage
-                    , label = Element.text "Next Page"
+                    , label =
+                        image [ Font.size 20, width <| Element.maximum 100 fill ]
+                            { description = "Next Page", src = "arrowRight.png" }
                     }
 
             LastPage ->
@@ -126,7 +128,9 @@ stylishPage station position title teamNumber page =
                     [ button
                         buttonStyle
                         { onPress = Just <| PrevPage
-                        , label = Element.text "Previous Page"
+                        , label =
+                            image [ Font.size 20, width <| Element.maximum 100 fill ]
+                                { description = "Previous Page", src = "arrowLeft.png" }
                         }
                     , button
                         buttonStyle
@@ -141,12 +145,16 @@ stylishPage station position title teamNumber page =
                     [ button
                         buttonStyle
                         { onPress = Just <| NextPage
-                        , label = Element.text "Next Page"
+                        , label =
+                            image [ Font.size 20, width <| Element.maximum 100 fill ]
+                                { description = "Next Page", src = "arrowRight.png" }
                         }
                     , button
                         buttonStyle
                         { onPress = Just <| PrevPage
-                        , label = Element.text "Previous Page"
+                        , label =
+                            image [ Font.size 20, width <| Element.maximum 100 fill ]
+                                { description = "Previous Page", src = "arrowLeft.png" }
                         }
                     ]
         ]
