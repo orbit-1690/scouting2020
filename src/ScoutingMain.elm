@@ -34,6 +34,7 @@ type Pages
     | AutonomousPage
     | TeleopPage
     | ClimbingPage
+    | SubmitPage
 
 
 type Msg
@@ -41,16 +42,20 @@ type Msg
     | AutonomousDataMsg Autonomous.Msg
     | TeleopDataMsg Teleop.Msg
     | ClimbingDataMsg Climbing.Msg
+    | SubmitDataMsg Msg
     | ScreenSize Device
     | PrevPage
     | NextPage
     | Submit
+    | YesSubmit
+    | NoSubmit
 
 
 type PagePosition
     = FirstPage
     | MiddlePage
     | LastPage
+    | SubmitPosPage
 
 
 type alias DeviceSize =
@@ -98,6 +103,22 @@ stylishPage station position title teamNumber page =
             , Font.color Colors.veryLightBlue
             , Font.size size
             ]
+
+        createButtons : Msg -> String -> Msg -> String -> Element.Element Msg
+        createButtons b1Msg title1Msg b2Msg title2Msg =
+            column
+                [ spacing 15, centerX, centerY ]
+                [ button
+                    buttonStyle
+                    { onPress = Just <| b1Msg
+                    , label = Element.text title1Msg
+                    }
+                , button
+                    buttonStyle
+                    { onPress = Just <| b2Msg
+                    , label = Element.text title2Msg
+                    }
+                ]
     in
     column
         [ Background.color <| findColor station
@@ -121,34 +142,13 @@ stylishPage station position title teamNumber page =
                     }
 
             LastPage ->
-                column
-                    [ spacing 15, centerX, centerY ]
-                    [ button
-                        buttonStyle
-                        { onPress = Just <| PrevPage
-                        , label = Element.text "Previous Page"
-                        }
-                    , button
-                        buttonStyle
-                        { onPress = Just <| Submit
-                        , label = Element.text "Submit"
-                        }
-                    ]
+                createButtons PrevPage "Previous Page" Submit "Submit"
 
             MiddlePage ->
-                column
-                    [ spacing 15, centerX, centerY ]
-                    [ button
-                        buttonStyle
-                        { onPress = Just <| NextPage
-                        , label = Element.text "Next Page"
-                        }
-                    , button
-                        buttonStyle
-                        { onPress = Just <| PrevPage
-                        , label = Element.text "Previous Page"
-                        }
-                    ]
+                createButtons NextPage "Next Page" PrevPage "Previous Page"
+
+            SubmitPosPage ->
+                createButtons YesSubmit "Yes" NoSubmit "No"
         ]
 
 
@@ -206,6 +206,9 @@ update msg model =
                 ClimbingPage ->
                     { model | pages = TeleopPage }
 
+                SubmitPage ->
+                    model
+
                 TeamDataPage ->
                     model
             , Cmd.none
@@ -243,8 +246,17 @@ update msg model =
             , Cmd.none
             )
 
-        Submit ->
+        YesSubmit ->
             ( model, dumpModel model )
+
+        NoSubmit ->
+            ( { model | pages = ClimbingPage }, Cmd.none )
+
+        Submit ->
+            ( { model | pages = SubmitPage }, Cmd.none )
+
+        SubmitDataMsg _ ->
+            ( model, Cmd.none )
 
 
 view : Model -> Element.Element Msg
@@ -302,6 +314,19 @@ view model =
                 << Element.map ClimbingDataMsg
             <|
                 Climbing.view model.climbingData
+
+        SubmitPage ->
+            page
+                "Submit"
+                SubmitPosPage
+                << Element.map SubmitDataMsg
+            <|
+                column [ centerY, centerX ]
+                    [ el [ Font.size 70, centerX, centerY ]
+                        (text "Are you sure")
+                    , el [ Font.size 70, centerX, centerY ]
+                        (text "you want to submit?")
+                    ]
 
 
 buttonStyle : List (Element.Attribute Msg)
