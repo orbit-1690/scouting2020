@@ -69,8 +69,8 @@ view model =
         [ Background.color blue
         , padding 20
         , spacing 50
+        , height fill
         , width fill
-        , htmlAttribute <| style "height" "83%"
         ]
         [ textInput model.scouterName ScouterInput "your name"
         , text "Station"
@@ -80,7 +80,7 @@ view model =
                 ]
         , radio
             [ Font.size 65
-            , htmlAttribute <| style "height" "60%"
+            , height fill
             , spacing 30
             ]
             { onChange = Station

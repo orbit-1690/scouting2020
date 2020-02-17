@@ -93,12 +93,18 @@ stylishPage position =
         createButtons : Msg -> Element.Element Msg -> Msg -> Element.Element Msg -> Element.Element Msg
         createButtons firstMsg firstLabelMsg secondMsg secondLabelMsg =
             row
-                [ spacing 15, centerX, centerY ]
+                [ spacing 15
+                , width fill
+                , centerX
+                , centerY
+                , Font.size 40
+                ]
                 [ button
                     buttonStyle
                     { onPress = Just <| firstMsg
                     , label = firstLabelMsg
                     }
+                , el [ width fill ] <| text ""
                 , button
                     buttonStyle
                     { onPress = Just <| secondMsg
@@ -110,29 +116,42 @@ stylishPage position =
         imageLabel description src =
             image [ Font.size 20, width <| Element.maximum 100 fill ]
                 { description = description, src = src }
+
+        nextPageImage : String
+        nextPageImage =
+            "https://bit.ly/39N4x1f"
+
+        preiousPageImage : String
+        preiousPageImage =
+            "https://bit.ly/2vKMw4D"
     in
     (case position of
         FirstPage ->
-            button
-                buttonStyle
-                { onPress = Just <| NextPage
-                , label =
-                    imageLabel "Next Page" "arrowRight.png"
-                }
+            row
+                [ width fill, height fill ]
+                [ el [ width fill ] <| text ""
+                , el [ width fill ] <| text ""
+                , button
+                    buttonStyle
+                    { onPress = Just <| NextPage
+                    , label =
+                        imageLabel "Next Page" nextPageImage
+                    }
+                ]
 
         LastPage ->
             createButtons
                 PrevPage
-                (imageLabel "Previous Page" "arrowLeft.png")
+                (imageLabel "Previous Page" preiousPageImage)
                 Submit
             <|
                 text "Submit"
 
         MiddlePage ->
             createButtons PrevPage
-                (imageLabel "Previous Page" "arrowLeft.png")
+                (imageLabel "Previous Page" preiousPageImage)
                 NextPage
-                (imageLabel "Next Page" "arrowRight.png")
+                (imageLabel "Next Page" nextPageImage)
 
         SubmitPosPage ->
             createButtons YesSubmit
@@ -281,6 +300,7 @@ view model =
                             , centerX
                             , height <| fillPortion 1
                             , Font.underline
+                            , fontExternal
                             ]
                     , text ("scouted team: " ++ teamDataToString model)
                         |> el
@@ -288,7 +308,9 @@ view model =
                             , Font.color Colors.white
                             , Font.glow Colors.black 10
                             , centerX
+                            , Font.bold
                             , height <| fillPortion 1
+                            , fontExternal
                             ]
                     ]
                 , msg
@@ -333,14 +355,13 @@ view model =
 
 buttonStyle : List (Element.Attribute Msg)
 buttonStyle =
-    [ Font.color white
-    , Font.size 40
+    [ Font.size 40
     , Font.glow blue 5
     , Border.rounded 10
-    , Background.color Colors.gray
     , centerX
     , centerY
-    , heightPercent 50
+    , height fill
+    , width fill
     ]
 
 

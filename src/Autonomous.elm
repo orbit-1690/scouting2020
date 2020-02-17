@@ -85,7 +85,7 @@ createButton : Msg -> String -> Element.Element Msg
 createButton msg name =
     button
         [ Font.color white
-        , Font.size 50
+        , Font.size 60
         , Font.glow blue 5
         , Border.rounded 4
         , Font.bold
@@ -96,9 +96,7 @@ createButton msg name =
                 }
             ]
         , Background.color purple
-        , center
         , centerX
-        , centerY
         ]
         { onPress = Just msg, label = text name }
 
@@ -134,7 +132,8 @@ view model =
                 [ padding 10
                 , spacing 50
                 , Font.size 50
-                , htmlAttribute <| style "height" "10%"
+                , heightPercent 10
+                , Font.semiBold
                 ]
                 { onChange = BallsAmount
                 , selected = Just model.ballsAmount
@@ -150,11 +149,19 @@ view model =
         , centerX
         , centerY
         , width fill
-        , htmlAttribute <| style "height" "10%"
+        , heightPercent 40
         , Element.height <| Element.fillPortion 5
         ]
         [ radios
-            (Input.labelAbove [ Font.size 50, padding 10, spacing 20, Font.underline ] <| text "started with:")
+            (Input.labelAbove
+                [ Font.size 50
+                , padding 20
+                , spacing 20
+                , Font.underline
+                ]
+             <|
+                text "started with:"
+            )
             NoBalls
             (text "0 balls")
             OneBall
@@ -173,14 +180,26 @@ view model =
                 "moved?"
         , column
             [ Font.size 50
-            , htmlAttribute <| style "height" "50%"
             , spacing 20
+            , padding 20
+            , Font.semiBold
+            , fontExternal
+            , heightPercent 50
             ]
-            [ Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
-            , Element.map LevelTwo <| Counter.view "second Level:" model.levelTwo
-            , Element.map LevelThree <| Counter.view "third Level:" model.levelThree
-            , Element.map Missed <| Counter.view "missed:" model.missed
-            , el [ Font.size 50, padding 10, Font.underline ] (text "Collected from:")
+            [ column
+                [ spacing 20
+                , heightPercent 70
+                ]
+                [ Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
+                , Element.map LevelTwo <| Counter.view "second Level:" model.levelTwo
+                , Element.map LevelThree <| Counter.view "third Level:" model.levelThree
+                , Element.map Missed <| Counter.view "missed:" model.missed
+                ]
+            , text "Collected from:"
+                |> el
+                    [ Font.size 60
+                    , Font.underline
+                    ]
             , Element.map TrenchCollection <| Counter.view "their trench:" model.trenchCollection
             , Element.map EnemyTrenchCollection <| Counter.view "enemy's trench:" model.enemyTrenchCollection
             , Element.map RendezvousCollection <| Counter.view "rendezvous:" model.rendezvousCollection
@@ -227,3 +246,18 @@ update msg model =
 
         RendezvousCollection count ->
             { model | rendezvousCollection = counterUpdate count model.rendezvousCollection }
+
+
+fontExternal : Element.Attr () Msg
+fontExternal =
+    Font.family
+        [ Font.external
+            { name = "Open Sans"
+            , url = "https://fonts.googleapis.com/css?family=Open+Sans:400i&display=swap"
+            }
+        ]
+
+
+heightPercent : Int -> Element.Attribute Msg
+heightPercent percent =
+    htmlAttribute << style "height" <| String.fromInt percent ++ "%"
