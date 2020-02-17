@@ -178,28 +178,55 @@ update msg model =
         counterUpdate : Counter.Msg -> Counter.Model -> Counter.Model
         counterUpdate =
             Counter.update
+
+        ballsAmountToInt : BallsInitAmount -> Int
+        ballsAmountToInt ball =
+            case ball of
+                NoBalls ->
+                    0
+
+                OneBall ->
+                    1
+
+                TwoBalls ->
+                    2
+
+                ThreeBalls ->
+                    3
+
+        maxCollected : Int
+        maxCollected =
+            model.trenchCollection + model.enemyTrenchCollection + model.rendezvousCollection + ballsAmountToInt model.ballsAmount
+
+        maxThrownOut : Int
+        maxThrownOut =
+            model.lowlevel + model.levelTwo + model.levelThree + model.missed
     in
     case msg of
         Moved ->
             { model | moved = not model.moved }
 
         LowLevel count ->
-            { model | lowlevel = counterUpdate count model.lowlevel }
+            { model | lowlevel = min (maxCollected - maxThrownOut + model.lowlevel) <| counterUpdate count model.lowlevel }
 
         LevelTwo count ->
-            { model | levelTwo = counterUpdate count model.levelTwo }
+            { model | levelTwo = min (maxCollected - maxThrownOut + model.levelTwo) <| counterUpdate count model.levelTwo }
 
         LevelThree count ->
-            { model | levelThree = counterUpdate count model.levelThree }
+            { model | levelThree = min (maxCollected - maxThrownOut + model.levelThree) <| counterUpdate count model.levelThree }
 
         Missed count ->
-            { model | missed = counterUpdate count model.missed }
+            { model | missed = min (maxCollected - maxThrownOut + model.missed) <| counterUpdate count model.missed }
 
         TrenchCollection count ->
             { model | trenchCollection = counterUpdate count model.trenchCollection }
 
         BallsAmount ballsAmount ->
-            { model | ballsAmount = ballsAmount }
+            if maxCollected - maxThrownOut < ballsAmountToInt model.ballsAmount - ballsAmountToInt ballsAmount then
+                model
+
+            else
+                { model | ballsAmount = ballsAmount }
 
         EnemyTrenchCollection count ->
             { model | enemyTrenchCollection = counterUpdate count model.enemyTrenchCollection }
