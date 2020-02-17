@@ -13,7 +13,6 @@ import Element.Input exposing (button)
 import File.Download as Download
 import GetMatch
 import Html.Attributes exposing (style)
-import ResizeableFont exposing (scaleFactor)
 import Result.Extra exposing (merge)
 import TeamData
 import Teleop
