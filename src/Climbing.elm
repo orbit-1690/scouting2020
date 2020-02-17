@@ -90,7 +90,7 @@ update msg model =
                 { model | climbStatus = status }
 
         Balanced ->
-            if model.climbStatus == Loser then
+            if model.climbStatus == Loser || model.climbStatus == Parked then
                 { model | balanced = False }
 
             else
