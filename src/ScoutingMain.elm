@@ -5,10 +5,10 @@ import Autonomous
 import Browser
 import Climbing
 import Colors exposing (blue, purple, white)
-import Element exposing (Color, centerX, centerY, column, el, fill, height, htmlAttribute, image, layout, padding, spacing, text, width)
+import Element exposing (centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, image, layout, padding, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
-import Element.Font as Font exposing (center)
+import Element.Font as Font
 import Element.Input exposing (button)
 import File.Download as Download
 import GetMatch
@@ -22,10 +22,20 @@ main : Program () Model Msg
 main =
     Browser.element
         { init = always ( init, Cmd.none )
-        , view = view >> layout [ width fill, htmlAttribute <| style "touch-action" "manipulation" ]
+        , view = view >> layout [ width fill, height fill, htmlAttribute <| style "touch-action" "manipulation" ]
         , update = update
         , subscriptions = always Sub.none
         }
+
+
+widthPercent : Int -> Element.Attribute Msg
+widthPercent percent =
+    htmlAttribute << style "width" <| String.fromInt percent ++ "%"
+
+
+heightPercent : Int -> Element.Attribute Msg
+heightPercent percent =
+    htmlAttribute << style "height" <| String.fromInt percent ++ "%"
 
 
 type Pages
@@ -68,107 +78,92 @@ type alias Model =
 findColor : String -> Element.Color
 findColor alliance =
     if String.contains "Blue" alliance then
-        Colors.blue
+        Colors.backgroundBlue
 
     else if String.contains "Red" alliance then
-        Colors.red
+        Colors.backgroundRed
 
     else
-        Colors.yellow
+        purple
 
 
-stylishPage : String -> PagePosition -> String -> String -> Element.Element Msg -> Element.Element Msg
-stylishPage station position title teamNumber page =
+stylishPage : PagePosition -> Element.Element Msg
+stylishPage position =
     let
-        decoration : Int -> List (Element.Attribute Msg)
-        decoration size =
-            [ padding 10
-            , spacing 10
-            , centerX
-            , centerY
-            , Font.color Colors.veryLightBlue
-            , Font.size size
-            ]
-
-        createButtons : Msg -> String -> Msg -> String -> Element.Element Msg
-        createButtons b1Msg title1Msg b2Msg title2Msg =
-            column
-                [ spacing 15, centerX, centerY ]
+        createButtons : Msg -> Element.Element Msg -> Msg -> Element.Element Msg -> Element.Element Msg
+        createButtons firstMsg firstLabelMsg secondMsg secondLabelMsg =
+            row
+                [ spacing 15
+                , width fill
+                , centerX
+                , centerY
+                , Font.size 40
+                ]
                 [ button
                     buttonStyle
-                    { onPress = Just <| b1Msg
-                    , label = Element.text title1Msg
+                    { onPress = Just <| firstMsg
+                    , label = firstLabelMsg
                     }
+                , el [ width fill ] <| text ""
                 , button
                     buttonStyle
-                    { onPress = Just <| b2Msg
-                    , label = Element.text title2Msg
+                    { onPress = Just <| secondMsg
+                    , label = secondLabelMsg
                     }
                 ]
+
+        imageLabel : String -> String -> Element.Element Msg
+        imageLabel description src =
+            image [ Font.size 20, width <| Element.maximum 100 fill ]
+                { description = description, src = src }
+
+        nextPageImage : String
+        nextPageImage =
+            "../public/static/arrowRight.png"
+
+        preiousPageImage : String
+        preiousPageImage =
+            "../public/static/arrowLeft.png"
     in
-    column
-        [ Background.color <| findColor station
-        , spacing 15
-        , width fill
-        , height fill
-        , centerY
-        ]
-        [ el
-            (decoration 20)
-            (text <| title)
-        , el
-            (decoration 15)
-            (text <| "\nscouted team: " ++ teamNumber)
-        , page
-        , case position of
-            FirstPage ->
-                button
+    (case position of
+        FirstPage ->
+            row
+                [ width fill, height fill ]
+                [ el [ width fill ] <| text ""
+                , el [ width fill ] <| text ""
+                , button
                     buttonStyle
                     { onPress = Just <| NextPage
                     , label =
-                        image [ Font.size 20, width <| Element.maximum 100 fill ]
-                            { description = "Next Page", src = "arrowRight.png" }
+                        imageLabel "Next Page" nextPageImage
                     }
+                ]
 
-            LastPage ->
-                column
-                    [ spacing 15, centerX, centerY ]
-                    [ button
-                        buttonStyle
-                        { onPress = Just <| PrevPage
-                        , label =
-                            image [ Font.size 20, width <| Element.maximum 100 fill ]
-                                { description = "Previous Page", src = "arrowLeft.png" }
-                        }
-                    , button
-                        buttonStyle
-                        { onPress = Just <| Submit
-                        , label = Element.text "Submit"
-                        }
-                    ]
+        LastPage ->
+            createButtons
+                PrevPage
+                (imageLabel "Previous Page" preiousPageImage)
+                Submit
+            <|
+                text "Submit"
 
-            MiddlePage ->
-                column
-                    [ spacing 15, centerX, centerY ]
-                    [ button
-                        buttonStyle
-                        { onPress = Just <| NextPage
-                        , label =
-                            image [ Font.size 20, width <| Element.maximum 100 fill ]
-                                { description = "Next Page", src = "arrowRight.png" }
-                        }
-                    , button
-                        buttonStyle
-                        { onPress = Just <| PrevPage
-                        , label =
-                            image [ Font.size 20, width <| Element.maximum 100 fill ]
-                                { description = "Previous Page", src = "arrowLeft.png" }
-                        }
-                    ]
+        MiddlePage ->
+            createButtons PrevPage
+                (imageLabel "Previous Page" preiousPageImage)
+                NextPage
+                (imageLabel "Next Page" nextPageImage)
 
-            SubmitPosPage ->
-                createButtons YesSubmit "Yes" NoSubmit "No"
-        ]
+        SubmitPosPage ->
+            createButtons YesSubmit
+                (Element.text "Yes")
+                NoSubmit
+            <|
+                Element.text "No"
+    )
+        |> el
+            [ centerX
+            , width fill
+            ]
 
 
 init : Model
@@ -241,7 +236,7 @@ update msg model =
 
                 verifier : Bool
                 verifier =
-                    (not <| List.member matchError [ Err "No such match", Err "Match number must be a number" ])
+                    (not <| List.member matchError [ Err "No such match", Err "Invalid match number" ])
                         && stationError
                         /= Err "No station"
                         && (not << String.isEmpty << .scouterName << .teamData) model
@@ -274,61 +269,73 @@ update msg model =
             ( model, Cmd.none )
 
 
+teamDataToString : Model -> String
+teamDataToString model =
+    model.teamData
+        |> TeamData.getTeam
+        |> Result.map String.fromInt
+        |> merge
+
+
 view : Model -> Element.Element Msg
 view model =
     let
         page : String -> PagePosition -> Element.Element Msg -> Element.Element Msg
-        page name pagePosition =
-            el
-                [ Background.color <| findColor (TeamData.stationToString model.teamData.station)
-                , padding 105
-                , spacing 10
+        page name pagePosition msg =
+            column
+                [ centerX
                 , width fill
+                , Background.color << findColor <| TeamData.stationToString model.teamData.station
                 , height fill
-                , centerY
-                , centerX
                 ]
-                << stylishPage
-                    (TeamData.stationToString model.teamData.station)
-                    pagePosition
-                    name
-                    (TeamData.getTeam model.teamData
-                        |> Result.map String.fromInt
-                        |> merge
-                    )
+                [ column
+                    [ heightPercent 9
+                    , width fill
+                    ]
+                    [ text name
+                        |> el
+                            [ Font.size 55
+                            , Font.color Colors.white
+                            , Font.glow Colors.black 10
+                            , centerX
+                            , height <| fillPortion 1
+                            , Font.underline
+                            ]
+                    , text ("scouted team: " ++ teamDataToString model)
+                        |> el
+                            [ Font.size 47
+                            , Font.color Colors.white
+                            , Font.glow Colors.black 10
+                            , centerX
+                            , Font.bold
+                            , height <| fillPortion 1
+                            ]
+                    ]
+                , msg
+                , stylishPage pagePosition
+                ]
     in
     case model.pages of
         TeamDataPage ->
-            page
-                "Registeration"
-                FirstPage
-                << Element.map TeamDataMsg
-            <|
-                TeamData.view model.teamData
+            model.teamData
+                |> TeamData.view
+                |> Element.map TeamDataMsg
+                |> page "Registeration" FirstPage
 
         AutonomousPage ->
-            page
-                "Autonomous"
-                MiddlePage
-                << Element.map AutonomousDataMsg
-            <|
-                Autonomous.view model.autonomousData
+            Autonomous.view model.autonomousData
+                |> Element.map AutonomousDataMsg
+                |> page "Autonomous" MiddlePage
 
         TeleopPage ->
-            page
-                "Teleop"
-                MiddlePage
-                << Element.map TeleopDataMsg
-            <|
-                Teleop.view model.teleopData
+            Teleop.view model.teleopData
+                |> Element.map TeleopDataMsg
+                |> page "Teleop" MiddlePage
 
         ClimbingPage ->
-            page
-                "End-game"
-                LastPage
-                << Element.map ClimbingDataMsg
-            <|
-                Climbing.view model.climbingData
+            Climbing.view model.climbingData
+                |> Element.map ClimbingDataMsg
+                |> page "End-game" LastPage
 
         SubmitPage ->
             page
@@ -346,18 +353,21 @@ view model =
 
 buttonStyle : List (Element.Attribute Msg)
 buttonStyle =
-    [ Font.color white
-    , Font.size 40
+    [ Font.size 40
     , Font.glow blue 5
     , Border.rounded 10
-    , Font.family
+    , centerX
+    , centerY
+    , height fill
+    , width fill
+    ]
+
+
+fontExternal : Element.Attr () Msg
+fontExternal =
+    Font.family
         [ Font.external
             { name = "Open Sans"
             , url = "https://fonts.googleapis.com/css?family=Open+Sans:400i&display=swap"
             }
         ]
-    , Background.color purple
-    , center
-    , centerX
-    , centerY
-    ]

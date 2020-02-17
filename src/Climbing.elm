@@ -2,7 +2,7 @@ module Climbing exposing (Model, Msg, getter, init, update, view)
 
 import Array
 import Colors exposing (black, blue, purple, sky, white)
-import Element exposing (centerX, centerY, column, el, fill, height, padding, row, spacing, text)
+import Element exposing (centerX, centerY, column, el, fill, height, padding, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border exposing (rounded)
 import Element.Font as Font exposing (center)
@@ -133,6 +133,7 @@ createButton msg name =
         , Font.size 25
         , Font.glow blue 5
         , Border.rounded 10
+        , Font.bold
         , Font.family
             [ Font.external
                 { name = "Open Sans"
@@ -159,12 +160,12 @@ decoration =
 view : Model -> Element.Element Msg
 view model =
     column
-        [ Background.color sky
+        [ Background.color blue
         , padding 50
-        , spacing 20
-        , rounded 20
+        , height <| Element.fillPortion 5
         , centerX
         , centerY
+        , width fill
         ]
         [ column decoration
             [ row
@@ -180,7 +181,7 @@ view model =
                 ]
             , radio
                 [ padding 10
-                , spacing 20
+                , spacing 70
                 ]
                 { onChange = ClimbStatus
                 , selected = Just model.climbStatus

@@ -2,11 +2,12 @@ module Autonomous exposing (Model, Msg, getter, init, update, view)
 
 import Colors exposing (black, blue, purple, sky, white)
 import Counter
-import Element exposing (centerX, centerY, column, el, padding, spacing, text)
+import Element exposing (centerX, centerY, column, el, fill, height, htmlAttribute, padding, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
 import Element.Input as Input exposing (button, radioRow)
+import Html.Attributes exposing (style)
 
 
 type Msg
@@ -84,9 +85,10 @@ createButton : Msg -> String -> Element.Element Msg
 createButton msg name =
     button
         [ Font.color white
-        , Font.size 25
+        , Font.size 60
         , Font.glow blue 5
         , Border.rounded 4
+        , Font.bold
         , Font.family
             [ Font.external
                 { name = "Open Sans"
@@ -94,9 +96,7 @@ createButton msg name =
                 }
             ]
         , Background.color purple
-        , center
         , centerX
-        , centerY
         ]
         { onPress = Just msg, label = text name }
 
@@ -119,51 +119,91 @@ buttonInfo onFalse onTrue modelBool =
 
 view : Model -> Element.Element Msg
 view model =
+    let
+        radios :
+            Input.Label Msg
+            -> BallsInitAmount
+            -> Element.Element Msg
+            -> BallsInitAmount
+            -> Element.Element Msg
+            -> Element.Element Msg
+        radios label ballAmount1 txtMsg1 ballAmount2 txtMsg2 =
+            radioRow
+                [ padding 10
+                , spacing 50
+                , Font.size 55
+                , heightPercent 10
+                , Font.semiBold
+                ]
+                { onChange = BallsAmount
+                , selected = Just model.ballsAmount
+                , label = label
+                , options =
+                    [ Input.option ballAmount1 <| txtMsg1
+                    , Input.option ballAmount2 <| txtMsg2
+                    ]
+                }
+    in
     column
-        [ Background.color sky
-        , Border.color black
-        , padding 50
-        , spacing 20
-        , widthXY 5 5
-        , rounded 10
+        [ Background.color blue
         , centerX
         , centerY
+        , width fill
+        , heightPercent 40
+        , Element.height <| Element.fillPortion 5
         ]
-        [ radioRow
-            [ padding 10
-            , spacing 50
-            , Font.size 60
-            ]
-            { onChange = BallsAmount
-            , selected = Just model.ballsAmount
-            , label = Input.labelAbove [ Font.size 60, padding 10, spacing 20 ] <| text "started with:"
-            , options =
-                [ Input.option NoBalls <| text "0 balls"
-                , Input.option OneBall <| text "1 ball"
+        [ radios
+            (Input.labelAbove
+                [ Font.size 60
+                , padding 20
+                , spacing 20
+                , Font.underline
                 ]
-            }
-        , radioRow
-            [ padding 10
-            , spacing 50
-            , Font.size 60
+             <|
+                text "started with:"
+            )
+            NoBalls
+            (text "0 balls")
+            OneBall
+            (text "1 ball")
+        , radios
+            (Input.labelHidden "option2")
+            TwoBalls
+            (text "2 balls")
+            ThreeBalls
+            (text "3 balls")
+        , createButton Moved <|
+            if model.moved then
+                "moved."
+
+            else
+                "moved?"
+        , column
+            [ Font.size 50
+            , spacing 20
+            , padding 20
+            , Font.semiBold
+            , fontExternal
+            , heightPercent 50
             ]
-            { onChange = BallsAmount
-            , selected = Just model.ballsAmount
-            , label = Input.labelHidden "option2"
-            , options =
-                [ Input.option TwoBalls <| text "2 balls"
-                , Input.option ThreeBalls <| text "3 balls"
+            [ column
+                [ spacing 20
+                , heightPercent 70
                 ]
-            }
-        , createButton Moved "moved?"
-        , buttonInfo "didn't move" "moved" model.moved
-        , Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
-        , Element.map LevelTwo <| Counter.view "second Level:" model.levelTwo
-        , Element.map LevelThree <| Counter.view "third Level:" model.levelThree
-        , Element.map Missed <| Counter.view "missed:" model.missed
-        , Element.map TrenchCollection <| Counter.view "Collected from their trench:" model.trenchCollection
-        , Element.map EnemyTrenchCollection <| Counter.view "Collected from enemy's trench:" model.enemyTrenchCollection
-        , Element.map RendezvousCollection <| Counter.view "Collected from rendezvous:" model.rendezvousCollection
+                [ Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
+                , Element.map LevelTwo <| Counter.view "second Level:" model.levelTwo
+                , Element.map LevelThree <| Counter.view "third Level:" model.levelThree
+                , Element.map Missed <| Counter.view "missed:" model.missed
+                ]
+            , text "Collected from:"
+                |> el
+                    [ Font.size 65
+                    , Font.underline
+                    ]
+            , Element.map TrenchCollection <| Counter.view "their trench:" model.trenchCollection
+            , Element.map EnemyTrenchCollection <| Counter.view "enemy's trench:" model.enemyTrenchCollection
+            , Element.map RendezvousCollection <| Counter.view "rendezvous:" model.rendezvousCollection
+            ]
         ]
 
 
@@ -233,3 +273,18 @@ update msg model =
 
         RendezvousCollection count ->
             { model | rendezvousCollection = counterUpdate count model.rendezvousCollection }
+
+
+fontExternal : Element.Attr () Msg
+fontExternal =
+    Font.family
+        [ Font.external
+            { name = "Open Sans"
+            , url = "https://fonts.googleapis.com/css?family=Open+Sans:400i&display=swap"
+            }
+        ]
+
+
+heightPercent : Int -> Element.Attribute Msg
+heightPercent percent =
+    htmlAttribute << style "height" <| String.fromInt percent ++ "%"
