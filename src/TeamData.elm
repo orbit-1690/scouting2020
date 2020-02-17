@@ -3,12 +3,13 @@ module TeamData exposing (Model, Msg, getMatch, getTeam, getter, init, stationTo
 import Array exposing (Array)
 import Browser
 import Colors exposing (black, blue, orange, sky, white)
-import Element exposing (centerX, centerY, column, el, fill, height, minimum, padding, spacing, text, width)
+import Element exposing (centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, minimum, padding, spacing, text, width)
 import Element.Background as Background
-import Element.Border as Border exposing (rounded, widthXY)
+import Element.Border as Border exposing (rounded)
 import Element.Font as Font exposing (center)
-import Element.Input as Input exposing (labelHidden, radioRow)
+import Element.Input as Input exposing (labelHidden, radio)
 import GetMatch exposing (AllianceColor, Match, StationNumber, TeamStation, getTeamNum)
+import Html.Attributes exposing (style)
 import Maybe.Extra exposing (unwrap)
 import Result.Extra exposing (merge)
 import String
@@ -65,25 +66,26 @@ inputOption allianceColor allianceNumber text =
 view : Model -> Element.Element Msg
 view model =
     column
-        [ Background.color sky
-        , Border.color black
-        , padding 50
-        , spacing 20
-        , widthXY 5 5
-        , rounded 10
-        , centerX
-        , centerY
-        , rounded 20
+        [ Background.color blue
+        , padding 20
+        , spacing 50
+        , height fill
+        , width fill
         ]
-        [ textInput model.scouterName ScouterInput "Scouter's name"
-        , radioRow
-            [ padding 10
-            , spacing 20
-            , Font.size 10
+        [ textInput model.scouterName ScouterInput "your name"
+        , text "Station"
+            |> el
+                [ Font.size 75
+                , Font.underline
+                ]
+        , radio
+            [ Font.size 70
+            , height fill
+            , spacing 30
             ]
             { onChange = Station
             , selected = model.station
-            , label = Input.labelAbove [] (text "stations")
+            , label = Input.labelHidden ""
             , options =
                 [ inputOption GetMatch.Blue GetMatch.One "Blue 1"
                 , inputOption GetMatch.Blue GetMatch.Two "Blue 2"
@@ -94,26 +96,26 @@ view model =
                 ]
             }
         , textInput model.matchNumber MatchInput "Match number"
-        , el
-            [ Background.color orange
-            , width <| minimum 350 <| fill
-            , height fill
-            , center
-            , Font.color white
-            , Font.glow blue 5
-            , Font.size 60
-            , Font.family
-                [ Font.external
-                    { name = "Open Sans"
-                    , url = "https://fonts.googleapis.com/css?family=Open+Sans:400i&display=swap"
-                    }
+        , getTeam model
+            |> Result.map String.fromInt
+            |> merge
+            |> Element.text
+            |> el
+                [ Background.color orange
+                , width fill
+                , rounded 10
+                , center
+                , Font.semiBold
+                , Font.color black
+                , Font.glow Colors.white 1
+                , Font.size 60
+                , Font.family
+                    [ Font.external
+                        { name = "Open Sans"
+                        , url = "https://fonts.googleapis.com/css?family=Open+Sans:400i&display=swap"
+                        }
+                    ]
                 ]
-            ]
-            (getTeam model
-                |> Result.map String.fromInt
-                |> merge
-                |> Element.text
-            )
         ]
 
 
@@ -134,7 +136,7 @@ getTeam model =
 getMatch : Model -> Result String Match
 getMatch { matchNumber, matches } =
     String.toInt matchNumber
-        |> Result.fromMaybe "Match number must be a number"
+        |> Result.fromMaybe "Invalid match number"
         |> Result.andThen
             (\number ->
                 Array.get (number - 1) matches
@@ -167,7 +169,7 @@ numberToString chosenNumber =
 
 stationToString : Maybe TeamStation -> String
 stationToString alliance =
-    unwrap "Now station selected" (\( color, number ) -> String.join " " [ colorToString color, numberToString number ]) alliance
+    unwrap "No station selected" (\( color, number ) -> String.join " " [ colorToString color, numberToString number ]) alliance
 
 
 textInput : String -> (String -> Msg) -> String -> Element.Element Msg

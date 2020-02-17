@@ -2,7 +2,7 @@ module Teleop exposing (Model, Msg, createButton, decoration, getter, init, prin
 
 import Colors exposing (black, blue, purple, sky, white)
 import Counter
-import Element exposing (centerX, centerY, column, el, padding, row, spacing, text)
+import Element exposing (centerX, centerY, column, el, fill, padding, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
@@ -60,7 +60,8 @@ createButton msg name =
         [ Font.color white
         , Font.size 25
         , Font.glow blue 5
-        , Border.rounded 10
+        , rounded 10
+        , Font.bold
         , Font.family
             [ Font.external
                 { name = "Open Sans"
@@ -121,14 +122,13 @@ update msg model =
 view : Model -> Element.Element Msg
 view model =
     column
-        [ Background.color sky
-        , Border.color black
+        [ Background.color blue
         , padding 50
-        , spacing 20
-        , widthXY 5 5
-        , rounded 10
+        , spacing 70
         , centerX
+        , Element.height <| Element.fillPortion 3
         , centerY
+        , width fill
         ]
         [ row decoration
             [ column decoration

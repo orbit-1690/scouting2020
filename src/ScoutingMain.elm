@@ -300,7 +300,7 @@ view model =
                             , centerX
                             , height <| fillPortion 1
                             , Font.underline
-                "Registration"
+                            , fontExternal
                             ]
                     , text ("scouted team: " ++ teamDataToString model)
                         |> el
@@ -320,7 +320,7 @@ view model =
     case model.pages of
         TeamDataPage ->
             model.teamData
-                |> TeamData.view
+                |> page "Registration" FirstPage
                 |> Element.map TeamDataMsg
                 |> page "Registeration" FirstPage
 
