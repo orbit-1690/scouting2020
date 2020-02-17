@@ -64,7 +64,7 @@ createButton msg name =
         , Font.family
             [ Font.external
                 { name = "Open Sans"
-                , url = "https://fonts.googleapis.com/css?family=Open+Sans:700i&display=swap"
+                , url = "https://fonts.googleapis.com/css?family=Open+Sans:400i&display=swap"
                 }
             ]
         , Background.color purple
@@ -130,12 +130,12 @@ view model =
         ]
         [ row decoration
             [ column decoration
-                [ createButton ColorRoulette "spun to\ncorrect color?"
-                , printButton "no" "yes" model.colorRoulette
-                ]
-            , column decoration
                 [ createButton SpunRoulette "spun cycles 3-5?"
                 , printButton "no" "yes" model.spunRoulette
+                ]
+            , column decoration
+                [ createButton ColorRoulette "spun to\ncorrect color?"
+                , printButton "no" "yes" model.colorRoulette
                 ]
             ]
         , Element.map LowLevel <| Counter.view "low Level:" model.lowlevel

@@ -323,6 +323,14 @@ buttonStyle =
     , Font.glow Colors.black 6
     , Border.rounded 10
     , Background.color Colors.gray
+    , Font.family
+        [ Font.external
+            { name = "Open Sans"
+            , url = "https://fonts.googleapis.com/css?family=Open+Sans:400i&display=swap"
+            }
+        ]
+    , Background.color purple
+    , center
     , centerX
     , centerY
     , heightPrecent 70

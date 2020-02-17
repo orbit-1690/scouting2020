@@ -83,10 +83,18 @@ update msg model =
             { model | triedClimb = not model.triedClimb }
 
         ClimbStatus status ->
-            { model | climbStatus = status }
+            if model.balanced == True then
+                { model | climbStatus = Hanged }
+
+            else
+                { model | climbStatus = status }
 
         Balanced ->
-            { model | balanced = not model.balanced }
+            if model.climbStatus == Loser then
+                { model | balanced = False }
+
+            else
+                { model | balanced = not model.balanced }
 
         Defended ->
             { model | defended = not model.defended }
@@ -130,7 +138,7 @@ createButton msg name =
         , Font.family
             [ Font.external
                 { name = "Open Sans"
-                , url = "https://fonts.googleapis.com/css?family=Open+Sans:700i&display=swap"
+                , url = "https://fonts.googleapis.com/css?family=Open+Sans:400i&display=swap"
                 }
             ]
         , Background.color purple
