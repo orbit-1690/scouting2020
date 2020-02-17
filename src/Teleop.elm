@@ -2,7 +2,7 @@ module Teleop exposing (Model, Msg, createButton, decoration, getter, init, upda
 
 import Colors exposing (black, blue, purple, sky, white)
 import Counter
-import Element exposing (centerX, centerY, column, el, padding, row, spacing, text)
+import Element exposing (centerX, centerY, column, el, fill, padding, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
@@ -128,6 +128,7 @@ view model =
         , centerX
         , Element.height <| Element.fillPortion 3
         , centerY
+        , width fill
         ]
         [ row decoration
             [ column decoration

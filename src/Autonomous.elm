@@ -2,11 +2,12 @@ module Autonomous exposing (Model, Msg, getter, init, update, view)
 
 import Colors exposing (black, blue, purple, sky, white)
 import Counter
-import Element exposing (centerX, centerY, column, el, padding, spacing, text)
+import Element exposing (centerX, centerY, column, el, fill, height, htmlAttribute, padding, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (center)
 import Element.Input as Input exposing (button, radioRow)
+import Html.Attributes exposing (style)
 
 
 type Msg
@@ -84,7 +85,7 @@ createButton : Msg -> String -> Element.Element Msg
 createButton msg name =
     button
         [ Font.color white
-        , Font.size 25
+        , Font.size 50
         , Font.glow blue 5
         , Border.rounded 4
         , Font.bold
@@ -133,6 +134,7 @@ view model =
                 [ padding 10
                 , spacing 50
                 , Font.size 50
+                , htmlAttribute <| style "height" "10%"
                 ]
                 { onChange = BallsAmount
                 , selected = Just model.ballsAmount
@@ -145,10 +147,10 @@ view model =
     in
     column
         [ Background.color blue
-        , padding 50
-        , spacing 50
         , centerX
         , centerY
+        , width fill
+        , htmlAttribute <| style "height" "10%"
         , Element.height <| Element.fillPortion 5
         ]
         [ radios
@@ -169,15 +171,20 @@ view model =
 
             else
                 "moved?"
-        , buttonInfo "didn't move" "moved" model.moved
-        , Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
-        , Element.map LevelTwo <| Counter.view "second Level:" model.levelTwo
-        , Element.map LevelThree <| Counter.view "third Level:" model.levelThree
-        , Element.map Missed <| Counter.view "missed:" model.missed
-        , el [ Font.size 50, padding 10, Font.underline ] (text "Collected from:")
-        , Element.map TrenchCollection <| Counter.view "their trench:" model.trenchCollection
-        , Element.map EnemyTrenchCollection <| Counter.view "enemy's trench:" model.enemyTrenchCollection
-        , Element.map RendezvousCollection <| Counter.view "rendezvous:" model.rendezvousCollection
+        , column
+            [ Font.size 50
+            , htmlAttribute <| style "height" "50%"
+            , spacing 20
+            ]
+            [ Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
+            , Element.map LevelTwo <| Counter.view "second Level:" model.levelTwo
+            , Element.map LevelThree <| Counter.view "third Level:" model.levelThree
+            , Element.map Missed <| Counter.view "missed:" model.missed
+            , el [ Font.size 50, padding 10, Font.underline ] (text "Collected from:")
+            , Element.map TrenchCollection <| Counter.view "their trench:" model.trenchCollection
+            , Element.map EnemyTrenchCollection <| Counter.view "enemy's trench:" model.enemyTrenchCollection
+            , Element.map RendezvousCollection <| Counter.view "rendezvous:" model.rendezvousCollection
+            ]
         ]
 
 

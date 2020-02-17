@@ -5,7 +5,7 @@ import Autonomous
 import Browser
 import Climbing
 import Colors exposing (blue, purple, white)
-import Element exposing (Color, centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, image, layout, padding, row, spacing, text, width)
+import Element exposing (centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, image, layout, padding, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
@@ -13,6 +13,7 @@ import Element.Input exposing (button)
 import File.Download as Download
 import GetMatch
 import Html.Attributes exposing (style)
+import ResizeableFont exposing (scaleFactor)
 import Result.Extra exposing (merge)
 import TeamData
 import Teleop
@@ -28,14 +29,14 @@ main =
         }
 
 
-widthPrecent : Int -> Element.Attribute Msg
-widthPrecent precent =
-    htmlAttribute << style "width" <| String.fromInt precent ++ "%"
+widthPercent : Int -> Element.Attribute Msg
+widthPercent percent =
+    htmlAttribute << style "width" <| String.fromInt percent ++ "%"
 
 
-heightPrecent : Int -> Element.Attribute Msg
-heightPrecent precent =
-    htmlAttribute << style "height" <| String.fromInt precent ++ "%"
+heightPercent : Int -> Element.Attribute Msg
+heightPercent percent =
+    htmlAttribute << style "height" <| String.fromInt percent ++ "%"
 
 
 type Pages
@@ -143,9 +144,7 @@ stylishPage position =
     )
         |> el
             [ centerX
-            , centerY
             , width fill
-            , height fill
             ]
 
 
@@ -271,10 +270,13 @@ view model =
                 , Background.color << findColor <| TeamData.stationToString model.teamData.station
                 , height fill
                 ]
-                [ column [ heightPrecent 7, width fill ]
+                [ column
+                    [ heightPercent 9
+                    , width fill
+                    ]
                     [ text name
                         |> el
-                            [ Font.size 50
+                            [ Font.size 55
                             , Font.color Colors.white
                             , Font.glow Colors.black 10
                             , centerX
@@ -283,7 +285,7 @@ view model =
                             ]
                     , text ("scouted team: " ++ teamDataToString model)
                         |> el
-                            [ Font.size 40
+                            [ Font.size 47
                             , Font.color Colors.white
                             , Font.glow Colors.black 10
                             , centerX
@@ -339,5 +341,15 @@ buttonStyle =
     , Background.color Colors.gray
     , centerX
     , centerY
-    , heightPrecent 70
+    , heightPercent 50
     ]
+
+
+fontExternal : Element.Attr () Msg
+fontExternal =
+    Font.family
+        [ Font.external
+            { name = "Open Sans"
+            , url = "https://fonts.googleapis.com/css?family=Open+Sans:700i&display=swap"
+            }
+        ]

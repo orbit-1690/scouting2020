@@ -2,9 +2,9 @@ module Climbing exposing (Model, Msg, getter, init, update, view)
 
 import Array
 import Colors exposing (black, blue, purple, sky, white)
-import Element exposing (centerX, centerY, column, el, fill, height, padding, row, spacing, text)
+import Element exposing (centerX, centerY, column, el, fill, height, padding, row, spacing, text, width)
 import Element.Background as Background
-import Element.Border as Border exposing (rounded, widthXY)
+import Element.Border as Border exposing (rounded)
 import Element.Font as Font exposing (center)
 import Element.Input as Input exposing (button, labelHidden, radio)
 import GetMatch
@@ -165,6 +165,7 @@ view model =
         , height <| Element.fillPortion 5
         , centerX
         , centerY
+        , width fill
         ]
         [ column decoration
             [ row

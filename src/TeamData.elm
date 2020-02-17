@@ -5,7 +5,7 @@ import Browser
 import Colors exposing (black, blue, orange, sky, white)
 import Element exposing (centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, minimum, padding, spacing, text, width)
 import Element.Background as Background
-import Element.Border as Border exposing (rounded, widthXY)
+import Element.Border as Border exposing (rounded)
 import Element.Font as Font exposing (center)
 import Element.Input as Input exposing (labelHidden, radio)
 import GetMatch exposing (AllianceColor, Match, StationNumber, TeamStation, getTeamNum)
@@ -68,26 +68,24 @@ view model =
     column
         [ Background.color blue
         , padding 20
-        , spacing 100
+        , spacing 50
         , width fill
-        , htmlAttribute <| style "height" "88%"
+        , htmlAttribute <| style "height" "83%"
         ]
         [ textInput model.scouterName ScouterInput "your name"
+        , text "Station"
+            |> el
+                [ Font.size 70
+                , Font.underline
+                ]
         , radio
-            [ padding 10
-            , spacing 50
-            , Font.size 50
+            [ Font.size 65
+            , htmlAttribute <| style "height" "60%"
+            , spacing 30
             ]
             { onChange = Station
             , selected = model.station
-            , label =
-                Input.labelAbove
-                    [ Font.size 50
-                    , padding 10
-                    , spacing 20
-                    , Font.underline
-                    ]
-                    (text "Station")
+            , label = Input.labelHidden ""
             , options =
                 [ inputOption GetMatch.Blue GetMatch.One "Blue 1"
                 , inputOption GetMatch.Blue GetMatch.Two "Blue 2"
@@ -171,9 +169,8 @@ textInput : String -> (String -> Msg) -> String -> Element.Element Msg
 textInput modelValue nextButton name =
     Input.text
         [ Font.color sky
-        , Font.size 50
+        , Font.size 60
         , rounded 10
-        , fontExternal
         ]
         { onChange = nextButton
         , text = modelValue
@@ -199,13 +196,3 @@ update msg model =
                 | matchNumber = matchNumber
                 , team = getTeam model
             }
-
-
-fontExternal : Element.Attr () Msg
-fontExternal =
-    Font.family
-        [ Font.external
-            { name = "Open Sans"
-            , url = "https://fonts.googleapis.com/css?family=Open+Sans:700i&display=swap"
-            }
-        ]
