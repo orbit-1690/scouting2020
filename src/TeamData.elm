@@ -75,11 +75,11 @@ view model =
         [ textInput model.scouterName ScouterInput "your name"
         , text "Station"
             |> el
-                [ Font.size 70
+                [ Font.size 75
                 , Font.underline
                 ]
         , radio
-            [ Font.size 65
+            [ Font.size 70
             , height fill
             , spacing 30
             ]
@@ -105,6 +105,7 @@ view model =
                 , width fill
                 , rounded 10
                 , center
+                , Font.semiBold
                 , Font.color black
                 , Font.glow Colors.white 1
                 , Font.size 60

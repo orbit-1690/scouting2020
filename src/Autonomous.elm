@@ -131,7 +131,7 @@ view model =
             radioRow
                 [ padding 10
                 , spacing 50
-                , Font.size 50
+                , Font.size 55
                 , heightPercent 10
                 , Font.semiBold
                 ]
@@ -154,7 +154,7 @@ view model =
         ]
         [ radios
             (Input.labelAbove
-                [ Font.size 50
+                [ Font.size 60
                 , padding 20
                 , spacing 20
                 , Font.underline
@@ -197,7 +197,7 @@ view model =
                 ]
             , text "Collected from:"
                 |> el
-                    [ Font.size 60
+                    [ Font.size 65
                     , Font.underline
                     ]
             , Element.map TrenchCollection <| Counter.view "their trench:" model.trenchCollection

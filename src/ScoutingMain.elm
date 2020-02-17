@@ -172,7 +172,7 @@ init =
     , autonomousData = Autonomous.init
     , teleopData = Teleop.init
     , climbingData = Climbing.init
-    , pages = TeamDataPage
+    , pages = AutonomousPage
     }
 
 
@@ -300,7 +300,6 @@ view model =
                             , centerX
                             , height <| fillPortion 1
                             , Font.underline
-                            , fontExternal
                             ]
                     , text ("scouted team: " ++ teamDataToString model)
                         |> el
@@ -310,7 +309,6 @@ view model =
                             , centerX
                             , Font.bold
                             , height <| fillPortion 1
-                            , fontExternal
                             ]
                     ]
                 , msg
