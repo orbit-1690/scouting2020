@@ -320,7 +320,7 @@ view model =
             model.teamData
                 |> TeamData.view
                 |> Element.map TeamDataMsg
-                |> page "Registeration" FirstPage
+                |> page "Registration" FirstPage
 
         AutonomousPage ->
             Autonomous.view model.autonomousData
