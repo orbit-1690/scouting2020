@@ -350,6 +350,6 @@ fontExternal =
     Font.family
         [ Font.external
             { name = "Open Sans"
-            , url = "https://fonts.googleapis.com/css?family=Open+Sans:700i&display=swap"
+            , url = "https://fonts.googleapis.com/css?family=Open+Sans:400i&display=swap"
             }
         ]

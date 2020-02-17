@@ -108,6 +108,12 @@ view model =
                 , Font.color black
                 , Font.glow Colors.white 1
                 , Font.size 60
+                , Font.family
+                    [ Font.external
+                        { name = "Open Sans"
+                        , url = "https://fonts.googleapis.com/css?family=Open+Sans:400i&display=swap"
+                        }
+                    ]
                 ]
         ]
 
@@ -171,6 +177,12 @@ textInput modelValue nextButton name =
         [ Font.color sky
         , Font.size 60
         , rounded 10
+        , Font.family
+            [ Font.external
+                { name = "Open Sans"
+                , url = "https://fonts.googleapis.com/css?family=Open+Sans:400i&display=swap"
+                }
+            ]
         ]
         { onChange = nextButton
         , text = modelValue
