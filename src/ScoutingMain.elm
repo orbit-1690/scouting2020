@@ -75,16 +75,16 @@ type alias Model =
     }
 
 
-findColor : String -> Element.Color
+findColor : String -> ( Element.Color, Element.Color )
 findColor alliance =
     if String.contains "Blue" alliance then
-        Colors.backgroundBlue
+        ( Colors.backgroundBlue, Colors.blue )
 
     else if String.contains "Red" alliance then
-        Colors.backgroundRed
+        ( Colors.backgroundRed, Colors.red )
 
     else
-        purple
+        ( purple, Colors.white )
 
 
 stylishPage : PagePosition -> Element.Element Msg
@@ -169,7 +169,7 @@ stylishPage position =
 init : Model
 init =
     { teamData = TeamData.init <| Array.fromList GetMatch.matches
-    , autonomousData = Autonomous.init
+    , autonomousData = Autonomous.init <| Array.fromList GetMatch.matches
     , teleopData = Teleop.init
     , climbingData = Climbing.init
     , pages = TeamDataPage
@@ -280,12 +280,12 @@ teamDataToString model =
 view : Model -> Element.Element Msg
 view model =
     let
-        page : String -> PagePosition -> Element.Element Msg -> Element.Element Msg
-        page name pagePosition msg =
+        page : String -> PagePosition -> List (Element.Attribute Msg) -> Element.Element Msg -> Element.Element Msg
+        page name pagePosition attr msg =
             column
                 [ centerX
                 , width fill
-                , Background.color << findColor <| TeamData.stationToString model.teamData.station
+                , Background.color <| Tuple.first <| findColor <| TeamData.stationToString model.teamData.station
                 , height fill
                 ]
                 [ column
@@ -312,7 +312,7 @@ view model =
                             , centerX
                             ]
                     ]
-                , msg
+                , el attr <| msg
                 , stylishPage pagePosition
                 ]
     in
@@ -321,33 +321,57 @@ view model =
             model.teamData
                 |> TeamData.view
                 |> Element.map TeamDataMsg
-                |> page "Registration" FirstPage
+                |> page "Registration"
+                    FirstPage
+                    [ height fill
+                    , width fill
+                    , Background.color <| Tuple.second <| findColor <| TeamData.stationToString model.teamData.station
+                    ]
 
         AutonomousPage ->
-            Autonomous.view model.autonomousData
+            model.autonomousData
+                |> Autonomous.view
                 |> Element.map AutonomousDataMsg
-                |> page "Autonomous" MiddlePage
+                |> page "Autonomous"
+                    MiddlePage
+                    [ Background.color <| Tuple.second <| findColor <| TeamData.stationToString model.teamData.station
+                    , width fill
+                    , Element.height <| Element.fillPortion 5
+                    ]
 
         TeleopPage ->
             Teleop.view model.teleopData
                 |> Element.map TeleopDataMsg
-                |> page "Teleop" MiddlePage
+                |> page "Teleop"
+                    MiddlePage
+                    [ height fill
+                    , width fill
+                    , Background.color <| Tuple.second <| findColor <| TeamData.stationToString model.teamData.station
+                    ]
 
         ClimbingPage ->
             Climbing.view model.climbingData
                 |> Element.map ClimbingDataMsg
-                |> page "End-game" LastPage
+                |> page "End-game"
+                    LastPage
+                    [ height fill
+                    , width fill
+                    , Background.color <| Tuple.second <| findColor <| TeamData.stationToString model.teamData.station
+                    ]
 
         SubmitPage ->
             page
                 "Submit"
                 SubmitPosPage
+                [ centerX
+                , centerY
+                ]
                 << Element.map SubmitDataMsg
             <|
-                column [ centerY, centerX ]
-                    [ el [ Font.size 70, centerX, centerY ]
+                column [ Font.size 70 ]
+                    [ el [ centerX ]
                         (text "Are you sure")
-                    , el [ Font.size 70, centerX, centerY ]
+                    , el []
                         (text "you want to submit?")
                     ]
 

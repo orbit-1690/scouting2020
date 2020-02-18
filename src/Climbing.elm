@@ -176,11 +176,8 @@ decorationForColumn =
 view : Model -> Element.Element Msg
 view model =
     column
-        [ Background.color blue
-        , height fill
+        [ height fill
         , centerX
-        , centerY
-        , width fill
         , Font.size 60
         ]
         [ column decoration

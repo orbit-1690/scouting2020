@@ -124,11 +124,8 @@ update msg model =
 view : Model -> Element.Element Msg
 view model =
     column
-        [ Background.color blue
-        , padding 50
+        [ padding 50
         , spacing 100
-        , centerX
-        , centerY
         , height fill
         , width fill
         ]
