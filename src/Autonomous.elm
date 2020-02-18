@@ -132,7 +132,7 @@ view model =
                 [ padding 10
                 , spacing 50
                 , Font.size 55
-                , heightPercent 10
+                , heightPercent 60
                 , Font.semiBold
                 ]
                 { onChange = BallsAmount
@@ -146,33 +146,33 @@ view model =
     in
     column
         [ Background.color blue
-        , centerX
-        , centerY
         , width fill
-        , heightPercent 35
         , spacing 30
         , Element.height <| Element.fillPortion 5
         ]
-        [ radios
-            (Input.labelAbove
-                [ Font.size 60
-                , padding 20
-                , spacing 20
-                , Font.underline
-                ]
-             <|
-                text "started with:"
-            )
-            NoBalls
-            (text "0 balls")
-            OneBall
-            (text "1 ball")
-        , radios
-            (Input.labelHidden "option2")
-            TwoBalls
-            (text "2 balls")
-            ThreeBalls
-            (text "3 balls")
+        [ column [ centerX, spacing 30 ]
+            [ radios
+                (Input.labelAbove
+                    [ Font.size 60
+                    , padding 20
+                    , spacing 20
+                    , Font.underline
+                    , centerX
+                    ]
+                 <|
+                    text "started with:"
+                )
+                NoBalls
+                (text "0 balls")
+                OneBall
+                (text "1 ball")
+            , radios
+                (Input.labelHidden "option2")
+                TwoBalls
+                (text "2 balls")
+                ThreeBalls
+                (text "3 balls")
+            ]
         , createButton Moved <|
             if model.moved then
                 "moved."
