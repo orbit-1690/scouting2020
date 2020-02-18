@@ -39,6 +39,15 @@ type alias Model =
     }
 
 
+findColor : String -> Element.Color
+findColor alliance =
+    if String.contains "Blue" alliance then
+        Colors.backgroundBlue
+
+    else
+        Colors.backgroundRed
+
+
 getter : Model -> List String
 getter model =
     [ "match" ++ "," ++ model.matchNumber
