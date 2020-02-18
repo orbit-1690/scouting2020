@@ -300,6 +300,7 @@ view model =
                             , centerX
                             , height <| fillPortion 1
                             , Font.underline
+                            , Element.paddingXY 0 10
                             ]
                     , text ("scouted team: " ++ teamDataToString model)
                         |> el
