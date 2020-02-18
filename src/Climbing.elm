@@ -80,11 +80,18 @@ update : Msg -> Model -> Model
 update msg model =
     case msg of
         TriedClimb ->
-            { model | triedClimb = not model.triedClimb }
+            if model.climbStatus == Hanged then
+                { model | triedClimb = True }
+
+            else
+                { model | triedClimb = not model.triedClimb }
 
         ClimbStatus status ->
             if model.balanced == True then
                 { model | climbStatus = Hanged }
+
+            else if status == Hanged then
+                { model | climbStatus = status, triedClimb = True }
 
             else
                 { model | climbStatus = status }
