@@ -31,13 +31,17 @@ update msg model =
 
 view : String -> Model -> Element.Element Msg
 view title model =
+    let
+        size : Element.Attribute Msg
+        size =
+            Font.size 70
+    in
     row
-        [ padding 3
-        , spacing 20
-        ]
-        [ el [ Font.size 60 ] (text title)
-        , button [ Font.size 60 ] { onPress = Just Minus, label = text "-" }
-        , el [ Font.size 60 ]
-            (text <| String.fromInt model)
-        , button [ Font.size 60 ] { onPress = Just Plus, label = text "+" }
+        [ spacing 100 ]
+        [ text title
+        , row [ size, spacing 20 ]
+            [ button [] { onPress = Just Minus, label = text "-" }
+            , text <| String.fromInt model
+            , button [] { onPress = Just Plus, label = text "+" }
+            ]
         ]
