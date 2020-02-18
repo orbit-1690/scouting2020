@@ -296,7 +296,7 @@ view model =
                         |> el
                             [ Font.size 55
                             , Font.color Colors.white
-                            , Font.glow Colors.black 10
+                            , Font.glow Colors.black 3
                             , centerX
                             , height <| fillPortion 1
                             , Font.underline
@@ -306,10 +306,10 @@ view model =
                         |> el
                             [ Font.size 47
                             , Font.color Colors.white
-                            , Font.glow Colors.black 10
-                            , Font.glow Colors.black 1
+                            , Font.glow Colors.black 3
                             , Font.bold
                             , height <| fillPortion 1
+                            , centerX
                             ]
                     ]
                 , msg

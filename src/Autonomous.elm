@@ -5,7 +5,7 @@ import Counter
 import Element exposing (centerX, centerY, column, el, fill, height, htmlAttribute, padding, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
-import Element.Font as Font exposing (center)
+import Element.Font as Font exposing (bold, center)
 import Element.Input as Input exposing (button, radioRow)
 import Html.Attributes exposing (style)
 
@@ -88,7 +88,6 @@ createButton msg name =
         , Font.size 60
         , Font.glow blue 5
         , Border.rounded 4
-        , Font.bold
         , Font.family
             [ Font.external
                 { name = "Open Sans"
@@ -101,62 +100,79 @@ createButton msg name =
         { onPress = Just msg, label = text name }
 
 
+forOptionWith : String -> Input.OptionState -> Element.Element Msg
+forOptionWith displayedText option =
+    el
+        (case option of
+            Input.Idle ->
+                [ Font.color black ]
+
+            Input.Focused ->
+                [ Font.color black ]
+
+            Input.Selected ->
+                [ Font.color Colors.backgroundBlue
+                , Font.bold
+                ]
+        )
+    <|
+        text displayedText
+
+
 view : Model -> Element.Element Msg
 view model =
     let
         radios :
             Input.Label Msg
             -> BallsInitAmount
-            -> Element.Element Msg
+            -> (Input.OptionState -> Element.Element Msg)
             -> BallsInitAmount
-            -> Element.Element Msg
+            -> (Input.OptionState -> Element.Element Msg)
             -> Element.Element Msg
         radios label ballAmount1 txtMsg1 ballAmount2 txtMsg2 =
             radioRow
                 [ padding 10
                 , spacing 50
                 , Font.size 55
-                , heightPercent 10
-                , Font.semiBold
                 ]
                 { onChange = BallsAmount
                 , selected = Just model.ballsAmount
                 , label = label
                 , options =
-                    [ Input.option ballAmount1 <| txtMsg1
-                    , Input.option ballAmount2 <| txtMsg2
+                    [ Input.optionWith ballAmount1 <| txtMsg1
+                    , Input.optionWith ballAmount2 <| txtMsg2
                     ]
                 }
     in
     column
         [ Background.color blue
-        , centerX
-        , centerY
         , width fill
-        , heightPercent 35
         , spacing 30
         , Element.height <| Element.fillPortion 5
         ]
-        [ radios
-            (Input.labelAbove
-                [ Font.size 60
-                , padding 20
-                , spacing 20
-                , Font.underline
-                ]
-             <|
-                text "started with:"
-            )
-            NoBalls
-            (text "0 balls")
-            OneBall
-            (text "1 ball")
-        , radios
-            (Input.labelHidden "option2")
-            TwoBalls
-            (text "2 balls")
-            ThreeBalls
-            (text "3 balls")
+        [ column [ centerX, spacing 30 ]
+            [ radios
+                (Input.labelAbove
+                    [ Font.size 60
+                    , padding 20
+                    , spacing 20
+                    , Font.underline
+                    , centerX
+                    ]
+                 <|
+                    text "started with:"
+                )
+                NoBalls
+                (forOptionWith "0 balls")
+                OneBall
+                (forOptionWith "1 ball")
+            , radios
+                (Input.labelHidden "option2")
+                TwoBalls
+                (forOptionWith "2 balls")
+                ThreeBalls
+                (forOptionWith "3 balls")
+            ]
         , createButton Moved <|
             if model.moved then
                 "moved."
@@ -167,7 +183,6 @@ view model =
             [ Font.size 50
             , spacing 50
             , padding 20
-            , Font.semiBold
             , fontExternal
             , heightPercent 42
             ]
@@ -244,7 +259,7 @@ update msg model =
             { model | missed = min (maxCollected - maxThrownOut + model.missed) <| counterUpdate count model.missed }
 
         TrenchCollection count ->
-            { model | trenchCollection = counterUpdate count model.trenchCollection }
+            { model | trenchCollection = max (maxThrownOut + model.trenchCollection - maxCollected) <| counterUpdate count model.trenchCollection }
 
         BallsAmount ballsAmount ->
             if maxCollected - maxThrownOut < ballsAmountToInt model.ballsAmount - ballsAmountToInt ballsAmount then
@@ -254,10 +269,10 @@ update msg model =
                 { model | ballsAmount = ballsAmount }
 
         EnemyTrenchCollection count ->
-            { model | enemyTrenchCollection = counterUpdate count model.enemyTrenchCollection }
+            { model | enemyTrenchCollection = max (maxThrownOut + model.enemyTrenchCollection - maxCollected) <| counterUpdate count model.enemyTrenchCollection }
 
         RendezvousCollection count ->
-            { model | rendezvousCollection = counterUpdate count model.rendezvousCollection }
+            { model | rendezvousCollection = max (maxThrownOut + model.rendezvousCollection - maxCollected) <| counterUpdate count model.rendezvousCollection }
 
 
 fontExternal : Element.Attr () Msg
