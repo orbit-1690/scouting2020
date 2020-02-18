@@ -119,11 +119,11 @@ stylishPage position =
 
         nextPageImage : String
         nextPageImage =
-            "../public/static/arrowRight.png"
+            "https://i.imgur.com/NFxo6mv.png"
 
         preiousPageImage : String
         preiousPageImage =
-            "../public/static/arrowLeft.png"
+            "https://i.imgur.com/mM68bja.png"
     in
     (case position of
         FirstPage ->
