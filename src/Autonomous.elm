@@ -5,7 +5,7 @@ import Counter
 import Element exposing (centerX, centerY, column, el, fill, height, htmlAttribute, padding, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
-import Element.Font as Font exposing (center)
+import Element.Font as Font exposing (bold, center)
 import Element.Input as Input exposing (button, radioRow)
 import Html.Attributes exposing (style)
 
@@ -88,7 +88,8 @@ createButton msg name =
         , Font.size 60
         , Font.glow blue 5
         , Border.rounded 4
-        , Font.bold
+
+        -- , Font.bold
         , Font.family
             [ Font.external
                 { name = "Open Sans"
@@ -142,24 +143,22 @@ view model =
         radios :
             Input.Label Msg
             -> BallsInitAmount
-            -> Element.Element Msg
+            -> (Input.OptionState -> Element.Element Msg)
             -> BallsInitAmount
-            -> Element.Element Msg
+            -> (Input.OptionState -> Element.Element Msg)
             -> Element.Element Msg
         radios label ballAmount1 txtMsg1 ballAmount2 txtMsg2 =
             radioRow
                 [ padding 10
                 , spacing 50
                 , Font.size 55
-                , heightPercent 60
-                , Font.semiBold
                 ]
                 { onChange = BallsAmount
                 , selected = Just model.ballsAmount
                 , label = label
                 , options =
-                    [ Input.option ballAmount1 <| txtMsg1
-                    , Input.option ballAmount2 <| txtMsg2
+                    [ Input.optionWith ballAmount1 <| txtMsg1
+                    , Input.optionWith ballAmount2 <| txtMsg2
                     ]
                 }
     in
@@ -182,15 +181,15 @@ view model =
                     text "started with:"
                 )
                 NoBalls
-                (text "0 balls")
+                (forOptionWith "0 balls")
                 OneBall
-                (text "1 ball")
+                (forOptionWith "1 ball")
             , radios
                 (Input.labelHidden "option2")
                 TwoBalls
-                (text "2 balls")
+                (forOptionWith "2 balls")
                 ThreeBalls
-                (text "3 balls")
+                (forOptionWith "3 balls")
             ]
         , createButton Moved <|
             if model.moved then
@@ -202,7 +201,6 @@ view model =
             [ Font.size 50
             , spacing 20
             , padding 20
-            , Font.semiBold
             , fontExternal
             , heightPercent 50
             ]
