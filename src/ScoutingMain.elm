@@ -300,13 +300,14 @@ view model =
                             , centerX
                             , height <| fillPortion 1
                             , Font.underline
+                            , Element.paddingXY 0 10
                             ]
                     , text ("scouted team: " ++ teamDataToString model)
                         |> el
                             [ Font.size 47
                             , Font.color Colors.white
                             , Font.glow Colors.black 10
-                            , centerX
+                            , Font.glow Colors.black 1
                             , Font.bold
                             , height <| fillPortion 1
                             ]
