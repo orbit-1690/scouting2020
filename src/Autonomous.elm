@@ -101,22 +101,6 @@ createButton msg name =
         { onPress = Just msg, label = text name }
 
 
-buttonInfo : String -> String -> Bool -> Element.Element Msg
-buttonInfo onFalse onTrue modelBool =
-    el
-        [ center
-        , centerX
-        , centerY
-        ]
-        (text <|
-            if modelBool then
-                onTrue
-
-            else
-                onFalse
-        )
-
-
 view : Model -> Element.Element Msg
 view model =
     let
@@ -181,14 +165,14 @@ view model =
                 "moved?"
         , column
             [ Font.size 50
-            , spacing 20
+            , spacing 50
             , padding 20
             , Font.semiBold
             , fontExternal
-            , heightPercent 50
+            , heightPercent 42
             ]
             [ column
-                [ spacing 20
+                [ spacing 50
                 , heightPercent 70
                 ]
                 [ Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
