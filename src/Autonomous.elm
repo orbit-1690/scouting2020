@@ -275,7 +275,7 @@ update msg model =
             { model | missed = min (maxCollected - maxThrownOut + model.missed) <| counterUpdate count model.missed }
 
         TrenchCollection count ->
-            { model | trenchCollection = counterUpdate count model.trenchCollection }
+            { model | trenchCollection = max (maxThrownOut + model.trenchCollection - maxCollected) <| counterUpdate count model.trenchCollection }
 
         BallsAmount ballsAmount ->
             if maxCollected - maxThrownOut < ballsAmountToInt model.ballsAmount - ballsAmountToInt ballsAmount then
@@ -285,10 +285,10 @@ update msg model =
                 { model | ballsAmount = ballsAmount }
 
         EnemyTrenchCollection count ->
-            { model | enemyTrenchCollection = counterUpdate count model.enemyTrenchCollection }
+            { model | enemyTrenchCollection = max (maxThrownOut + model.enemyTrenchCollection - maxCollected) <| counterUpdate count model.enemyTrenchCollection }
 
         RendezvousCollection count ->
-            { model | rendezvousCollection = counterUpdate count model.rendezvousCollection }
+            { model | rendezvousCollection = max (maxThrownOut + model.rendezvousCollection - maxCollected) <| counterUpdate count model.rendezvousCollection }
 
 
 fontExternal : Element.Attr () Msg
