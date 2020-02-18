@@ -1,5 +1,8 @@
 module GetMatch exposing (AllianceColor(..), Match, StationNumber(..), TeamStation, getTeamNum, matches)
 
+import Json.Decode as JD
+import RemoteData
+
 
 type alias Alliance =
     { one : Int
@@ -12,6 +15,16 @@ type alias Match =
     { blue : Alliance
     , red : Alliance
     }
+
+
+type alias StringMatch =
+    { blueTeams : List String
+    , redTeams : List String
+    }
+
+
+type alias Matches =
+    List StringMatch
 
 
 matches : List Match
@@ -36,6 +49,14 @@ type StationNumber
 
 type alias TeamStation =
     ( AllianceColor, StationNumber )
+
+
+matchesParser : JD.Decoder Matches
+matchesParser =
+    JD.map2 StringMatch
+        (JD.at [ "alliances", "blue", "team_keys" ] (JD.list JD.string))
+        (JD.at [ "alliances", "red", "team_keys" ] (JD.list JD.string))
+        |> JD.list
 
 
 getTeamNum : TeamStation -> Match -> Int
