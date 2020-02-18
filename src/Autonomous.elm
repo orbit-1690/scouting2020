@@ -117,6 +117,25 @@ buttonInfo onFalse onTrue modelBool =
         )
 
 
+forOptionWith : String -> Input.OptionState -> Element.Element Msg
+forOptionWith displayedText option =
+    el
+        (case option of
+            Input.Idle ->
+                [ Font.color black ]
+
+            Input.Focused ->
+                [ Font.color black ]
+
+            Input.Selected ->
+                [ Font.color Colors.backgroundBlue
+                , Font.bold
+                ]
+        )
+    <|
+        text displayedText
+
+
 view : Model -> Element.Element Msg
 view model =
     let
