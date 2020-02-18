@@ -110,7 +110,7 @@ textInput : String -> (String -> Msg) -> String -> Element.Element Msg
 textInput modelValue nextButton name =
     Input.text
         [ Font.color sky
-        , Font.size 20
+        , Font.size 60
         , height fill
         , Font.family
             [ Font.external
@@ -130,7 +130,7 @@ createButton : Msg -> String -> Element.Element Msg
 createButton msg name =
     button
         [ Font.color white
-        , Font.size 25
+        , Font.size 60
         , Font.glow blue 5
         , Border.rounded 10
         , Font.bold
@@ -151,6 +151,15 @@ createButton msg name =
 decoration : List (Element.Attribute Msg)
 decoration =
     [ padding 10
+    , spacing 70
+    , centerX
+    , centerY
+    ]
+
+
+decorationForColumn : List (Element.Attribute Msg)
+decorationForColumn =
+    [ padding 10
     , spacing 5
     , centerX
     , centerY
@@ -161,31 +170,30 @@ view : Model -> Element.Element Msg
 view model =
     column
         [ Background.color blue
-        , padding 50
-        , height <| Element.fillPortion 5
+        , height fill
         , centerX
         , centerY
         , width fill
+        , Font.size 60
         ]
         [ column decoration
             [ row
                 decoration
-                [ column decoration
+                [ column decorationForColumn
                     [ createButton TriedClimb "Tried hanging?"
                     , printButton "no" "yes" model.triedClimb
                     ]
-                , column decoration
+                , column decorationForColumn
                     [ createButton Balanced "Balanced?"
                     , printButton "no" "yes" model.balanced
                     ]
                 ]
             , radio
-                [ padding 10
-                , spacing 70
+                [ spacing 50
                 ]
                 { onChange = ClimbStatus
                 , selected = Just model.climbStatus
-                , label = Input.labelAbove [] (text " climb status:")
+                , label = Input.labelAbove [ padding 20, Font.semiBold, Font.underline, Font.size 60 ] (text " climb status:")
                 , options =
                     [ Input.option Loser (text "loser")
                     , Input.option Parked (text "parked")
@@ -194,11 +202,11 @@ view model =
                 }
             , row
                 decoration
-                [ column decoration
+                [ column decorationForColumn
                     [ createButton Defended "Defended?"
                     , printButton "no" "yes" model.defended
                     ]
-                , column decoration
+                , column decorationForColumn
                     [ createButton WasDefended "Was defended?"
                     , printButton "no" "yes" model.wasDefended
                     ]

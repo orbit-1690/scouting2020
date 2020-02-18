@@ -145,7 +145,7 @@ stylishPage position =
                 (imageLabel "Previous Page" preiousPageImage)
                 Submit
             <|
-                text "Submit"
+                el [ Font.size 70, centerX ] (text "Submit")
 
         MiddlePage ->
             createButtons PrevPage
@@ -155,10 +155,10 @@ stylishPage position =
 
         SubmitPosPage ->
             createButtons YesSubmit
-                (Element.text "Yes")
+                (el [ Font.size 70, centerX ] (text "Yes"))
                 NoSubmit
             <|
-                Element.text "No"
+                el [ Font.size 70, centerX ] (text "No")
     )
         |> el
             [ centerX

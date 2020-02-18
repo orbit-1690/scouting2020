@@ -2,11 +2,12 @@ module Teleop exposing (Model, Msg, createButton, decoration, getter, init, prin
 
 import Colors exposing (black, blue, purple, sky, white)
 import Counter
-import Element exposing (centerX, centerY, column, el, fill, padding, row, spacing, text, width)
+import Element exposing (centerX, centerY, column, el, fill, height, htmlAttribute, padding, row, spacing, text, width)
 import Element.Background as Background
-import Element.Border as Border exposing (rounded, widthXY)
+import Element.Border as Border exposing (rounded)
 import Element.Font as Font exposing (center)
 import Element.Input exposing (button)
+import Html.Attributes exposing (style)
 
 
 type Msg
@@ -58,7 +59,7 @@ createButton : Msg -> String -> Element.Element Msg
 createButton msg name =
     button
         [ Font.color white
-        , Font.size 25
+        , Font.size 60
         , Font.glow blue 5
         , rounded 10
         , Font.bold
@@ -82,6 +83,7 @@ printButton onFalse onTrue modelBool =
         [ center
         , centerX
         , centerY
+        , Font.size 60
         ]
         (text <|
             if modelBool then
@@ -124,13 +126,17 @@ view model =
     column
         [ Background.color blue
         , padding 50
-        , spacing 70
+        , spacing 100
         , centerX
-        , Element.height <| Element.fillPortion 3
         , centerY
+        , height fill
         , width fill
         ]
-        [ row decoration
+        [ Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
+        , Element.map LevelTwo <| Counter.view "second Level:" model.levelTwo
+        , Element.map LevelThree <| Counter.view "third Level:" model.levelThree
+        , Element.map Missed <| Counter.view "missed:" model.missed
+        , row decoration
             [ column decoration
                 [ createButton SpunRoulette "spun cycles 3-5?"
                 , printButton "no" "yes" model.spunRoulette
@@ -140,17 +146,12 @@ view model =
                 , printButton "no" "yes" model.colorRoulette
                 ]
             ]
-        , Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
-        , Element.map LevelTwo <| Counter.view "second Level:" model.levelTwo
-        , Element.map LevelThree <| Counter.view "third Level:" model.levelThree
-        , Element.map Missed <| Counter.view "missed:" model.missed
         ]
 
 
 decoration : List (Element.Attribute Msg)
 decoration =
-    [ padding 10
-    , spacing 5
+    [ padding 20
     , centerX
     , centerY
     ]

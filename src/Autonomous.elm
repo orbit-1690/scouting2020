@@ -149,7 +149,8 @@ view model =
         , centerX
         , centerY
         , width fill
-        , heightPercent 40
+        , heightPercent 35
+        , spacing 30
         , Element.height <| Element.fillPortion 5
         ]
         [ radios
