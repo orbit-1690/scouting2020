@@ -75,13 +75,13 @@ view model =
         [ textInput model.scouterName ScouterInput "your name"
         , text "Station"
             |> el
-                [ Font.size 75
+                [ Font.size 80
                 , Font.underline
                 ]
         , radio
-            [ Font.size 70
+            [ Font.size 77
             , height fill
-            , spacing 30
+            , spacing 70
             ]
             { onChange = Station
             , selected = model.station
@@ -108,7 +108,7 @@ view model =
                 , Font.semiBold
                 , Font.color black
                 , Font.glow Colors.white 1
-                , Font.size 60
+                , Font.size 70
                 , Font.family
                     [ Font.external
                         { name = "Open Sans"
@@ -176,7 +176,7 @@ textInput : String -> (String -> Msg) -> String -> Element.Element Msg
 textInput modelValue nextButton name =
     Input.text
         [ Font.color sky
-        , Font.size 60
+        , Font.size 70
         , rounded 10
         , Font.family
             [ Font.external
