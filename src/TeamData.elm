@@ -39,6 +39,15 @@ type alias Model =
     }
 
 
+findColor : String -> Element.Color
+findColor alliance =
+    if String.contains "Blue" alliance then
+        Colors.backgroundBlue
+
+    else
+        Colors.backgroundRed
+
+
 getter : Model -> List String
 getter model =
     [ "match" ++ "," ++ model.matchNumber
@@ -58,9 +67,27 @@ init matches =
     Model "" "" Nothing (Err "") matches
 
 
+optionWithColor : String -> Input.OptionState -> Element.Element msg
+optionWithColor station option =
+    el
+        (case option of
+            Input.Idle ->
+                [ Font.color black ]
+
+            Input.Focused ->
+                [ Font.color black ]
+
+            Input.Selected ->
+                [ Font.color <| findColor station
+                , Font.bold
+                ]
+        )
+        (text station)
+
+
 inputOption : GetMatch.AllianceColor -> GetMatch.StationNumber -> String -> Input.Option ( AllianceColor, StationNumber ) msg
 inputOption allianceColor allianceNumber text =
-    Input.option ( allianceColor, allianceNumber ) (Element.text text)
+    Input.optionWith ( allianceColor, allianceNumber ) (optionWithColor text)
 
 
 view : Model -> Element.Element Msg
