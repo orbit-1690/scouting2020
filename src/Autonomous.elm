@@ -3,7 +3,7 @@ module Autonomous exposing (Model, Msg, getter, init, update, view)
 import Array
 import Colors exposing (black, blue, purple, sky, white)
 import Counter
-import Element exposing (centerX, centerY, column, el, fill, height, htmlAttribute, padding, spacing, text, width)
+import Element exposing (centerX, centerY, column, el, fill, height, htmlAttribute, image, padding, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (bold, center)
@@ -85,25 +85,6 @@ type BallsInitAmount
     | ThreeBalls
 
 
-createButton : Msg -> String -> Element.Element Msg
-createButton msg name =
-    button
-        [ Font.color white
-        , Font.size 60
-        , Font.glow blue 5
-        , Border.rounded 4
-        , Font.family
-            [ Font.external
-                { name = "Open Sans"
-                , url = "https://fonts.googleapis.com/css?family=Open+Sans:400i&display=swap"
-                }
-            ]
-        , Background.color purple
-        , centerX
-        ]
-        { onPress = Just msg, label = text name }
-
-
 forOptionWith : String -> Input.OptionState -> Element.Element Msg
 forOptionWith displayedText option =
     el
@@ -124,6 +105,28 @@ forOptionWith displayedText option =
 view : Model -> Element.Element Msg
 view model =
     let
+        createButton : Element.Element Msg
+        createButton =
+            button
+                [ Font.size 70
+                , centerX
+                ]
+                { onPress = Just Moved
+                , label =
+                    Element.row [ spacing 30 ]
+                        [ text "moved?"
+                        , image [ width <| Element.maximum 70 fill ]
+                            { description = ""
+                            , src =
+                                if model.moved then
+                                    "https://i.imgur.com/eiuQZig.png"
+
+                                else
+                                    "https://i.imgur.com/SeSMGGI.png"
+                            }
+                        ]
+                }
+
         radios :
             Input.Label Msg
             -> BallsInitAmount
@@ -135,7 +138,7 @@ view model =
             radioRow
                 [ padding 10
                 , spacing 50
-                , Font.size 55
+                , Font.size 67
                 ]
                 { onChange = BallsAmount
                 , selected = Just model.ballsAmount
@@ -148,13 +151,13 @@ view model =
     in
     column
         [ width fill
-        , spacing 30
+        , spacing 80
         , Element.height <| Element.fillPortion 5
         ]
         [ column [ centerX, spacing 30 ]
             [ radios
                 (Input.labelAbove
-                    [ Font.size 60
+                    [ Font.size 70
                     , padding 20
                     , spacing 20
                     , Font.underline
@@ -174,15 +177,10 @@ view model =
                 ThreeBalls
                 (forOptionWith "3 balls")
             ]
-        , createButton Moved <|
-            if model.moved then
-                "moved."
-
-            else
-                "moved?"
+        , createButton
         , column
-            [ Font.size 50
-            , spacing 50
+            [ Font.size 60
+            , spacing 60
             , padding 20
             , fontExternal
             , heightPercent 42
@@ -191,9 +189,9 @@ view model =
                 [ spacing 50
                 , heightPercent 70
                 ]
-                [ Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
+                [ Element.map LevelThree <| Counter.view "third Level:" model.levelThree
+                , Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
                 , Element.map LevelTwo <| Counter.view "second Level:" model.levelTwo
-                , Element.map LevelThree <| Counter.view "third Level:" model.levelThree
                 , Element.map Missed <| Counter.view "missed:" model.missed
                 ]
             , text "Collected from:"
