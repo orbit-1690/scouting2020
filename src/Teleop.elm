@@ -1,4 +1,4 @@
-module Teleop exposing (Model, Msg, createButton, decoration, getter, init, update, view)
+module Teleop exposing (Model, Msg, createButton, getter, init, update, view)
 
 import Colors exposing (black, blue, purple, sky, white)
 import Counter
@@ -57,20 +57,20 @@ init =
 
 createButton : Msg -> String -> String -> Element.Element Msg
 createButton msg title src =
-    row
-        [ spacing 50
-        , Font.size 60
-        ]
-        [ text title
-        , button
-            [ centerX ]
-            { onPress = Just msg
-            , label =
-                Element.image
-                    [ width <| Element.maximum 100 fill ]
+    button
+        [ centerX ]
+        { onPress = Just msg
+        , label =
+            row
+                [ spacing 50
+                , Font.size 80
+                ]
+                [ text title
+                , Element.image
+                    [ height <| Element.maximum 80 fill ]
                     { src = src, description = "" }
-            }
-        ]
+                ]
+        }
 
 
 update : Msg -> Model -> Model
@@ -112,23 +112,20 @@ view model =
                 "https://i.imgur.com/SeSMGGI.png"
     in
     column
-        [ padding 50
-        , spacing 100
-        , height fill
-        , width fill
+        [ spacing 100
+        , Font.size 80
+        , centerX
         ]
-        [ Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
-        , Element.map LevelTwo <| Counter.view "second Level:" model.levelTwo
-        , Element.map LevelThree <| Counter.view "third Level:" model.levelThree
-        , Element.map Missed <| Counter.view "missed:" model.missed
-        , createButton SpunRoulette "spun cycles 3-5?" <| buttonState model.spunRoulette
-        , createButton ColorRoulette "spun to correct color?" <| buttonState model.colorRoulette
+        [ column [ Element.paddingXY 0 50, spacing 100 ]
+            [ Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
+            , Element.map LevelTwo <| Counter.view "second Level:" model.levelTwo
+            , Element.map LevelThree <| Counter.view "third Level:" model.levelThree
+            , Element.map Missed <|
+                Counter.view "missed:"
+                    model.missed
+            ]
+        , column [ centerX, spacing 100 ]
+            [ createButton SpunRoulette "spun cycles 3-5?" <| buttonState model.spunRoulette
+            , createButton ColorRoulette "spun to correct color?" <| buttonState model.colorRoulette
+            ]
         ]
-
-
-decoration : List (Element.Attribute Msg)
-decoration =
-    [ padding 20
-    , centerX
-    , centerY
-    ]
