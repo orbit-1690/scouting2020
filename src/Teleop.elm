@@ -1,12 +1,12 @@
-module Teleop exposing (Model, Msg, createButton, decoration, getter, init, printButton, update, view)
+module Teleop exposing (Model, Msg, createButton, decoration, getter, init, update, view)
 
 import Colors exposing (black, blue, purple, sky, white)
 import Counter
-import Element exposing (centerX, centerY, column, el, fill, height, htmlAttribute, padding, row, spacing, text, width)
+import Element exposing (centerX, centerY, column, el, fill, height, htmlAttribute, image, padding, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border exposing (rounded)
 import Element.Font as Font exposing (center)
-import Element.Input exposing (button)
+import Element.Input as Input exposing (button)
 import Html.Attributes exposing (style)
 
 
@@ -55,43 +55,22 @@ init =
     Model Counter.init Counter.init Counter.init Counter.init False False
 
 
-createButton : Msg -> String -> Element.Element Msg
-createButton msg name =
-    button
-        [ Font.color white
-        , Font.size 60
-        , Font.glow blue 5
-        , rounded 10
-        , Font.bold
-        , Font.family
-            [ Font.external
-                { name = "Open Sans"
-                , url = "https://fonts.googleapis.com/css?family=Open+Sans:400i&display=swap"
-                }
-            ]
-        , Background.color purple
-        , center
-        , centerX
-        , centerY
-        ]
-        { onPress = Just msg, label = text name }
-
-
-printButton : String -> String -> Bool -> Element.Element Msg
-printButton onFalse onTrue modelBool =
-    el
-        [ center
-        , centerX
-        , centerY
+createButton : Msg -> String -> String -> Element.Element Msg
+createButton msg title src =
+    row
+        [ spacing 50
         , Font.size 60
         ]
-        (text <|
-            if modelBool then
-                onTrue
-
-            else
-                onFalse
-        )
+        [ text title
+        , button
+            [ centerX ]
+            { onPress = Just msg
+            , label =
+                Element.image
+                    [ width <| Element.maximum 100 fill ]
+                    { src = src, description = "" }
+            }
+        ]
 
 
 update : Msg -> Model -> Model
@@ -123,6 +102,15 @@ update msg model =
 
 view : Model -> Element.Element Msg
 view model =
+    let
+        buttonState : Bool -> String
+        buttonState state =
+            if state then
+                "https://i.imgur.com/eiuQZig.png"
+
+            else
+                "https://i.imgur.com/SeSMGGI.png"
+    in
     column
         [ padding 50
         , spacing 100
@@ -133,16 +121,8 @@ view model =
         , Element.map LevelTwo <| Counter.view "second Level:" model.levelTwo
         , Element.map LevelThree <| Counter.view "third Level:" model.levelThree
         , Element.map Missed <| Counter.view "missed:" model.missed
-        , row decoration
-            [ column decoration
-                [ createButton SpunRoulette "spun cycles 3-5?"
-                , printButton "no" "yes" model.spunRoulette
-                ]
-            , column decoration
-                [ createButton ColorRoulette "spun to\ncorrect color?"
-                , printButton "no" "yes" model.colorRoulette
-                ]
-            ]
+        , createButton SpunRoulette "spun cycles 3-5?" <| buttonState model.spunRoulette
+        , createButton ColorRoulette "spun to correct color?" <| buttonState model.colorRoulette
         ]
 
 

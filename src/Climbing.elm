@@ -9,7 +9,6 @@ import Element.Font as Font exposing (center)
 import Element.Input as Input exposing (button, labelHidden, radio)
 import GetMatch
 import TeamData
-import Teleop
 
 
 type Msg
@@ -133,26 +132,22 @@ textInput modelValue nextButton name =
         }
 
 
-createButton : Msg -> String -> Element.Element Msg
-createButton msg name =
-    button
-        [ Font.color white
+createButton : Msg -> String -> String -> Element.Element Msg
+createButton msg title src =
+    row
+        [ spacing 50
         , Font.size 60
-        , Font.glow blue 5
-        , Border.rounded 10
-        , Font.bold
-        , Font.family
-            [ Font.external
-                { name = "Open Sans"
-                , url = "https://fonts.googleapis.com/css?family=Open+Sans:400i&display=swap"
-                }
-            ]
-        , Background.color purple
-        , center
-        , centerX
-        , centerY
         ]
-        { onPress = Just msg, label = text name }
+        [ text title
+        , button
+            [ centerX ]
+            { onPress = Just msg
+            , label =
+                Element.image
+                    [ width <| Element.maximum 100 fill ]
+                    { src = src, description = "" }
+            }
+        ]
 
 
 decoration : List (Element.Attribute Msg)
@@ -175,22 +170,25 @@ decorationForColumn =
 
 view : Model -> Element.Element Msg
 view model =
+    let
+        buttonContent : Bool -> String
+        buttonContent condition =
+            if condition then
+                "https://i.imgur.com/eiuQZig.png"
+
+            else
+                "https://i.imgur.com/SeSMGGI.png"
+    in
     column
         [ height fill
         , centerX
         , Font.size 60
         ]
         [ column decoration
-            [ row
+            [ column
                 decoration
-                [ column decorationForColumn
-                    [ createButton TriedClimb "Tried hanging?"
-                    , printButton "no" "yes" model.triedClimb
-                    ]
-                , column decorationForColumn
-                    [ createButton Balanced "Balanced?"
-                    , printButton "no" "yes" model.balanced
-                    ]
+                [ createButton TriedClimb "Tried hanging?" <| buttonContent model.triedClimb
+                , createButton Balanced "Balanced?" <| buttonContent model.balanced
                 ]
             , radio
                 [ spacing 50
@@ -204,33 +202,11 @@ view model =
                     , Input.option Hanged (text "hanged")
                     ]
                 }
-            , row
+            , column
                 decoration
-                [ column decorationForColumn
-                    [ createButton Defended "Defended?"
-                    , printButton "no" "yes" model.defended
-                    ]
-                , column decorationForColumn
-                    [ createButton WasDefended "Was defended?"
-                    , printButton "no" "yes" model.wasDefended
-                    ]
+                [ createButton Defended "Defended?" <| buttonContent model.defended
+                , createButton WasDefended "Was defended?" <| buttonContent model.wasDefended
                 ]
             , textInput model.comment Comment "any comments?"
             ]
         ]
-
-
-printButton : String -> String -> Bool -> Element.Element Msg
-printButton onFalse onTrue modelBool =
-    el
-        [ center
-        , centerX
-        , centerY
-        ]
-        (text <|
-            if modelBool then
-                onTrue
-
-            else
-                onFalse
-        )
