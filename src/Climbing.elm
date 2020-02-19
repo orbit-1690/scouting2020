@@ -109,63 +109,58 @@ update msg model =
             { model | wasDefended = not model.wasDefended }
 
         Comment string ->
-            { model | comment = string }
+            let
+                wordCounter =
+                    modBy 20 (String.length string)
+            in
+            { model
+                | comment =
+                    if wordCounter == 0 then
+                        string ++ "\n"
+
+                    else
+                        string
+            }
 
 
 textInput : String -> (String -> Msg) -> String -> Element.Element Msg
 textInput modelValue nextButton name =
-    Input.text
+    Input.multiline
         [ Font.color sky
-        , Font.size 60
+        , Font.size 70
         , height fill
-        , Font.family
-            [ Font.external
-                { name = "open-sans"
-                , url = "https://fonts.googleapis.com/css?family=open-sans"
-                }
-            ]
         ]
         { onChange = nextButton
         , text = modelValue
         , placeholder = Just <| Input.placeholder [] <| Element.text name
         , label = labelHidden modelValue
+        , spellcheck = True
         }
 
 
 createButton : Msg -> String -> String -> Element.Element Msg
 createButton msg title src =
-    row
-        [ spacing 50
-        , Font.size 60
-        ]
-        [ text title
-        , button
-            [ centerX ]
-            { onPress = Just msg
-            , label =
-                Element.image
-                    [ width <| Element.maximum 100 fill ]
+    button
+        [ width fill ]
+        { onPress = Just msg
+        , label =
+            row
+                [ spacing 50
+                , Font.size 80
+                , centerX
+                ]
+                [ text title
+                , Element.image
+                    [ height <| Element.maximum 80 fill
+                    ]
                     { src = src, description = "" }
-            }
-        ]
+                ]
+        }
 
 
 decoration : List (Element.Attribute Msg)
 decoration =
-    [ padding 10
-    , spacing 70
-    , centerX
-    , centerY
-    ]
-
-
-decorationForColumn : List (Element.Attribute Msg)
-decorationForColumn =
-    [ padding 10
-    , spacing 5
-    , centerX
-    , centerY
-    ]
+    [ spacing 100 ]
 
 
 view : Model -> Element.Element Msg
@@ -180,33 +175,46 @@ view model =
                 "https://i.imgur.com/SeSMGGI.png"
     in
     column
-        [ height fill
+        [ Font.size 60
         , centerX
-        , Font.size 60
+        , padding 70
         ]
         [ column decoration
-            [ column
-                decoration
-                [ createButton TriedClimb "Tried hanging?" <| buttonContent model.triedClimb
-                , createButton Balanced "Balanced?" <| buttonContent model.balanced
-                ]
+            [ createButton TriedClimb "Tried hanging?" <| buttonContent model.triedClimb
             , radio
-                [ spacing 50
-                ]
+                [ spacing 50, centerX, Font.size 75 ]
                 { onChange = ClimbStatus
                 , selected = Just model.climbStatus
-                , label = Input.labelAbove [ padding 20, Font.semiBold, Font.underline, Font.size 60 ] (text " climb status:")
+                , label = Input.labelAbove [ Font.semiBold, Font.underline, Font.size 80 ] (text "Climb status:")
                 , options =
-                    [ Input.option Loser (text "loser")
-                    , Input.option Parked (text "parked")
-                    , Input.option Hanged (text "hanged")
+                    [ Input.optionWith Loser <| forOptionWith "loser"
+                    , Input.optionWith Parked <| forOptionWith "parked"
+                    , Input.optionWith Hanged <| forOptionWith "hanged"
                     ]
                 }
             , column
                 decoration
-                [ createButton Defended "Defended?" <| buttonContent model.defended
+                [ createButton Balanced "Balanced?" <| buttonContent model.balanced
+                , createButton Defended "Defended?" <| buttonContent model.defended
                 , createButton WasDefended "Was defended?" <| buttonContent model.wasDefended
                 ]
             , textInput model.comment Comment "any comments?"
             ]
         ]
+
+
+forOptionWith : String -> Input.OptionState -> Element.Element Msg
+forOptionWith displayedText option =
+    el
+        (case option of
+            Input.Idle ->
+                [ Font.color Colors.gray ]
+
+            Input.Focused ->
+                [ Font.color black ]
+
+            Input.Selected ->
+                [ Font.bold ]
+        )
+    <|
+        text displayedText
