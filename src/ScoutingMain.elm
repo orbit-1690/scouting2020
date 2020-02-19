@@ -172,7 +172,7 @@ init =
     , autonomousData = Autonomous.init
     , teleopData = Teleop.init
     , climbingData = Climbing.init
-    , pages = TeleopPage
+    , pages = TeamDataPage
     }
 
 
