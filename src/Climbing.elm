@@ -133,7 +133,7 @@ textInput modelValue nextButton name =
 
 
 createButton : Msg -> String -> String -> Element.Element Msg
-createButton msg title name =
+createButton msg title src =
     row
         [ spacing 50
         , Font.size 60
@@ -156,7 +156,14 @@ createButton msg title name =
             , centerX
             , centerY
             ]
-            { onPress = Just msg, label = el[Font.size 80] <| text name }
+            { onPress = Just msg
+            , label =
+                Element.image
+                    [ Font.size 20
+                    , width <| Element.maximum 100 fill
+                    ]
+                    { src = src, description = "" }
+            }
         ]
 
 
@@ -184,10 +191,10 @@ view model =
         buttonContent : Bool -> String
         buttonContent condition =
             if condition then
-                "yes"
+                "https://i.imgur.com/9SXgxID.png"
 
             else
-                "no"
+                "https://i.imgur.com/9eZzWtk.png"
     in
     column
         [ Background.color blue

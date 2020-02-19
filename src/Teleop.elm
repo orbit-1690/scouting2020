@@ -2,7 +2,7 @@ module Teleop exposing (Model, Msg, createButton, decoration, getter, init, upda
 
 import Colors exposing (black, blue, purple, sky, white)
 import Counter
-import Element exposing (centerX, centerY, column, el, fill, height, htmlAttribute, padding, row, spacing, text, width)
+import Element exposing (centerX, centerY, column, el, fill, height, htmlAttribute, image, padding, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border exposing (rounded)
 import Element.Font as Font exposing (center)
@@ -56,7 +56,7 @@ init =
 
 
 createButton : Msg -> String -> String -> Element.Element Msg
-createButton msg title name =
+createButton msg title src =
     row
         [ spacing 50
         , Font.size 60
@@ -79,7 +79,14 @@ createButton msg title name =
             , centerX
             , centerY
             ]
-            { onPress = Just msg, label = el[Font.size 80] <| text name }
+            { onPress = Just msg
+            , label =
+                image
+                    [ Font.size 20
+                    , width <| Element.maximum 100 fill
+                    ]
+                    { src = src, description = "" }
+            }
         ]
 
 
@@ -113,13 +120,13 @@ update msg model =
 view : Model -> Element.Element Msg
 view model =
     let
-        buttonContent : Bool -> String
-        buttonContent condition =
-            if condition then
-                "yes"
+        buttonState : Bool -> String
+        buttonState state =
+            if state then
+                "https://i.imgur.com/9SXgxID.png"
 
             else
-                "no"
+                "https://i.imgur.com/9eZzWtk.png"
     in
     column
         [ Background.color blue
@@ -134,8 +141,8 @@ view model =
         , Element.map LevelTwo <| Counter.view "second Level:" model.levelTwo
         , Element.map LevelThree <| Counter.view "third Level:" model.levelThree
         , Element.map Missed <| Counter.view "missed:" model.missed
-        , createButton SpunRoulette "spun cycles 3-5?" <| buttonContent model.spunRoulette
-        , createButton ColorRoulette "spun to correct color?" <| buttonContent model.colorRoulette
+        , createButton SpunRoulette "spun cycles 3-5?" <| buttonState model.spunRoulette
+        , createButton ColorRoulette "spun to correct color?" <| buttonState model.colorRoulette
         ]
 
 
