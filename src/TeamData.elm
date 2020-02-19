@@ -39,8 +39,8 @@ type alias Model =
     }
 
 
-findColor : String -> Element.Color
-findColor alliance =
+findColorOption : String -> Element.Color
+findColorOption alliance =
     if String.contains "Blue" alliance then
         Colors.backgroundBlue
 
@@ -78,7 +78,7 @@ optionWithColor station option =
                 [ Font.color black ]
 
             Input.Selected ->
-                [ Font.color <| findColor station
+                [ Font.color <| findColorOption station
                 , Font.bold
                 ]
         )
@@ -93,8 +93,7 @@ inputOption allianceColor allianceNumber text =
 view : Model -> Element.Element Msg
 view model =
     column
-        [ Background.color blue
-        , padding 20
+        [ padding 20
         , spacing 50
         , height fill
         , width fill

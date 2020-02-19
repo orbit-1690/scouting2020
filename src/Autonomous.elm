@@ -1,5 +1,6 @@
 module Autonomous exposing (Model, Msg, getter, init, update, view)
 
+import Array
 import Colors exposing (black, blue, purple, sky, white)
 import Counter
 import Element exposing (centerX, centerY, column, el, fill, height, htmlAttribute, padding, spacing, text, width)
@@ -7,7 +8,9 @@ import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (bold, center)
 import Element.Input as Input exposing (button, radioRow)
+import GetMatch
 import Html.Attributes exposing (style)
+import TeamData exposing (stationToString)
 
 
 type Msg
@@ -32,6 +35,7 @@ type alias Model =
     , trenchCollection : Counter.Model
     , enemyTrenchCollection : Counter.Model
     , rendezvousCollection : Counter.Model
+    , teamData : TeamData.Model
     }
 
 
@@ -145,8 +149,7 @@ view model =
                 }
     in
     column
-        [ Background.color blue
-        , width fill
+        [ width fill
         , spacing 30
         , Element.height <| Element.fillPortion 5
         ]
@@ -207,9 +210,9 @@ view model =
         ]
 
 
-init : Model
-init =
-    Model NoBalls False Counter.init Counter.init Counter.init Counter.init Counter.init Counter.init <| Counter.init
+init : Array.Array GetMatch.Match -> Model
+init match =
+    Model NoBalls False Counter.init Counter.init Counter.init Counter.init Counter.init Counter.init Counter.init (TeamData.init match)
 
 
 update : Msg -> Model -> Model

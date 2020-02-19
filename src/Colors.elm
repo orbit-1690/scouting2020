@@ -24,7 +24,7 @@ import Element exposing (Color)
 
 red : Color
 red =
-    Element.rgb255 255 182 173
+    Element.rgb255 250 224 220
 
 
 orange : Color
@@ -64,7 +64,7 @@ sky =
 
 blue : Color
 blue =
-    Element.rgb255 177 210 219
+    Element.rgb255 206 244 255
 
 
 purple : Color
