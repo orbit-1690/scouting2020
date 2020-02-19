@@ -63,28 +63,11 @@ createButton msg title src =
         ]
         [ text title
         , button
-            [ Font.color white
-            , Font.size 60
-            , Font.glow blue 5
-            , rounded 10
-            , Font.bold
-            , Font.family
-                [ Font.external
-                    { name = "Open Sans"
-                    , url = "https://fonts.googleapis.com/css?family=Open+Sans:400i&display=swap"
-                    }
-                ]
-            , Background.color purple
-            , center
-            , centerX
-            , centerY
-            ]
+            [ centerX ]
             { onPress = Just msg
             , label =
-                image
-                    [ Font.size 20
-                    , width <| Element.maximum 100 fill
-                    ]
+                Element.image
+                    [ width <| Element.maximum 100 fill ]
                     { src = src, description = "" }
             }
         ]
@@ -123,10 +106,10 @@ view model =
         buttonState : Bool -> String
         buttonState state =
             if state then
-                "https://i.imgur.com/9SXgxID.png"
+                "https://i.imgur.com/eiuQZig.png"
 
             else
-                "https://i.imgur.com/9eZzWtk.png"
+                "https://i.imgur.com/SeSMGGI.png"
     in
     column
         [ Background.color blue
