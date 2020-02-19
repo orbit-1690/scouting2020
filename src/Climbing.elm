@@ -156,7 +156,7 @@ createButton msg title name =
             , centerX
             , centerY
             ]
-            { onPress = Just msg, label = text name }
+            { onPress = Just msg, label = el[Font.size 80] <| text name }
         ]
 
 

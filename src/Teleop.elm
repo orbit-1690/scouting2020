@@ -79,7 +79,7 @@ createButton msg title name =
             , centerX
             , centerY
             ]
-            { onPress = Just msg, label = text name }
+            { onPress = Just msg, label = el[Font.size 80] <| text name }
         ]
 
 
@@ -135,7 +135,7 @@ view model =
         , Element.map LevelThree <| Counter.view "third Level:" model.levelThree
         , Element.map Missed <| Counter.view "missed:" model.missed
         , createButton SpunRoulette "spun cycles 3-5?" <| buttonContent model.spunRoulette
-        , createButton ColorRoulette "spun to\ncorrect color?" <| buttonContent model.colorRoulette
+        , createButton ColorRoulette "spun to correct color?" <| buttonContent model.colorRoulette
         ]
 
 
