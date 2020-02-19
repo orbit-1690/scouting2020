@@ -109,15 +109,13 @@ forOptionWith displayedText option =
     el
         (case option of
             Input.Idle ->
-                [ Font.color black ]
+                [ Font.color Colors.gray ]
 
             Input.Focused ->
                 [ Font.color black ]
 
             Input.Selected ->
-                [ Font.color Colors.backgroundBlue
-                , Font.bold
-                ]
+                [ Font.bold ]
         )
     <|
         text displayedText
