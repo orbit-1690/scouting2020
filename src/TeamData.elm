@@ -7,7 +7,7 @@ import Element exposing (centerX, centerY, column, el, fill, fillPortion, height
 import Element.Background as Background
 import Element.Border as Border exposing (rounded)
 import Element.Font as Font exposing (center)
-import Element.Input as Input exposing (labelHidden, radio)
+import Element.Input as Input exposing (checkbox, labelHidden, radio)
 import GetMatch exposing (AllianceColor, Match, StationNumber, TeamStation, getTeamNum)
 import Html.Attributes exposing (style)
 import Maybe.Extra exposing (unwrap)
@@ -28,6 +28,8 @@ type Msg
     = ScouterInput String
     | MatchInput String
     | Station TeamStation
+    | TeamEdit Bool
+    | TeamInput Int
 
 
 type alias Model =
@@ -36,6 +38,7 @@ type alias Model =
     , station : Maybe TeamStation
     , team : Result String Int
     , matches : Array Match
+    , teamEdit : Bool
     }
 
 
@@ -64,7 +67,7 @@ getter model =
 
 init : Array Match -> Model
 init matches =
-    Model "" "" Nothing (Err "") matches
+    Model "" "" Nothing (Err "") matches False
 
 
 optionWithColor : String -> Input.OptionState -> Element.Element msg
@@ -72,7 +75,7 @@ optionWithColor station option =
     el
         (case option of
             Input.Idle ->
-                [ Font.color black ]
+                [ Font.color black, centerX ]
 
             Input.Focused ->
                 [ Font.color black ]
@@ -80,9 +83,20 @@ optionWithColor station option =
             Input.Selected ->
                 [ Font.color <| findColorOption station
                 , Font.bold
+                , centerX
                 ]
         )
         (text station)
+
+
+checkBox : Bool -> Element.Element Msg
+checkBox model =
+    checkbox [ Font.size 30 ]
+        { onChange = TeamEdit
+        , icon = Input.defaultCheckbox
+        , checked = model
+        , label = Input.labelRight [ Font.size 30 ] <| text "edit team number"
+        }
 
 
 inputOption : GetMatch.AllianceColor -> GetMatch.StationNumber -> String -> Input.Option ( AllianceColor, StationNumber ) msg
@@ -92,22 +106,34 @@ inputOption allianceColor allianceNumber text =
 
 view : Model -> Element.Element Msg
 view model =
+    let
+        teamString : String
+        teamString =
+            getTeam model
+                |> Result.map String.fromInt
+                |> merge
+    in
     column
-        [ padding 20
+        [ Element.paddingXY 0 100
         , spacing 50
         , height fill
-        , width fill
+        , centerX
         ]
         [ textInput model.scouterName ScouterInput "your name"
         , text "Station"
             |> el
-                [ Font.size 80
+                [ Font.size 85
                 , Font.underline
+                , centerX
+                , centerY
                 ]
         , radio
-            [ Font.size 77
+            [ Font.size 80
             , height fill
             , spacing 70
+            , centerX
+            , center
+            , width fill
             ]
             { onChange = Station
             , selected = model.station
@@ -122,41 +148,47 @@ view model =
                 ]
             }
         , textInput model.matchNumber MatchInput "Match number"
-        , getTeam model
-            |> Result.map String.fromInt
-            |> merge
-            |> Element.text
-            |> el
-                [ Background.color orange
-                , width fill
-                , rounded 10
-                , center
-                , Font.semiBold
-                , Font.color black
-                , Font.glow Colors.white 1
-                , Font.size 70
-                , Font.family
-                    [ Font.external
-                        { name = "Open Sans"
-                        , url = "https://fonts.googleapis.com/css?family=Open+Sans:400i&display=swap"
-                        }
+        , checkBox model.teamEdit
+        , if model.teamEdit then
+            textInput teamString (TeamInput << Maybe.withDefault 0 << String.toInt) "edit team here"
+
+          else
+            teamString
+                |> text
+                |> el
+                    [ Background.color orange
+                    , rounded 10
+                    , centerX
+                    , Font.semiBold
+                    , Font.color black
+                    , Font.glow Colors.white 1
+                    , Font.size 70
+                    , Font.family
+                        [ Font.external
+                            { name = "Open Sans"
+                            , url = "https://fonts.googleapis.com/css?family=Open+Sans:400i&display=swap"
+                            }
+                        ]
                     ]
-                ]
         ]
 
 
 getTeam : Model -> Result String Int
 getTeam model =
-    getMatch model
-        |> Result.andThen
-            (\match ->
-                model.station
-                    |> Result.fromMaybe "No station"
-                    |> Result.map
-                        (\station ->
-                            getTeamNum station match
-                        )
-            )
+    if model.teamEdit then
+        model.team
+
+    else
+        getMatch model
+            |> Result.andThen
+                (\match ->
+                    model.station
+                        |> Result.fromMaybe "No station"
+                        |> Result.map
+                            (\station ->
+                                getTeamNum station match
+                            )
+                )
 
 
 getMatch : Model -> Result String Match
@@ -199,19 +231,13 @@ stationToString alliance =
 
 
 textInput : String -> (String -> Msg) -> String -> Element.Element Msg
-textInput modelValue nextButton name =
+textInput modelValue msg name =
     Input.text
-        [ Font.color sky
+        [ Font.color black
         , Font.size 70
         , rounded 10
-        , Font.family
-            [ Font.external
-                { name = "Open Sans"
-                , url = "https://fonts.googleapis.com/css?family=Open+Sans:400i&display=swap"
-                }
-            ]
         ]
-        { onChange = nextButton
+        { onChange = msg
         , text = modelValue
         , placeholder = Just <| Input.placeholder [] <| Element.text name
         , label = Input.labelHidden modelValue
@@ -234,4 +260,14 @@ update msg model =
             { model
                 | matchNumber = matchNumber
                 , team = getTeam model
+            }
+
+        TeamEdit state ->
+            { model | teamEdit = state }
+
+        TeamInput input ->
+            { model
+                | team =
+                    Just input
+                        |> Result.fromMaybe "Not a number"
             }
