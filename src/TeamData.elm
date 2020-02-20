@@ -123,7 +123,6 @@ view model =
             |> el
                 [ Font.size 80
                 , Font.underline
-                , centerX
                 ]
         , radio
             [ Font.size 76
