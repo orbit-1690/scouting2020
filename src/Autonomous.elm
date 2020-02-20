@@ -183,20 +183,20 @@ view model =
             , spacing 60
             , padding 20
             , fontExternal
-            , heightPercent 42
+            , heightPercent 50
             ]
             [ column
                 [ spacing 50
                 , heightPercent 70
                 ]
                 [ Element.map LevelThree <| Counter.view "third Level:" model.levelThree
-                , Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
                 , Element.map LevelTwo <| Counter.view "second Level:" model.levelTwo
                 , Element.map Missed <| Counter.view "missed:" model.missed
+                , Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
                 ]
             , text "Collected from:"
                 |> el
-                    [ Font.size 65
+                    [ Font.size 69
                     , Font.underline
                     ]
             , Element.map TrenchCollection <| Counter.view "their trench:" model.trenchCollection
