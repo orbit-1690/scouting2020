@@ -67,7 +67,7 @@ getter model =
 
 init : Array Match -> Model
 init matches =
-    Model "" "" Nothing (Err "Fill in the inputs") matches False
+    Model "" "" Nothing (Err "Fill in the fields") matches False
 
 
 optionWithColor : String -> Input.OptionState -> Element.Element msg
