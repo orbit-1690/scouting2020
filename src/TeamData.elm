@@ -29,7 +29,7 @@ type Msg
     | MatchInput String
     | Station TeamStation
     | TeamEdit Bool
-    | TeamInput Int
+    | TeamInput String
 
 
 type alias Model =
@@ -67,7 +67,7 @@ getter model =
 
 init : Array Match -> Model
 init matches =
-    Model "" "" Nothing (Err "") matches False
+    Model "" "" Nothing (Err "Fill in the inputs") matches False
 
 
 optionWithColor : String -> Input.OptionState -> Element.Element msg
@@ -75,7 +75,7 @@ optionWithColor station option =
     el
         (case option of
             Input.Idle ->
-                [ Font.color black, centerX ]
+                [ Font.color black ]
 
             Input.Focused ->
                 [ Font.color black ]
@@ -83,7 +83,6 @@ optionWithColor station option =
             Input.Selected ->
                 [ Font.color <| findColorOption station
                 , Font.bold
-                , centerX
                 ]
         )
         (text station)
@@ -122,17 +121,15 @@ view model =
         [ textInput model.scouterName ScouterInput "your name"
         , text "Station"
             |> el
-                [ Font.size 85
+                [ Font.size 80
                 , Font.underline
                 , centerX
-                , centerY
                 ]
         , radio
-            [ Font.size 80
+            [ Font.size 76
             , height fill
-            , spacing 70
+            , spacing 50
             , centerX
-            , center
             , width fill
             ]
             { onChange = Station
@@ -148,28 +145,30 @@ view model =
                 ]
             }
         , textInput model.matchNumber MatchInput "Match number"
-        , checkBox model.teamEdit
         , if model.teamEdit then
-            textInput teamString (TeamInput << Maybe.withDefault 0 << String.toInt) "edit team here"
+            textInput teamString TeamInput "edit team here"
 
           else
-            teamString
-                |> text
-                |> el
-                    [ Background.color orange
-                    , rounded 10
-                    , centerX
-                    , Font.semiBold
-                    , Font.color black
-                    , Font.glow Colors.white 1
-                    , Font.size 70
-                    , Font.family
-                        [ Font.external
-                            { name = "Open Sans"
-                            , url = "https://fonts.googleapis.com/css?family=Open+Sans:400i&display=swap"
-                            }
-                        ]
+            Element.none
+        , teamString
+            |> text
+            |> el
+                [ Background.color orange
+                , rounded 10
+                , center
+                , Font.semiBold
+                , Font.color black
+                , Font.glow Colors.white 1
+                , Font.size 70
+                , width fill
+                , Font.family
+                    [ Font.external
+                        { name = "Open Sans"
+                        , url = "https://fonts.googleapis.com/css?family=Open+Sans:400i&display=swap"
+                        }
                     ]
+                ]
+        , checkBox model.teamEdit
         ]
 
 
@@ -268,6 +267,11 @@ update msg model =
         TeamInput input ->
             { model
                 | team =
-                    Just input
-                        |> Result.fromMaybe "Not a number"
+                    case String.filter Char.isDigit input of
+                        "" ->
+                            Err "Not a number"
+
+                        stringOfInts ->
+                            -- Will always return the ints
+                            Ok << Maybe.withDefault 0 <| String.toInt stringOfInts
             }
