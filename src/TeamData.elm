@@ -144,31 +144,34 @@ view model =
                 , inputOption GetMatch.Red GetMatch.Three "Red 3"
                 ]
             }
-        , textInput model.matchNumber MatchInput "Match number"
-        , if model.teamEdit then
-            textInput teamString TeamInput "edit team here"
+        , column [ spacing 40 ]
+            [ textInput model.matchNumber MatchInput "Match number"
+            , if model.teamEdit then
+                textInput teamString TeamInput "edit team here"
 
-          else
-            Element.none
-        , teamString
-            |> text
-            |> el
-                [ Background.color orange
-                , rounded 10
-                , center
-                , Font.semiBold
-                , Font.color black
-                , Font.glow Colors.white 1
-                , Font.size 70
-                , width fill
-                , Font.family
-                    [ Font.external
-                        { name = "Open Sans"
-                        , url = "https://fonts.googleapis.com/css?family=Open+Sans:400i&display=swap"
-                        }
+              else
+                Element.none
+            , teamString
+                |> text
+                |> el
+                    [ Background.color orange
+                    , rounded 10
+                    , center
+                    , Font.semiBold
+                    , Font.color black
+                    , Font.glow Colors.white 1
+                    , Font.size 70
+                    , width fill
+                    , htmlAttribute <| style "height" "26%"
+                    , Font.family
+                        [ Font.external
+                            { name = "Open Sans"
+                            , url = "https://fonts.googleapis.com/css?family=Open+Sans:400i&display=swap"
+                            }
+                        ]
                     ]
-                ]
-        , checkBox model.teamEdit
+            , checkBox model.teamEdit
+            ]
         ]
 
 
