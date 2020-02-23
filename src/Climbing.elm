@@ -222,7 +222,7 @@ forOptionWith displayedText option =
                 [ Font.color Colors.gray, centerX ]
 
             Input.Focused ->
-                [ Font.color black, centerX ]
+                [ Font.color black ]
 
             Input.Selected ->
                 [ Font.bold, centerX ]
