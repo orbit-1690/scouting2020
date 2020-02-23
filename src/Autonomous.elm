@@ -143,7 +143,7 @@ view model =
                 , label =
                     Input.labelAbove
                         [ Font.size 70
-                        , padding 20
+                        , Element.paddingXY 0 50
                         , spacing 20
                         , Font.underline
                         , centerX
@@ -160,14 +160,16 @@ view model =
         , createButton
         , column
             [ Font.size 60
-            , spacing 60
-            , padding 20
+            , spacing 50
+            , Element.paddingXY 100 0
             , fontExternal
+            , width fill
             , heightPercent 50
             ]
             [ column
                 [ spacing 50
-                , heightPercent 70
+                , heightPercent 65
+                , width fill
                 ]
                 [ Element.map LevelThree <| Counter.view "third Level:" model.levelThree
                 , Element.map LevelTwo <| Counter.view "second Level:" model.levelTwo
@@ -178,6 +180,7 @@ view model =
                 |> el
                     [ Font.size 69
                     , Font.underline
+                    , centerX
                     ]
             , Element.map TrenchCollection <| Counter.view "their trench:" model.trenchCollection
             , Element.map EnemyTrenchCollection <| Counter.view "enemy's trench:" model.enemyTrenchCollection
