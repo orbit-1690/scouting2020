@@ -1,8 +1,9 @@
 module Counter exposing (Model, Msg, init, update, view)
 
-import Element exposing (el, padding, row, spacing, text)
-import Element.Border exposing (widthXY)
-import Element.Font as Font
+import Colors
+import Element exposing (alignLeft, alignRight, el, padding, row, spacing, text)
+import Element.Background exposing (color)
+import Element.Font as Font exposing (size)
 import Element.Input exposing (button)
 
 
@@ -32,15 +33,10 @@ update msg model =
 
 view : String -> Model -> Element.Element Msg
 view title model =
-    let
-        size : Int -> Element.Attribute Msg
-        size number =
-            Font.size number
-    in
     row
-        [ spacing 100 ]
+        [ Element.width Element.fill ]
         [ text title
-        , row [ size 60, spacing 20 ]
+        , row [ size 60, spacing 20, alignRight ]
             [ button [ size 90 ] { onPress = Just Minus, label = text "-" }
             , text <| String.fromInt model
             , button [ size 90 ] { onPress = Just Plus, label = text "+" }
