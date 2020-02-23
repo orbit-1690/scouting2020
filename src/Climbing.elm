@@ -17,6 +17,7 @@ type Msg
     | Balanced
     | Defended
     | WasDefended
+    | ShutDown
     | Comment String
 
 
@@ -26,6 +27,7 @@ type alias Model =
     , balanced : Bool
     , defended : Bool
     , wasDefended : Bool
+    , shutDown : Bool
     , comment : String
     , localTeam : TeamData.Model
     }
@@ -60,6 +62,7 @@ getter model =
         , "final state" ++ "," ++ statusToString model.climbStatus
         , "defended?" ++ "," ++ boolToString model.defended
         , "was defended?" ++ "," ++ boolToString model.wasDefended
+        , "shut down?" ++ "," ++ boolToString model.shutDown
         , "comments" ++ "," ++ "'" ++ model.comment ++ "'"
         ]
 
@@ -72,7 +75,7 @@ type Status
 
 init : Model
 init =
-    Model False Loser False False False "" (TeamData.init <| Array.fromList GetMatch.matches)
+    Model False Loser False False False False "" (TeamData.init <| Array.fromList GetMatch.matches)
 
 
 update : Msg -> Model -> Model
@@ -107,6 +110,9 @@ update msg model =
 
         WasDefended ->
             { model | wasDefended = not model.wasDefended }
+
+        ShutDown ->
+            { model | shutDown = not model.shutDown }
 
         Comment string ->
             let
@@ -181,22 +187,27 @@ view model =
         ]
         [ column decoration
             [ createButton TriedClimb "Tried hanging?" <| buttonContent model.triedClimb
-            , radio
-                [ spacing 50, centerX, Font.size 75 ]
-                { onChange = ClimbStatus
-                , selected = Just model.climbStatus
-                , label = Input.labelAbove [ Font.semiBold, Font.underline, Font.size 80 ] (text "Climb status:")
-                , options =
-                    [ Input.optionWith Loser <| forOptionWith "loser"
-                    , Input.optionWith Parked <| forOptionWith "parked"
-                    , Input.optionWith Hanged <| forOptionWith "hanged"
-                    ]
-                }
+            , column [ spacing 50, centerX ]
+                [ el [ Font.underline, Font.size 80 ] (text "Climb status:")
+                , el [ centerX ] <|
+                    radio
+                        [ spacing 50, Font.size 75 ]
+                        { onChange = ClimbStatus
+                        , selected = Just model.climbStatus
+                        , label = Input.labelHidden "Climb status:"
+                        , options =
+                            [ Input.optionWith Loser <| forOptionWith "loser"
+                            , Input.optionWith Parked <| forOptionWith "parked"
+                            , Input.optionWith Hanged <| forOptionWith "hanged"
+                            ]
+                        }
+                ]
             , column
                 decoration
                 [ createButton Balanced "Balanced?" <| buttonContent model.balanced
                 , createButton Defended "Defended?" <| buttonContent model.defended
                 , createButton WasDefended "Was defended?" <| buttonContent model.wasDefended
+                , createButton ShutDown "Shut down?" <| buttonContent model.shutDown
                 ]
             , textInput model.comment Comment "any comments?"
             ]
@@ -208,13 +219,13 @@ forOptionWith displayedText option =
     el
         (case option of
             Input.Idle ->
-                [ Font.color Colors.gray ]
+                [ Font.color Colors.gray, centerX ]
 
             Input.Focused ->
-                [ Font.color black ]
+                [ Font.color black, centerX ]
 
             Input.Selected ->
-                [ Font.bold ]
+                [ Font.bold, centerX ]
         )
     <|
         text displayedText

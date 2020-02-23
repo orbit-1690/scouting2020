@@ -172,7 +172,7 @@ init =
     , autonomousData = Autonomous.init <| Array.fromList GetMatch.matches
     , teleopData = Teleop.init
     , climbingData = Climbing.init
-    , pages = TeamDataPage
+    , pages = ClimbingPage
     }
 
 
