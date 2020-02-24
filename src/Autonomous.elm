@@ -129,7 +129,7 @@ view model =
     in
     column
         [ width fill
-        , spacing 80
+        , spacing 60
         , Element.height <| Element.fillPortion 5
         ]
         [ el [ centerX ] <|
@@ -142,7 +142,7 @@ view model =
                 , selected = Just model.ballsAmount
                 , label =
                     Input.labelAbove
-                        [ Font.size 60
+                        [ Font.size 70
                         , Element.paddingXY 0 50
                         , spacing 20
                         , Font.underline
