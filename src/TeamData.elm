@@ -127,7 +127,7 @@ view model =
         , radio
             [ Font.size 75
             , height fill
-            , spacing 50
+            , spacing 45
             , centerX
             , width fill
             ]
