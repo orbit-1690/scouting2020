@@ -136,13 +136,13 @@ view model =
             radioRow
                 [ padding 10
                 , spacing 80
-                , Font.size 67
+                , Font.size 60
                 ]
                 { onChange = BallsAmount
                 , selected = Just model.ballsAmount
                 , label =
                     Input.labelAbove
-                        [ Font.size 70
+                        [ Font.size 60
                         , Element.paddingXY 0 50
                         , spacing 20
                         , Font.underline
@@ -167,7 +167,7 @@ view model =
             , heightPercent 50
             ]
             [ column
-                [ spacing 50
+                [ spacing 30
                 , heightPercent 65
                 , width fill
                 ]
@@ -178,13 +178,19 @@ view model =
                 ]
             , text "Collected from:"
                 |> el
-                    [ Font.size 69
+                    [ Font.size 70
                     , Font.underline
                     , centerX
                     ]
-            , Element.map TrenchCollection <| Counter.view "their trench:" model.trenchCollection
-            , Element.map EnemyTrenchCollection <| Counter.view "enemy's trench:" model.enemyTrenchCollection
-            , Element.map RendezvousCollection <| Counter.view "rendezvous:" model.rendezvousCollection
+            , column
+                [ spacing 30
+                , heightPercent 65
+                , width fill
+                ]
+                [ Element.map TrenchCollection <| Counter.view "their trench:" model.trenchCollection
+                , Element.map EnemyTrenchCollection <| Counter.view "enemy's trench:" model.enemyTrenchCollection
+                , Element.map RendezvousCollection <| Counter.view "rendezvous:" model.rendezvousCollection
+                ]
             ]
         ]
 
