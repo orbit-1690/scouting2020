@@ -112,11 +112,11 @@ view model =
                 "https://i.imgur.com/SeSMGGI.png"
     in
     column
-        [ spacing 100
+        [ spacing 120
         , Font.size 80
         , centerX
         ]
-        [ column [ Element.paddingXY 0 50, spacing 100 ]
+        [ column [ Element.paddingXY 50 60, spacing 120, width fill ]
             [ Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
             , Element.map LevelTwo <| Counter.view "second Level:" model.levelTwo
             , Element.map LevelThree <| Counter.view "third Level:" model.levelThree
@@ -124,7 +124,7 @@ view model =
                 Counter.view "missed:"
                     model.missed
             ]
-        , column [ centerX, spacing 100 ]
+        , column [ centerX, spacing 120 ]
             [ createButton SpunRoulette "spun cycles 3-5?" <| buttonState model.spunRoulette
             , createButton ColorRoulette "spun to correct color?" <| buttonState model.colorRoulette
             ]
