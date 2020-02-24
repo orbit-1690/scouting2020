@@ -166,7 +166,7 @@ createButton msg title src =
 
 decoration : List (Element.Attribute Msg)
 decoration =
-    [ spacing 100 ]
+    [ spacing 85, Font.size 60 ]
 
 
 view : Model -> Element.Element Msg
@@ -183,12 +183,12 @@ view model =
     column
         [ Font.size 60
         , centerX
-        , padding 70
+        , padding 50
         ]
         [ column decoration
             [ createButton TriedClimb "Tried hanging?" <| buttonContent model.triedClimb
             , column [ spacing 50, centerX ]
-                [ el [ Font.underline, Font.size 80 ] (text "Climb status:")
+                [ el [ Font.underline, Font.size 70 ] (text "Climb status:")
                 , el [ centerX ] <|
                     radio
                         [ spacing 50, Font.size 75 ]

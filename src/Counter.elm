@@ -36,9 +36,9 @@ view title model =
     row
         [ Element.width Element.fill ]
         [ text title
-        , row [ size 60, spacing 20, alignRight ]
-            [ button [ size 90 ] { onPress = Just Minus, label = text "-" }
+        , row [ spacing 40, alignRight ]
+            [ button [ size 110 ] { onPress = Just Minus, label = text "-" }
             , text <| String.fromInt model
-            , button [ size 90 ] { onPress = Just Plus, label = text "+" }
+            , button [ size 110 ] { onPress = Just Plus, label = text "+" }
             ]
         ]
