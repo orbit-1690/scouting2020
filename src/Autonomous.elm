@@ -90,13 +90,13 @@ forOptionWith displayedText option =
     el
         (case option of
             Input.Idle ->
-                [ Font.color Colors.gray ]
+                [ Font.color Colors.gray, center ]
 
             Input.Focused ->
                 [ Font.color black ]
 
             Input.Selected ->
-                [ Font.bold ]
+                [ Font.bold, center ]
         )
     <|
         text displayedText
@@ -126,68 +126,50 @@ view model =
                             }
                         ]
                 }
-
-        radios :
-            Input.Label Msg
-            -> BallsInitAmount
-            -> (Input.OptionState -> Element.Element Msg)
-            -> BallsInitAmount
-            -> (Input.OptionState -> Element.Element Msg)
-            -> Element.Element Msg
-        radios label ballAmount1 txtMsg1 ballAmount2 txtMsg2 =
-            radioRow
-                [ padding 10
-                , spacing 50
-                , Font.size 67
-                ]
-                { onChange = BallsAmount
-                , selected = Just model.ballsAmount
-                , label = label
-                , options =
-                    [ Input.optionWith ballAmount1 <| txtMsg1
-                    , Input.optionWith ballAmount2 <| txtMsg2
-                    ]
-                }
     in
     column
         [ width fill
         , spacing 80
         , Element.height <| Element.fillPortion 5
         ]
-        [ column [ centerX, spacing 30 ]
-            [ radios
-                (Input.labelAbove
-                    [ Font.size 70
-                    , padding 20
-                    , spacing 20
-                    , Font.underline
-                    , centerX
+        [ el [ centerX ] <|
+            radioRow
+                [ padding 10
+                , spacing 80
+                , Font.size 67
+                ]
+                { onChange = BallsAmount
+                , selected = Just model.ballsAmount
+                , label =
+                    Input.labelAbove
+                        [ Font.size 70
+                        , Element.paddingXY 0 50
+                        , spacing 20
+                        , Font.underline
+                        , centerX
+                        ]
+                    <|
+                        text "started with:"
+                , options =
+                    [ Input.optionWith NoBalls (forOptionWith "0\nballs")
+                    , Input.optionWith OneBall (forOptionWith "1\nball")
+                    , Input.optionWith TwoBalls (forOptionWith "2\nballs")
+                    , Input.optionWith ThreeBalls (forOptionWith "3\nballs")
                     ]
-                 <|
-                    text "started with:"
-                )
-                NoBalls
-                (forOptionWith "0 balls")
-                OneBall
-                (forOptionWith "1 ball")
-            , radios
-                (Input.labelHidden "option2")
-                TwoBalls
-                (forOptionWith "2 balls")
-                ThreeBalls
-                (forOptionWith "3 balls")
-            ]
+                }
         , createButton
         , column
             [ Font.size 60
-            , spacing 60
-            , padding 20
+            , spacing 50
+            , Element.paddingXY 100 0
             , fontExternal
+            , width fill
             , heightPercent 50
             ]
             [ column
                 [ spacing 50
-                , heightPercent 70
+                , heightPercent 65
+                , width fill
                 ]
                 [ Element.map LevelThree <| Counter.view "third Level:" model.levelThree
                 , Element.map LevelTwo <| Counter.view "second Level:" model.levelTwo
@@ -198,6 +180,7 @@ view model =
                 |> el
                     [ Font.size 69
                     , Font.underline
+                    , centerX
                     ]
             , Element.map TrenchCollection <| Counter.view "their trench:" model.trenchCollection
             , Element.map EnemyTrenchCollection <| Counter.view "enemy's trench:" model.enemyTrenchCollection

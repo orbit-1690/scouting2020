@@ -113,7 +113,7 @@ view model =
                 |> merge
     in
     column
-        [ Element.paddingXY 0 100
+        [ Element.paddingXY 0 80
         , spacing 50
         , height fill
         , centerX
@@ -125,7 +125,7 @@ view model =
                 , Font.underline
                 ]
         , radio
-            [ Font.size 76
+            [ Font.size 75
             , height fill
             , spacing 50
             , centerX
@@ -235,7 +235,7 @@ textInput : String -> (String -> Msg) -> String -> Element.Element Msg
 textInput modelValue msg name =
     Input.text
         [ Font.color black
-        , Font.size 70
+        , Font.size 68
         , rounded 10
         ]
         { onChange = msg
