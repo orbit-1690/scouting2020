@@ -115,8 +115,9 @@ view model =
         [ spacing 100
         , Font.size 80
         , centerX
+        , width fill
         ]
-        [ column [ Element.paddingXY 0 50, spacing 100 ]
+        [ column [ Element.paddingXY 60 50, spacing 100, width fill ]
             [ Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
             , Element.map LevelTwo <| Counter.view "second Level:" model.levelTwo
             , Element.map LevelThree <| Counter.view "third Level:" model.levelThree
