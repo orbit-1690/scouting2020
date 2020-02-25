@@ -3,7 +3,7 @@ module TeamData exposing (Model, Msg, getMatch, getTeam, getter, init, stationTo
 import Array exposing (Array)
 import Browser
 import Colors exposing (black, blue, orange, sky, white)
-import Element exposing (centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, minimum, padding, spacing, text, width)
+import Element exposing (centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, minimum, padding, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border exposing (rounded)
 import Element.Font as Font exposing (center)
@@ -30,6 +30,7 @@ type Msg
     | Station TeamStation
     | TeamEdit Bool
     | TeamInput String
+    | IsRematch Bool
 
 
 type alias Model =
@@ -39,6 +40,7 @@ type alias Model =
     , team : Result String Int
     , matches : Array Match
     , teamEdit : Bool
+    , isRematch : Bool
     }
 
 
@@ -54,6 +56,14 @@ findColorOption alliance =
 getter : Model -> List String
 getter model =
     [ "match" ++ "," ++ model.matchNumber
+    , "isRematch"
+        ++ ","
+        ++ (if model.isRematch then
+                "1"
+
+            else
+                "0"
+           )
     , "station" ++ "," ++ stationToString model.station
     , "team"
         ++ ","
@@ -67,7 +77,7 @@ getter model =
 
 init : Array Match -> Model
 init matches =
-    Model "" "" Nothing (Err "Fill in the fields") matches False
+    Model "" "" Nothing (Err "Fill in the fields") matches False False
 
 
 optionWithColor : String -> Input.OptionState -> Element.Element msg
@@ -88,13 +98,13 @@ optionWithColor station option =
         (text station)
 
 
-checkBox : Bool -> Element.Element Msg
-checkBox model =
+checkBox : Bool -> String -> Element.Element Msg
+checkBox model label =
     checkbox [ Font.size 30 ]
         { onChange = TeamEdit
         , icon = Input.defaultCheckbox
         , checked = model
-        , label = Input.labelRight [ Font.size 30 ] <| text "edit team number"
+        , label = Input.labelRight [ Font.size 30 ] <| text label
         }
 
 
@@ -169,7 +179,11 @@ view model =
                             }
                         ]
                     ]
-            , checkBox model.teamEdit
+            , row [ width fill ]
+                [ checkBox model.teamEdit "edit team number"
+                , el [ width fill ] <| text ""
+                , checkBox model.isRematch "is this a rematch?"
+                ]
             ]
         ]
 
@@ -277,3 +291,6 @@ update msg model =
                             -- Will always return the ints
                             Ok << Maybe.withDefault 0 <| String.toInt stringOfInts
             }
+
+        IsRematch state ->
+            { model | isRematch = state }
