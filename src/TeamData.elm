@@ -82,7 +82,7 @@ init matches =
 
 currentInit : Model -> Model
 currentInit model =
-    Model model.scouterName (String.fromInt <| 1 + (Maybe.withDefault 0 <| String.toInt model.matchNumber)) model.station model.team model.matches model.teamEdit model.isRematch
+    { model | matchNumber = String.fromInt <| 1 + (Maybe.withDefault 0 <| String.toInt model.matchNumber) }
 
 
 optionWithColor : String -> Input.OptionState -> Element.Element msg
