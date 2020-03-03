@@ -15,15 +15,6 @@ import Result.Extra exposing (merge)
 import String
 
 
-main : Program () Model Msg
-main =
-    Browser.sandbox
-        { init = init <| Array.fromList GetMatch.matches
-        , view = Element.layout [] << view
-        , update = update
-        }
-
-
 type Msg
     = ScouterInput String
     | MatchInput String
@@ -98,10 +89,10 @@ optionWithColor station option =
         (text station)
 
 
-checkBox : Bool -> String -> Element.Element Msg
-checkBox model label =
+checkBox : Bool -> (Bool -> Msg) -> String -> Element.Element Msg
+checkBox model msg label =
     checkbox [ Font.size 30 ]
-        { onChange = TeamEdit
+        { onChange = msg
         , icon = Input.defaultCheckbox
         , checked = model
         , label = Input.labelRight [ Font.size 30 ] <| text label
@@ -153,7 +144,7 @@ view model =
                 , inputOption GetMatch.Red GetMatch.Three "Red 3"
                 ]
             }
-        , column [ spacing 40 ]
+        , column [ spacing 30 ]
             [ textInput model.matchNumber MatchInput "Match number"
             , if model.teamEdit then
                 textInput teamString TeamInput "edit team here"
@@ -180,9 +171,9 @@ view model =
                         ]
                     ]
             , row [ width fill ]
-                [ checkBox model.teamEdit "edit team number"
+                [ checkBox model.teamEdit TeamEdit "edit team number"
                 , el [ width fill ] <| text ""
-                , checkBox model.isRematch "is this a rematch?"
+                , checkBox model.isRematch IsRematch "is this a rematch?"
                 ]
             ]
         ]
