@@ -14,7 +14,7 @@ import File.Download as Download
 import GetMatch
 import Html.Attributes exposing (style)
 import Result.Extra exposing (merge)
-import TeamData
+import TeamData exposing (currentInit)
 import Teleop
 
 
@@ -279,7 +279,16 @@ update msg model =
             ( model, Cmd.none )
 
         ClearPages ->
-            ( model, Cmd.none )
+            ( { model
+                | autonomousData = Autonomous.init <| Array.fromList GetMatch.matches
+                , teleopData = Teleop.init
+                , climbingData = Climbing.init
+                , pages = TeamDataPage
+                , askForClear = False
+                , teamData = currentInit model.teamData
+              }
+            , Cmd.none
+            )
 
 
 teamDataToString : Model -> String
