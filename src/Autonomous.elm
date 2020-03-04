@@ -141,15 +141,7 @@ view model =
                 { onChange = BallsAmount
                 , selected = Just model.ballsAmount
                 , label =
-                    Input.labelAbove
-                        [ Font.size 70
-                        , Element.paddingXY 0 50
-                        , spacing 20
-                        , Font.underline
-                        , centerX
-                        ]
-                    <|
-                        text "started with:"
+                    Input.labelHidden ""
                 , options =
                     [ Input.optionWith NoBalls (forOptionWith "0\nballs")
                     , Input.optionWith OneBall (forOptionWith "1\nball")

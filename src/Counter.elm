@@ -1,6 +1,5 @@
 module Counter exposing (Model, Msg, init, update, view)
 
-import Colors
 import Element exposing (alignLeft, alignRight, el, padding, row, spacing, text)
 import Element.Background exposing (color)
 import Element.Font as Font exposing (size)

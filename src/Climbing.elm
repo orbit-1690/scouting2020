@@ -166,7 +166,7 @@ createButton msg title src =
 
 decoration : List (Element.Attribute Msg)
 decoration =
-    [ spacing 85, Font.size 60 ]
+    [ spacing 73, Font.size 60 ]
 
 
 view : Model -> Element.Element Msg
