@@ -3,7 +3,7 @@ module Autonomous exposing (Model, Msg, getter, init, update, view)
 import Array
 import Colors exposing (black, blue, purple, sky, white)
 import Counter
-import Element exposing (centerX, centerY, column, el, fill, height, htmlAttribute, image, padding, spacing, text, width)
+import Element exposing (centerX, centerY, column, el, fill, height, htmlAttribute, image, maximum, padding, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (bold, center)
@@ -163,10 +163,10 @@ view model =
                 , heightPercent 65
                 , width fill
                 ]
-                [ Element.map LevelThree <| Counter.view "third Level:" model.levelThree
-                , Element.map LevelTwo <| Counter.view "second Level:" model.levelTwo
-                , Element.map Missed <| Counter.view "missed:" model.missed
-                , Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
+                [ Element.map LevelThree <| Counter.view (text "third Level:") model.levelThree
+                , Element.map LevelTwo <| Counter.view (text "second Level:") model.levelTwo
+                , Element.map Missed <| Counter.view (text "missed:") model.missed
+                , Element.map LowLevel <| Counter.view (text "low Level:") model.lowlevel
                 ]
             , text "Collected from:"
                 |> el
@@ -179,9 +179,9 @@ view model =
                 , heightPercent 65
                 , width fill
                 ]
-                [ Element.map TrenchCollection <| Counter.view "their trench:" model.trenchCollection
-                , Element.map EnemyTrenchCollection <| Counter.view "enemy's trench:" model.enemyTrenchCollection
-                , Element.map RendezvousCollection <| Counter.view "rendezvous:" model.rendezvousCollection
+                [ Element.map TrenchCollection <| Counter.view (text "their trench:") model.trenchCollection
+                , Element.map EnemyTrenchCollection <| Counter.view (text "enemy's trench:") model.enemyTrenchCollection
+                , Element.map RendezvousCollection <| Counter.view (image [ height <| maximum 200 fill ] { src = "https://i.imgur.com/yvjl4Dt.png", description = "" }) model.rendezvousCollection
                 ]
             ]
         ]

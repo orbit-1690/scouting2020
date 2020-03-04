@@ -120,12 +120,12 @@ view model =
             [ Element.map
                 LevelThree
               <|
-                Counter.view "third Level:" model.levelThree
-            , Element.map LevelTwo <| Counter.view "second Level:" model.levelTwo
+                Counter.view (text "third Level:") model.levelThree
+            , Element.map LevelTwo <| Counter.view (text "second Level:") model.levelTwo
             , Element.map Missed <|
-                Counter.view "missed:"
+                Counter.view (text "missed:")
                     model.missed
-            , Element.map LowLevel <| Counter.view "low Level:" model.lowlevel
+            , Element.map LowLevel <| Counter.view (text "low Level:") model.lowlevel
             ]
         , column [ centerX, spacing 120 ]
             [ createButton SpunRoulette "spun cycles 3-5?" <| buttonState model.spunRoulette
