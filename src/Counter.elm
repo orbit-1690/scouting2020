@@ -1,8 +1,7 @@
 module Counter exposing (Model, Msg, init, update, view)
 
-import Element exposing (alignLeft, alignRight, el, padding, row, spacing, text)
-import Element.Background exposing (color)
-import Element.Font as Font exposing (size)
+import Element exposing (alignRight, centerX, centerY, fill, px, row, spacing, text, width)
+import Element.Font exposing (center, size)
 import Element.Input exposing (button)
 
 
@@ -32,12 +31,20 @@ update msg model =
 
 view : String -> Model -> Element.Element Msg
 view title model =
+    let
+        buttonElements : List (Element.Attribute Msg)
+        buttonElements =
+            [ size 110
+            , width <| px 100
+            , center
+            ]
+    in
     row
-        [ Element.width Element.fill ]
+        [ width fill ]
         [ text title
-        , row [ spacing 40, alignRight ]
-            [ button [ size 110 ] { onPress = Just Minus, label = text "-" }
+        , row [ spacing 10, alignRight ]
+            [ button buttonElements { onPress = Just Minus, label = Element.el [ centerX, centerY, Element.moveUp 9.8 ] <| text "-" }
             , text <| String.fromInt model
-            , button [ size 110 ] { onPress = Just Plus, label = text "+" }
+            , button buttonElements { onPress = Just Plus, label = text "+" }
             ]
         ]

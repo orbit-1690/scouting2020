@@ -3,7 +3,7 @@ module TeamData exposing (Model, Msg, getMatch, getTeam, getter, init, stationTo
 import Array exposing (Array)
 import Browser
 import Colors exposing (black, blue, orange, sky, white)
-import Element exposing (centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, minimum, padding, spacing, text, width)
+import Element exposing (centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, minimum, padding, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border exposing (rounded)
 import Element.Font as Font exposing (center)
@@ -15,21 +15,13 @@ import Result.Extra exposing (merge)
 import String
 
 
-main : Program () Model Msg
-main =
-    Browser.sandbox
-        { init = init <| Array.fromList GetMatch.matches
-        , view = Element.layout [] << view
-        , update = update
-        }
-
-
 type Msg
     = ScouterInput String
     | MatchInput String
     | Station TeamStation
     | TeamEdit Bool
     | TeamInput String
+    | IsRematch Bool
 
 
 type alias Model =
@@ -39,6 +31,7 @@ type alias Model =
     , team : Result String Int
     , matches : Array Match
     , teamEdit : Bool
+    , isRematch : Bool
     }
 
 
@@ -54,6 +47,14 @@ findColorOption alliance =
 getter : Model -> List String
 getter model =
     [ "match" ++ "," ++ model.matchNumber
+    , "isRematch"
+        ++ ","
+        ++ (if model.isRematch then
+                "1"
+
+            else
+                "0"
+           )
     , "station" ++ "," ++ stationToString model.station
     , "team"
         ++ ","
@@ -67,7 +68,7 @@ getter model =
 
 init : Array Match -> Model
 init matches =
-    Model "" "" Nothing (Err "Fill in the fields") matches False
+    Model "" "" Nothing (Err "Fill in the fields") matches False False
 
 
 optionWithColor : String -> Input.OptionState -> Element.Element msg
@@ -88,13 +89,13 @@ optionWithColor station option =
         (text station)
 
 
-checkBox : Bool -> Element.Element Msg
-checkBox model =
+checkBox : Bool -> (Bool -> Msg) -> String -> Element.Element Msg
+checkBox model msg label =
     checkbox [ Font.size 30 ]
-        { onChange = TeamEdit
+        { onChange = msg
         , icon = Input.defaultCheckbox
         , checked = model
-        , label = Input.labelRight [ Font.size 30 ] <| text "edit team number"
+        , label = Input.labelRight [ Font.size 30 ] <| text label
         }
 
 
@@ -143,7 +144,7 @@ view model =
                 , inputOption GetMatch.Red GetMatch.Three "Red 3"
                 ]
             }
-        , column [ spacing 40 ]
+        , column [ spacing 30 ]
             [ textInput model.matchNumber MatchInput "Match number"
             , if model.teamEdit then
                 textInput teamString TeamInput "edit team here"
@@ -169,7 +170,11 @@ view model =
                             }
                         ]
                     ]
-            , checkBox model.teamEdit
+            , row [ width fill ]
+                [ checkBox model.teamEdit TeamEdit "edit team number"
+                , el [ width fill ] <| text ""
+                , checkBox model.isRematch IsRematch "is this a rematch?"
+                ]
             ]
         ]
 
@@ -277,3 +282,6 @@ update msg model =
                             -- Will always return the ints
                             Ok << Maybe.withDefault 0 <| String.toInt stringOfInts
             }
+
+        IsRematch state ->
+            { model | isRematch = state }
