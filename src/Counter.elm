@@ -1,6 +1,6 @@
 module Counter exposing (Model, Msg, init, update, view)
 
-import Element exposing (alignRight, centerX, centerY, fill, px, row, spacing, text, width)
+import Element exposing (alignRight, centerX, centerY, fill, image, px, row, spacing, text, width)
 import Element.Font exposing (center, size)
 import Element.Input exposing (button)
 
@@ -29,7 +29,7 @@ update msg model =
             max 0 <| model - 1
 
 
-view : String -> Model -> Element.Element Msg
+view : Element.Element Msg -> Model -> Element.Element Msg
 view title model =
     let
         buttonElements : List (Element.Attribute Msg)
@@ -38,13 +38,19 @@ view title model =
             , width <| px 100
             , center
             ]
+
+        buttonImage : String -> Element.Element Msg
+        buttonImage src =
+            image
+                [ Element.height <| Element.maximum 90 fill ]
+                { src = src, description = "" }
     in
     row
         [ width fill ]
-        [ text title
+        [ title
         , row [ spacing 10, alignRight ]
-            [ button buttonElements { onPress = Just Minus, label = Element.el [ centerX, centerY, Element.moveUp 9.8 ] <| text "-" }
+            [ button buttonElements { onPress = Just Minus, label = buttonImage "https://i.imgur.com/0DaYRDU.png" }
             , text <| String.fromInt model
-            , button buttonElements { onPress = Just Plus, label = text "+" }
+            , button buttonElements { onPress = Just Plus, label = buttonImage "https://i.imgur.com/IRdXUrL.png" }
             ]
         ]
