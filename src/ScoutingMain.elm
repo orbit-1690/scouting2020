@@ -14,7 +14,7 @@ import File.Download as Download
 import GetMatch
 import Html.Attributes exposing (style)
 import Result.Extra exposing (merge)
-import TeamData exposing (currentInit)
+import TeamData exposing (currentMatch)
 import Teleop
 
 
@@ -90,7 +90,7 @@ findColor alliance =
 
 
 stylishPage : PagePosition -> Bool -> Element.Element Msg
-stylishPage position clearButton =
+stylishPage position isClearButtonPressed =
     let
         createButtons : Msg -> Element.Element Msg -> Msg -> Element.Element Msg -> Element.Element Msg
         createButtons firstMsg firstLabelMsg secondMsg secondLabelMsg =
@@ -157,7 +157,7 @@ stylishPage position clearButton =
 
         SubmitPosPage ->
             column [ width fill ]
-                [ if clearButton then
+                [ if isClearButtonPressed then
                     button [ Font.size 90, Font.glow blue 5, centerX ] { onPress = Just ClearPages, label = text "Clear" }
 
                   else
@@ -285,7 +285,7 @@ update msg model =
                 , climbingData = Climbing.init
                 , pages = TeamDataPage
                 , askForClear = False
-                , teamData = currentInit model.teamData
+                , teamData = currentMatch model.teamData
               }
             , Cmd.none
             )
