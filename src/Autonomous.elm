@@ -179,8 +179,8 @@ view model =
                 , heightPercent 65
                 , width fill
                 ]
-                [ Element.map TrenchCollection <| Counter.view (text "their trench:") model.trenchCollection
-                , Element.map EnemyTrenchCollection <| Counter.view (text "enemy's trench:") model.enemyTrenchCollection
+                [ Element.map TrenchCollection <| Counter.view (image [ height <| maximum 200 fill ] { src = "https://i.imgur.com/04kGJ8A.jpg", description = "" }) model.trenchCollection
+                , Element.map EnemyTrenchCollection <| Counter.view (image [ height <| maximum 200 fill, Background.color blue ] { src = "https://i.imgur.com/5BxqoZK.jpg", description = "" }) model.enemyTrenchCollection
                 , Element.map RendezvousCollection <| Counter.view (image [ height <| maximum 200 fill ] { src = "https://i.imgur.com/yvjl4Dt.png", description = "" }) model.rendezvousCollection
                 ]
             ]
