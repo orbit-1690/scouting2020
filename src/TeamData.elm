@@ -1,4 +1,4 @@
-module TeamData exposing (Model, Msg, getMatch, getTeam, getter, init, stationToString, update, view)
+module TeamData exposing (Model, Msg, currentMatch, getMatch, getTeam, getter, init, stationToString, update, view)
 
 import Array exposing (Array)
 import Browser
@@ -69,6 +69,11 @@ getter model =
 init : Array Match -> Model
 init matches =
     Model "" "" Nothing (Err "Fill in the fields") matches False False
+
+
+currentMatch : Model -> Model
+currentMatch model =
+    { model | matchNumber = String.fromInt <| 1 + (Maybe.withDefault 0 <| String.toInt model.matchNumber) }
 
 
 optionWithColor : String -> Input.OptionState -> Element.Element msg

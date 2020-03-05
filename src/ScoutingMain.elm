@@ -14,7 +14,7 @@ import File.Download as Download
 import GetMatch
 import Html.Attributes exposing (style)
 import Result.Extra exposing (merge)
-import TeamData
+import TeamData exposing (currentMatch)
 import Teleop
 
 
@@ -52,6 +52,7 @@ type Msg
     | TeleopDataMsg Teleop.Msg
     | ClimbingDataMsg Climbing.Msg
     | SubmitDataMsg Msg
+    | ClearPages
     | PrevPage
     | NextPage
     | Submit
@@ -72,6 +73,7 @@ type alias Model =
     , teleopData : Teleop.Model
     , climbingData : Climbing.Model
     , pages : Pages
+    , askForClear : Bool
     }
 
 
@@ -87,8 +89,8 @@ findColor alliance =
         ( purple, Colors.white )
 
 
-stylishPage : PagePosition -> Element.Element Msg
-stylishPage position =
+stylishPage : PagePosition -> Bool -> Element.Element Msg
+stylishPage position isClearButtonPressed =
     let
         createButtons : Msg -> Element.Element Msg -> Msg -> Element.Element Msg -> Element.Element Msg
         createButtons firstMsg firstLabelMsg secondMsg secondLabelMsg =
@@ -154,11 +156,18 @@ stylishPage position =
                 (imageLabel "Next Page" nextPageImage)
 
         SubmitPosPage ->
-            createButtons YesSubmit
-                (el [ Font.size 70, centerX ] (text "Yes"))
-                NoSubmit
-            <|
-                el [ Font.size 70, centerX ] (text "No")
+            column [ width fill ]
+                [ if isClearButtonPressed then
+                    button [ Font.size 90, Font.glow blue 5, centerX ] { onPress = Just ClearPages, label = text "Clear" }
+
+                  else
+                    Element.none
+                , createButtons YesSubmit
+                    (el [ Font.size 70, centerX ] (text "Yes"))
+                    NoSubmit
+                  <|
+                    el [ Font.size 70, centerX ] (text "No")
+                ]
     )
         |> el
             [ centerX
@@ -173,6 +182,7 @@ init =
     , teleopData = Teleop.init
     , climbingData = Climbing.init
     , pages = TeamDataPage
+    , askForClear = False
     }
 
 
@@ -257,16 +267,28 @@ update msg model =
             )
 
         YesSubmit ->
-            ( model, dumpModel model )
+            ( { model | askForClear = True }, dumpModel model )
 
         NoSubmit ->
-            ( { model | pages = ClimbingPage }, Cmd.none )
+            ( { model | pages = ClimbingPage, askForClear = False }, Cmd.none )
 
         Submit ->
             ( { model | pages = SubmitPage }, Cmd.none )
 
         SubmitDataMsg _ ->
             ( model, Cmd.none )
+
+        ClearPages ->
+            ( { model
+                | autonomousData = Autonomous.init <| Array.fromList GetMatch.matches
+                , teleopData = Teleop.init
+                , climbingData = Climbing.init
+                , pages = TeamDataPage
+                , askForClear = False
+                , teamData = currentMatch model.teamData
+              }
+            , Cmd.none
+            )
 
 
 teamDataToString : Model -> String
@@ -313,7 +335,7 @@ view model =
                             ]
                     ]
                 , el attr <| msg
-                , stylishPage pagePosition
+                , stylishPage pagePosition model.askForClear
                 ]
     in
     case model.pages of
