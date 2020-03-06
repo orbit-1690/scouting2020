@@ -1,6 +1,5 @@
 module Autonomous exposing (Model, Msg, getter, init, update, view)
 
-import Array
 import Colors exposing (black, blue, purple, sky, white)
 import Counter
 import Element exposing (centerX, centerY, column, el, fill, height, htmlAttribute, image, maximum, padding, spacing, text, width)
@@ -8,7 +7,6 @@ import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (bold, center)
 import Element.Input as Input exposing (button, radioRow)
-import GetMatch
 import Html.Attributes exposing (style)
 
 
@@ -179,7 +177,11 @@ view model =
                 ]
                 [ Element.map TrenchCollection <|
                     Counter.view
-                        (text "")
+                        (image [ width <| maximum 400 fill ]
+                            { src = "https://i.imgur.com/ArAyvjQ.jpg"
+                            , description = ""
+                            }
+                        )
                         model.trenchCollection
                 , Element.map RendezvousCollection <|
                     Counter.view
@@ -189,15 +191,23 @@ view model =
                         model.rendezvousCollection
                 , Element.map EnemyTrenchCollection <|
                     Counter.view
-                        (text "")
+                        (image
+                            [ width <|
+                                maximum 400 fill
+                            , Background.color blue
+                            ]
+                            { src = "https://i.imgur.com/TNqtMuT.jpg"
+                            , description = ""
+                            }
+                        )
                         model.enemyTrenchCollection
                 ]
             ]
         ]
 
 
-init : Array.Array GetMatch.Match -> Model
-init match =
+init : Model
+init =
     Model NoBalls False Counter.init Counter.init Counter.init Counter.init Counter.init Counter.init Counter.init
 
 
