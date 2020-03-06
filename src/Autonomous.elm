@@ -136,7 +136,6 @@ view model =
                 , heightPercent 65
                 , width fill
                 ]
-
                 [ Element.map BlueTrenchCollection <|
                     Counter.view
                         (image [ width <| maximum 400 fill ]
