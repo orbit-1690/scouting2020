@@ -1,4 +1,4 @@
-module Climbing exposing (Model, Msg, getter, init, update, view)
+module Climbing exposing (Model, Msg, init, update, view, Status(..))
 
 import Array
 import Colors exposing (black, blue, purple, sky, white)
@@ -31,40 +31,6 @@ type alias Model =
     , comment : String
     , localTeam : TeamData.Model
     }
-
-
-getter : Model -> String
-getter model =
-    let
-        boolToString : Bool -> String
-        boolToString bool =
-            if bool then
-                "1"
-
-            else
-                "0"
-
-        statusToString : Status -> String
-        statusToString status =
-            case status of
-                Hanged ->
-                    "Hanged"
-
-                Parked ->
-                    "Parked"
-
-                Loser ->
-                    "Loser"
-    in
-    String.join "\n"
-        [ "triedClimb" ++ "," ++ boolToString model.triedClimb
-        , "balanced?" ++ "," ++ boolToString model.balanced
-        , "final state" ++ "," ++ statusToString model.climbStatus
-        , "defended?" ++ "," ++ boolToString model.defended
-        , "was defended?" ++ "," ++ boolToString model.wasDefended
-        , "shut down?" ++ "," ++ boolToString model.shutDown
-        , "comments" ++ "," ++ "'" ++ model.comment ++ "'"
-        ]
 
 
 type Status

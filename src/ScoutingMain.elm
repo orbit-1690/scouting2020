@@ -1,9 +1,9 @@
 module ScoutingMain exposing (Model, Msg, init, update, view)
 
 import Array
-import Autonomous
+import Autonomous exposing (BallsInitAmount(..))
 import Browser
-import Climbing
+import Climbing exposing (Status(..))
 import Colors exposing (blue, purple, white)
 import Element exposing (centerX, centerY, column, el, fill, fillPortion, height, htmlAttribute, image, layout, padding, row, spacing, text, width)
 import Element.Background as Background
@@ -14,7 +14,7 @@ import File.Download as Download
 import GetMatch
 import Html.Attributes exposing (style)
 import Result.Extra exposing (merge)
-import TeamData exposing (currentMatch)
+import TeamData exposing (currentMatch, getTeam, stationToString)
 import Teleop
 
 
@@ -188,15 +188,137 @@ init =
 
 dumpModel : Model -> Cmd Msg
 dumpModel model =
+    let
+        teamDataGetter : List String
+        teamDataGetter =
+            [ "match" ++ "," ++ model.teamData.matchNumber
+            , "isRematch"
+                ++ ","
+                ++ (if model.teamData.isRematch then
+                        "1"
+
+                    else
+                        "0"
+                   )
+            , "station" ++ "," ++ stationToString model.teamData.station
+            , "team"
+                ++ ","
+                ++ (getTeam model.teamData
+                        |> Result.map String.fromInt
+                        |> merge
+                   )
+            , "scouterName" ++ "," ++ "'" ++ model.teamData.scouterName ++ "'"
+            ]
+
+        autonomousGetter : String
+        autonomousGetter =
+            let
+                boolToString : Bool -> String
+                boolToString bool =
+                    if bool then
+                        "1"
+
+                    else
+                        "0"
+
+                ballsAmountToString : BallsInitAmount -> String
+                ballsAmountToString ball =
+                    case ball of
+                        NoBalls ->
+                            "none"
+
+                        OneBall ->
+                            "1"
+
+                        TwoBalls ->
+                            "2"
+
+                        ThreeBalls ->
+                            "3"
+            in
+            String.join "\n"
+                [ "started with" ++ "," ++ ballsAmountToString model.autonomousData.ballsAmount
+                , "moved?" ++ "," ++ boolToString model.autonomousData.moved
+                , "level 1" ++ "," ++ String.fromInt model.autonomousData.lowlevel
+                , "level 2" ++ "," ++ String.fromInt model.autonomousData.levelTwo
+                , "level 3" ++ "," ++ String.fromInt model.autonomousData.levelThree
+                , "missed" ++ "," ++ String.fromInt model.autonomousData.missed
+                , if String.contains "Blue" <| TeamData.stationToString model.teamData.station then
+                    String.join "\n"
+                        [ "trenchCollection" ++ "," ++ String.fromInt model.autonomousData.blueTrenchCollection
+                        , "enemyTrenchCollection" ++ "," ++ String.fromInt model.autonomousData.redTrenchCollection
+                        ]
+
+                  else
+                    String.join "\n"
+                        [ "trenchCollection" ++ "," ++ String.fromInt model.autonomousData.redTrenchCollection
+                        , "enemyTrenchCollection" ++ "," ++ String.fromInt model.autonomousData.blueTrenchCollection
+                        ]
+                , "rendezvousCollection" ++ "," ++ String.fromInt model.autonomousData.rendezvousCollection
+                ]
+
+        teleopGetter : String
+        teleopGetter =
+            let
+                boolToString : Bool -> String
+                boolToString bool =
+                    if bool then
+                        "1"
+
+                    else
+                        "0"
+            in
+            String.join "\n"
+                [ "colorRoulette" ++ "," ++ boolToString model.teleopData.colorRoulette
+                , "spunRoulette?" ++ "," ++ boolToString model.teleopData.spunRoulette
+                , "level 1." ++ "," ++ String.fromInt model.teleopData.lowlevel
+                , "level 2." ++ "," ++ String.fromInt model.teleopData.levelTwo
+                , "level 3." ++ "," ++ String.fromInt model.teleopData.levelThree
+                , "missed." ++ "," ++ String.fromInt model.teleopData.missed
+                ]
+
+        climbingGetter : String
+        climbingGetter =
+            let
+                boolToString : Bool -> String
+                boolToString bool =
+                    if bool then
+                        "1"
+
+                    else
+                        "0"
+
+                statusToString : Status -> String
+                statusToString status =
+                    case status of
+                        Hanged ->
+                            "Hanged"
+
+                        Parked ->
+                            "Parked"
+
+                        Loser ->
+                            "Loser"
+            in
+            String.join "\n"
+                [ "triedClimb" ++ "," ++ boolToString model.climbingData.triedClimb
+                , "balanced?" ++ "," ++ boolToString model.climbingData.balanced
+                , "final state" ++ "," ++ statusToString model.climbingData.climbStatus
+                , "defended?" ++ "," ++ boolToString model.climbingData.defended
+                , "was defended?" ++ "," ++ boolToString model.climbingData.wasDefended
+                , "shut down?" ++ "," ++ boolToString model.climbingData.shutDown
+                , "comments" ++ "," ++ "'" ++ model.climbingData.comment ++ "'"
+                ]
+    in
     Download.string
-        (String.concat [ String.join "-" <| TeamData.getter model.teamData, ".csv" ])
+        (String.concat [ String.join "-" <| teamDataGetter, ".csv" ])
         "content/text"
     <|
         String.join "\n"
-            [ String.join "\n" <| TeamData.getter model.teamData
-            , Autonomous.getter model.autonomousData
-            , Teleop.getter model.teleopData
-            , Climbing.getter model.climbingData
+            [ String.join "\n" <| teamDataGetter
+            , autonomousGetter
+            , teleopGetter
+            , climbingGetter
             ]
 
 

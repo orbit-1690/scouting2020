@@ -1,4 +1,4 @@
-module Autonomous exposing (Model, Msg, getter, init, update, view)
+module Autonomous exposing (BallsInitAmount(..), Model, Msg, init, update, view)
 
 import Array
 import Colors exposing (black, blue, purple, sky, white)
@@ -19,8 +19,8 @@ type Msg
     | LevelTwo Counter.Msg
     | LevelThree Counter.Msg
     | Missed Counter.Msg
-    | TrenchCollection Counter.Msg
-    | EnemyTrenchCollection Counter.Msg
+    | RedTrenchCollection Counter.Msg
+    | BlueTrenchCollection Counter.Msg
     | RendezvousCollection Counter.Msg
     | BallsAmount BallsInitAmount
 
@@ -32,50 +32,11 @@ type alias Model =
     , levelTwo : Counter.Model
     , levelThree : Counter.Model
     , missed : Counter.Model
-    , trenchCollection : Counter.Model
-    , enemyTrenchCollection : Counter.Model
+    , redTrenchCollection : Counter.Model
+    , blueTrenchCollection : Counter.Model
     , rendezvousCollection : Counter.Model
     , teamData : TeamData.Model
     }
-
-
-getter : Model -> String
-getter model =
-    let
-        boolToString : Bool -> String
-        boolToString bool =
-            if bool then
-                "1"
-
-            else
-                "0"
-
-        ballsAmountToString : BallsInitAmount -> String
-        ballsAmountToString ball =
-            case ball of
-                NoBalls ->
-                    "none"
-
-                OneBall ->
-                    "1"
-
-                TwoBalls ->
-                    "2"
-
-                ThreeBalls ->
-                    "3"
-    in
-    String.join "\n"
-        [ "started with" ++ "," ++ ballsAmountToString model.ballsAmount
-        , "moved?" ++ "," ++ boolToString model.moved
-        , "level 1" ++ "," ++ String.fromInt model.lowlevel
-        , "level 2" ++ "," ++ String.fromInt model.levelTwo
-        , "level 3" ++ "," ++ String.fromInt model.levelThree
-        , "missed" ++ "," ++ String.fromInt model.missed
-        , "trenchCollection" ++ "," ++ String.fromInt model.trenchCollection
-        , "enemyTrenchCollection" ++ "," ++ String.fromInt model.enemyTrenchCollection
-        , "rendezvousCollection" ++ "," ++ String.fromInt model.rendezvousCollection
-        ]
 
 
 type BallsInitAmount
@@ -179,9 +140,34 @@ view model =
                 , heightPercent 65
                 , width fill
                 ]
-                [ Element.map TrenchCollection <| Counter.view (image [ height <| maximum 200 fill ] { src = "https://i.imgur.com/04kGJ8A.jpg", description = "" }) model.trenchCollection
-                , Element.map EnemyTrenchCollection <| Counter.view (image [ height <| maximum 200 fill, Background.color blue ] { src = "https://i.imgur.com/5BxqoZK.jpg", description = "" }) model.enemyTrenchCollection
-                , Element.map RendezvousCollection <| Counter.view (image [ height <| maximum 200 fill ] { src = "https://i.imgur.com/yvjl4Dt.png", description = "" }) model.rendezvousCollection
+                [ Element.map RedTrenchCollection <|
+                    Counter.view
+                        (image
+                            [ height <|
+                                maximum 200 fill
+                            ]
+                            { src = "https://i.imgur.com/04kGJ8A.jpg", description = "" }
+                        )
+                        model.redTrenchCollection
+                , Element.map BlueTrenchCollection <|
+                    Counter.view
+                        (image
+                            [ height <|
+                                maximum 200 fill
+                            , Background.color blue
+                            ]
+                            { src = "https://i.imgur.com/5BxqoZK.jpg", description = "" }
+                        )
+                        model.blueTrenchCollection
+                , Element.map RendezvousCollection <|
+                    Counter.view
+                        (image
+                            [ height <|
+                                maximum 200 fill
+                            ]
+                            { src = "https://i.imgur.com/yvjl4Dt.png", description = "" }
+                        )
+                        model.rendezvousCollection
                 ]
             ]
         ]
@@ -216,7 +202,7 @@ update msg model =
 
         maxCollected : Int
         maxCollected =
-            model.trenchCollection + model.enemyTrenchCollection + model.rendezvousCollection + ballsAmountToInt model.ballsAmount
+            model.redTrenchCollection + model.blueTrenchCollection + model.rendezvousCollection + ballsAmountToInt model.ballsAmount
 
         maxThrownOut : Int
         maxThrownOut =
@@ -238,8 +224,8 @@ update msg model =
         Missed count ->
             { model | missed = min (maxCollected - maxThrownOut + model.missed) <| counterUpdate count model.missed }
 
-        TrenchCollection count ->
-            { model | trenchCollection = max (maxThrownOut + model.trenchCollection - maxCollected) <| counterUpdate count model.trenchCollection }
+        RedTrenchCollection count ->
+            { model | redTrenchCollection = max (maxThrownOut + model.redTrenchCollection - maxCollected) <| counterUpdate count model.redTrenchCollection }
 
         BallsAmount ballsAmount ->
             if maxCollected - maxThrownOut < ballsAmountToInt model.ballsAmount - ballsAmountToInt ballsAmount then
@@ -248,8 +234,8 @@ update msg model =
             else
                 { model | ballsAmount = ballsAmount }
 
-        EnemyTrenchCollection count ->
-            { model | enemyTrenchCollection = max (maxThrownOut + model.enemyTrenchCollection - maxCollected) <| counterUpdate count model.enemyTrenchCollection }
+        BlueTrenchCollection count ->
+            { model | blueTrenchCollection = max (maxThrownOut + model.blueTrenchCollection - maxCollected) <| counterUpdate count model.blueTrenchCollection }
 
         RendezvousCollection count ->
             { model | rendezvousCollection = max (maxThrownOut + model.rendezvousCollection - maxCollected) <| counterUpdate count model.rendezvousCollection }
