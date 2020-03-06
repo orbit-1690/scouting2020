@@ -92,9 +92,17 @@ view model =
     let
         teamString : String
         teamString =
-            getTeam model
-                |> Result.map String.fromInt
-                |> merge
+            if model.isRematch && not (model.matchNumber == "") then
+                "R"
+                    ++ (getTeam model
+                            |> Result.map String.fromInt
+                            |> merge
+                       )
+
+            else
+                getTeam model
+                    |> Result.map String.fromInt
+                    |> merge
     in
     column
         [ Element.paddingXY 0 80
