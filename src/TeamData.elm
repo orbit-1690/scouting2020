@@ -238,6 +238,10 @@ numberToString chosenNumber =
 
 stationToString : Maybe TeamStation -> String
 stationToString alliance =
+    let
+        _ =
+            Debug.log "station: " <| unwrap "No station selected" (\( color, number ) -> String.join " " [ colorToString color, numberToString number ]) alliance
+    in
     unwrap "No station selected" (\( color, number ) -> String.join " " [ colorToString color, numberToString number ]) alliance
 
 
@@ -285,7 +289,7 @@ update msg model =
 
                         stringOfInts ->
                             -- Will always return the ints
-                            Ok << Maybe.withDefault 0 <| String.toInt stringOfInts
+                            Ok <| Maybe.withDefault 0 <| String.toInt stringOfInts
             }
 
         IsRematch state ->
