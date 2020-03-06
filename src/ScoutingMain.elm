@@ -246,7 +246,12 @@ update msg model =
 
                 verifier : Bool
                 verifier =
-                    (not <| List.member matchError [ Err "No such match", Err "Invalid match number" ])
+                    (if model.teamData.teamEdit then
+                        matchError /= Err "Invalid match number"
+
+                     else
+                        not <| List.member matchError [ Err "No such match", Err "Invalid match number" ]
+                    )
                         && stationError
                         /= Err "No station"
                         && (not << String.isEmpty << .scouterName << .teamData) model
