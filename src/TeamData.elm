@@ -187,7 +187,11 @@ view model =
 getTeam : Model -> Result String Int
 getTeam model =
     if model.teamEdit then
-        model.team
+        if model.station == Nothing then
+            Err "No station"
+
+        else
+            model.team
 
     else
         getMatch model
