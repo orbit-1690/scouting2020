@@ -263,7 +263,7 @@ update msg model =
 
                         stringOfInts ->
                             -- Will always return the ints
-                            Ok << Maybe.withDefault 0 <| String.toInt stringOfInts
+                            Ok <| Maybe.withDefault 0 <| String.toInt stringOfInts
             }
 
         IsRematch state ->

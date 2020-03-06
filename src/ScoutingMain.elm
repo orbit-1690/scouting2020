@@ -178,7 +178,7 @@ stylishPage position isClearButtonPressed =
 init : Model
 init =
     { teamData = TeamData.init <| Array.fromList GetMatch.matches
-    , autonomousData = Autonomous.init <| Array.fromList GetMatch.matches
+    , autonomousData = Autonomous.init
     , teleopData = Teleop.init
     , climbingData = Climbing.init
     , pages = TeamDataPage
@@ -402,7 +402,7 @@ update msg model =
 
         ClearPages ->
             ( { model
-                | autonomousData = Autonomous.init <| Array.fromList GetMatch.matches
+                | autonomousData = Autonomous.init
                 , teleopData = Teleop.init
                 , climbingData = Climbing.init
                 , pages = TeamDataPage

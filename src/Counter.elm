@@ -1,7 +1,7 @@
 module Counter exposing (Model, Msg, init, update, view)
 
 import Element exposing (alignRight, centerX, centerY, fill, image, px, row, spacing, text, width)
-import Element.Font exposing (center, size)
+import Element.Font as Font exposing (center, size)
 import Element.Input exposing (button)
 
 
@@ -48,7 +48,7 @@ view title model =
     row
         [ width fill ]
         [ title
-        , row [ spacing 10, alignRight ]
+        , row [ spacing 10, alignRight, Font.size 80 ]
             [ button buttonElements { onPress = Just Minus, label = buttonImage "https://i.imgur.com/0DaYRDU.png" }
             , text <| String.fromInt model
             , button buttonElements { onPress = Just Plus, label = buttonImage "https://i.imgur.com/IRdXUrL.png" }

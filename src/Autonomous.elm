@@ -1,6 +1,5 @@
 module Autonomous exposing (BallsInitAmount(..), Model, Msg, init, update, view)
 
-import Array
 import Colors exposing (black, blue, purple, sky, white)
 import Counter
 import Element exposing (centerX, centerY, column, el, fill, height, htmlAttribute, image, maximum, padding, spacing, text, width)
@@ -8,9 +7,7 @@ import Element.Background as Background
 import Element.Border as Border exposing (rounded, widthXY)
 import Element.Font as Font exposing (bold, center)
 import Element.Input as Input exposing (button, radioRow)
-import GetMatch
 import Html.Attributes exposing (style)
-import TeamData exposing (stationToString)
 
 
 type Msg
@@ -35,7 +32,6 @@ type alias Model =
     , redTrenchCollection : Counter.Model
     , blueTrenchCollection : Counter.Model
     , rendezvousCollection : Counter.Model
-    , teamData : TeamData.Model
     }
 
 
@@ -140,42 +136,41 @@ view model =
                 , heightPercent 65
                 , width fill
                 ]
-                [ Element.map RedTrenchCollection <|
+
+                [ Element.map BlueTrenchCollection <|
                     Counter.view
-                        (image
-                            [ height <|
-                                maximum 200 fill
-                            ]
-                            { src = "https://i.imgur.com/04kGJ8A.jpg", description = "" }
-                        )
-                        model.redTrenchCollection
-                , Element.map BlueTrenchCollection <|
-                    Counter.view
-                        (image
-                            [ height <|
-                                maximum 200 fill
-                            , Background.color blue
-                            ]
-                            { src = "https://i.imgur.com/5BxqoZK.jpg", description = "" }
+                        (image [ width <| maximum 400 fill ]
+                            { src = "https://i.imgur.com/ArAyvjQ.jpg"
+                            , description = ""
+                            }
                         )
                         model.blueTrenchCollection
                 , Element.map RendezvousCollection <|
                     Counter.view
-                        (image
-                            [ height <|
-                                maximum 200 fill
-                            ]
+                        (image [ height <| maximum 200 fill ]
                             { src = "https://i.imgur.com/yvjl4Dt.png", description = "" }
                         )
                         model.rendezvousCollection
+                , Element.map RedTrenchCollection <|
+                    Counter.view
+                        (image
+                            [ width <|
+                                maximum 400 fill
+                            , Background.color blue
+                            ]
+                            { src = "https://i.imgur.com/TNqtMuT.jpg"
+                            , description = ""
+                            }
+                        )
+                        model.redTrenchCollection
                 ]
             ]
         ]
 
 
-init : Array.Array GetMatch.Match -> Model
-init match =
-    Model NoBalls False Counter.init Counter.init Counter.init Counter.init Counter.init Counter.init Counter.init (TeamData.init match)
+init : Model
+init =
+    Model NoBalls False Counter.init Counter.init Counter.init Counter.init Counter.init Counter.init Counter.init
 
 
 update : Msg -> Model -> Model
