@@ -246,15 +246,14 @@ update msg model =
 
                 verifier : Bool
                 verifier =
-                    stationError
-                        /= Err "No station"
+                        isOk stationError
                         && (not << String.isEmpty << .scouterName << .teamData) model
                         || List.member model.teamData.scouterName [ "Itamar", "tom", "hadar", "shira" ]
                         && (if model.teamData.teamEdit then
                                 matchError /= Err "Invalid match number"
 
                             else
-                                not <| List.member matchError [ Err "No such match", Err "Invalid match number" ]
+                                isOk matchError
                            )
             in
             ( if model.pages == TeamDataPage && verifier then
