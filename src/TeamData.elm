@@ -1,4 +1,4 @@
-module TeamData exposing (Model, Msg, currentMatch, getMatch, getTeam, getter, init, stationToString, update, view)
+module TeamData exposing (Model, Msg, currentMatch, getMatch, getTeam, init, stationToString, update, view)
 
 import Array exposing (Array)
 import Browser
@@ -42,28 +42,6 @@ findColorOption alliance =
 
     else
         Colors.backgroundRed
-
-
-getter : Model -> List String
-getter model =
-    [ "match" ++ "," ++ model.matchNumber
-    , "isRematch"
-        ++ ","
-        ++ (if model.isRematch then
-                "1"
-
-            else
-                "0"
-           )
-    , "station" ++ "," ++ stationToString model.station
-    , "team"
-        ++ ","
-        ++ (getTeam model
-                |> Result.map String.fromInt
-                |> merge
-           )
-    , "scouterName" ++ "," ++ "'" ++ model.scouterName ++ "'"
-    ]
 
 
 init : Array Match -> Model
@@ -114,9 +92,17 @@ view model =
     let
         teamString : String
         teamString =
-            getTeam model
-                |> Result.map String.fromInt
-                |> merge
+            if model.isRematch && not (model.matchNumber == "") then
+                "R"
+                    ++ (getTeam model
+                            |> Result.map String.fromInt
+                            |> merge
+                       )
+
+            else
+                getTeam model
+                    |> Result.map String.fromInt
+                    |> merge
     in
     column
         [ Element.paddingXY 0 80
