@@ -49,8 +49,8 @@ view title model =
         [ width fill ]
         [ title
         , row [ spacing 10, alignRight, Font.size 80 ]
-            [ button buttonElements { onPress = Just Minus, label = buttonImage "https://i.imgur.com/0DaYRDU.png" }
+            [ button buttonElements { onPress = Just Minus, label = buttonImage "https://i.imgur.com/gWiof6q.png" }
             , text <| String.fromInt model
-            , button buttonElements { onPress = Just Plus, label = buttonImage "https://i.imgur.com/IRdXUrL.png" }
+            , button buttonElements { onPress = Just Plus, label = buttonImage "https://i.imgur.com/BMg1XjN.png" }
             ]
         ]
