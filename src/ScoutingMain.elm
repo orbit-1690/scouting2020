@@ -16,7 +16,7 @@ import Html.Attributes exposing (style)
 import Result.Extra exposing (merge)
 import TeamData exposing (currentMatch)
 import Teleop
-
+import Result.Extra exposing (isOk)
 
 main : Program () Model Msg
 main =
@@ -26,11 +26,6 @@ main =
         , update = update
         , subscriptions = always Sub.none
         }
-
-
-widthPercent : Int -> Element.Attribute Msg
-widthPercent percent =
-    htmlAttribute << style "width" <| String.fromInt percent ++ "%"
 
 
 heightPercent : Int -> Element.Attribute Msg
@@ -412,13 +407,3 @@ buttonStyle =
     , height fill
     , width fill
     ]
-
-
-fontExternal : Element.Attr () Msg
-fontExternal =
-    Font.family
-        [ Font.external
-            { name = "Open Sans"
-            , url = "https://fonts.googleapis.com/css?family=Open+Sans:400i&display=swap"
-            }
-        ]
