@@ -13,10 +13,10 @@ import Element.Input exposing (button)
 import File.Download as Download
 import GetMatch
 import Html.Attributes exposing (style)
-import Result.Extra exposing (merge)
+import Result.Extra exposing (isOk, merge)
 import TeamData exposing (currentMatch, getTeam, stationToString)
 import Teleop
-import Result.Extra exposing (isOk)
+
 
 main : Program () Model Msg
 main =
@@ -363,9 +363,9 @@ update msg model =
 
                 verifier : Bool
                 verifier =
-                        isOk stationError
+                    List.member model.teamData.scouterName [ "Itamar", "tom", "hadar", "shira" ]
+                        || isOk stationError
                         && (not << String.isEmpty << .scouterName << .teamData) model
-                        || List.member model.teamData.scouterName [ "Itamar", "tom", "hadar", "shira" ]
                         && (if model.teamData.teamEdit then
                                 matchError /= Err "Invalid match number"
 
