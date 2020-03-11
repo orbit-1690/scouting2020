@@ -106,7 +106,7 @@ view model =
     in
     column
         [ Element.paddingXY 0 80
-        , spacing 50
+        , spacing 43
         , height fill
         , centerX
         ]
@@ -119,7 +119,7 @@ view model =
         , radio
             [ Font.size 75
             , height fill
-            , spacing 45
+            , spacing 38
             , centerX
             , width fill
             ]
@@ -173,7 +173,11 @@ view model =
 getTeam : Model -> Result String Int
 getTeam model =
     if model.teamEdit then
-        model.team
+        if model.station == Nothing then
+            Err "No station"
+
+        else
+            model.team
 
     else
         getMatch model

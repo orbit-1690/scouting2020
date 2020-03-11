@@ -91,8 +91,7 @@ view model =
         ]
         [ el [ centerX ] <|
             radioRow
-                [ padding 10
-                , spacing 80
+                [ spacing 80
                 , Font.size 60
                 ]
                 { onChange = BallsAmount
@@ -109,7 +108,7 @@ view model =
         , createButton
         , column
             [ Font.size 60
-            , spacing 50
+            , spacing 31
             , Element.paddingXY 100 0
             , fontExternal
             , width fill
@@ -117,13 +116,37 @@ view model =
             ]
             [ column
                 [ spacing 30
-                , heightPercent 65
+                , heightPercent 79
                 , width fill
                 ]
-                [ Element.map LevelThree <| Counter.view (text "third Level:") model.levelThree
-                , Element.map LevelTwo <| Counter.view (text "second Level:") model.levelTwo
+                [ Element.map LevelThree <|
+                    Counter.view
+                        (image
+                            [ width <| maximum 100 fill
+                            , Element.moveRight 50
+                            ]
+                            { src = "https://i.imgur.com/CASJ22Q.png"
+                            , description = ""
+                            }
+                        )
+                        model.levelThree
+                , Element.map LevelTwo <|
+                    Counter.view
+                        (image [ width <| maximum 200 fill ]
+                            { src = "https://i.imgur.com/xzlggya.png"
+                            , description = ""
+                            }
+                        )
+                        model.levelTwo
+                , Element.map LowLevel <|
+                    Counter.view
+                        (image [ width <| maximum 200 fill ]
+                            { src = "https://i.imgur.com/dJTmIok.png"
+                            , description = ""
+                            }
+                        )
+                        model.lowlevel
                 , Element.map Missed <| Counter.view (text "missed:") model.missed
-                , Element.map LowLevel <| Counter.view (text "low Level:") model.lowlevel
                 ]
             , text "Collected from:"
                 |> el
@@ -138,7 +161,7 @@ view model =
                 ]
                 [ Element.map BlueTrenchCollection <|
                     Counter.view
-                        (image [ width <| maximum 400 fill ]
+                        (image [ width <| maximum 300 fill ]
                             { src = "https://i.imgur.com/ArAyvjQ.jpg"
                             , description = ""
                             }
@@ -146,7 +169,7 @@ view model =
                         model.blueTrenchCollection
                 , Element.map RendezvousCollection <|
                     Counter.view
-                        (image [ height <| maximum 200 fill ]
+                        (image [ height <| maximum 180 fill ]
                             { src = "https://i.imgur.com/yvjl4Dt.png", description = "" }
                         )
                         model.rendezvousCollection
@@ -154,7 +177,7 @@ view model =
                     Counter.view
                         (image
                             [ width <|
-                                maximum 400 fill
+                                maximum 300 fill
                             , Background.color blue
                             ]
                             { src = "https://i.imgur.com/TNqtMuT.jpg"

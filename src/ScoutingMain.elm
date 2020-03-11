@@ -13,7 +13,7 @@ import Element.Input exposing (button)
 import File.Download as Download
 import GetMatch
 import Html.Attributes exposing (style)
-import Result.Extra exposing (merge)
+import Result.Extra exposing (isOk, merge)
 import TeamData exposing (currentMatch, getTeam, stationToString)
 import Teleop
 
@@ -26,11 +26,6 @@ main =
         , update = update
         , subscriptions = always Sub.none
         }
-
-
-widthPercent : Int -> Element.Attribute Msg
-widthPercent percent =
-    htmlAttribute << style "width" <| String.fromInt percent ++ "%"
 
 
 heightPercent : Int -> Element.Attribute Msg
@@ -368,11 +363,15 @@ update msg model =
 
                 verifier : Bool
                 verifier =
-                    (not <| List.member matchError [ Err "No such match", Err "Invalid match number" ])
-                        && stationError
-                        /= Err "No station"
+                    List.member model.teamData.scouterName [ "Itamar", "tom", "hadar", "shira" ]
+                        || isOk stationError
                         && (not << String.isEmpty << .scouterName << .teamData) model
-                        || List.member model.teamData.scouterName [ "Itamar", "tom", "hadar", "shira" ]
+                        && (if model.teamData.teamEdit then
+                                matchError /= Err "Invalid match number"
+
+                            else
+                                isOk matchError
+                           )
             in
             ( if model.pages == TeamDataPage && verifier then
                 { model | pages = AutonomousPage }
@@ -539,13 +538,3 @@ buttonStyle =
     , height fill
     , width fill
     ]
-
-
-fontExternal : Element.Attr () Msg
-fontExternal =
-    Font.family
-        [ Font.external
-            { name = "Open Sans"
-            , url = "https://fonts.googleapis.com/css?family=Open+Sans:400i&display=swap"
-            }
-        ]
