@@ -225,7 +225,7 @@ dumpModel model =
                 ballsAmountToString ball =
                     case ball of
                         NoBalls ->
-                            "none"
+                            "0"
 
                         OneBall ->
                             "1"
