@@ -243,17 +243,21 @@ dumpModel model =
                 , "level 2" ++ "," ++ String.fromInt model.autonomousData.levelTwo
                 , "level 3" ++ "," ++ String.fromInt model.autonomousData.levelThree
                 , "missed" ++ "," ++ String.fromInt model.autonomousData.missed
-                , if String.contains "Blue" <| TeamData.stationToString model.teamData.station then
-                    String.join "\n"
-                        [ "trenchCollection" ++ "," ++ String.fromInt model.autonomousData.blueTrenchCollection
-                        , "enemyTrenchCollection" ++ "," ++ String.fromInt model.autonomousData.redTrenchCollection
-                        ]
+                , case model.teamData.station of
+                    Just ( GetMatch.Blue, _ ) ->
+                        String.join "\n"
+                            [ "trenchCollection" ++ "," ++ String.fromInt model.autonomousData.blueTrenchCollection
+                            , "enemyTrenchCollection" ++ "," ++ String.fromInt model.autonomousData.redTrenchCollection
+                            ]
 
-                  else
-                    String.join "\n"
-                        [ "trenchCollection" ++ "," ++ String.fromInt model.autonomousData.redTrenchCollection
-                        , "enemyTrenchCollection" ++ "," ++ String.fromInt model.autonomousData.blueTrenchCollection
-                        ]
+                    Just ( GetMatch.Red, _ ) ->
+                        String.join "\n"
+                            [ "trenchCollection" ++ "," ++ String.fromInt model.autonomousData.redTrenchCollection
+                            , "enemyTrenchCollection" ++ "," ++ String.fromInt model.autonomousData.blueTrenchCollection
+                            ]
+
+                    Nothing ->
+                        ""
                 , "rendezvousCollection" ++ "," ++ String.fromInt model.autonomousData.rendezvousCollection
                 ]
 
