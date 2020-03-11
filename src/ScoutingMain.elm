@@ -415,19 +415,16 @@ update msg model =
 
 teamDataToString : Model -> String
 teamDataToString model =
-    if model.teamData.isRematch && not (model.teamData.matchNumber == "") then
-        "R"
-            ++ (model.teamData
-                    |> TeamData.getTeam
-                    |> Result.map String.fromInt
-                    |> merge
-               )
+    let
+        rematchPrefix : String
+        rematchPrefix =
+            if model.teamData.isRematch && model.teamData.matchNumber /= "" then
+                "R"
 
-    else
-        model.teamData
-            |> TeamData.getTeam
-            |> Result.map String.fromInt
-            |> merge
+            else
+                ""
+    in
+    rematchPrefix ++ (merge <| Result.map String.fromInt <| TeamData.getTeam model.teamData)
 
 
 view : Model -> Element.Element Msg
