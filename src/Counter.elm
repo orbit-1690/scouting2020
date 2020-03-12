@@ -32,25 +32,27 @@ update msg model =
 view : Element.Element Msg -> Model -> Element.Element Msg
 view title model =
     let
-        buttonElements : List (Element.Attribute Msg)
-        buttonElements =
-            [ size 110
-            , width <| px 100
-            , center
-            ]
-
-        buttonImage : String -> Element.Element Msg
-        buttonImage src =
-            image
-                [ Element.height <| Element.maximum 90 fill ]
-                { src = src, description = "" }
+        makeButton : Msg -> String -> Element.Element Msg
+        makeButton msg src =
+            button
+                [ size 110
+                , width <| px 100
+                , center
+                ]
+                { onPress = Just msg
+                , label =
+                    image [ Element.height <| Element.maximum 90 fill ]
+                        { src = src
+                        , description = ""
+                        }
+                }
     in
     row
         [ width fill ]
         [ title
         , row [ spacing 10, alignRight, Font.size 80 ]
-            [ button buttonElements { onPress = Just Minus, label = buttonImage "https://i.imgur.com/gWiof6q.png" }
+            [ makeButton Minus "https://i.imgur.com/0DaYRDU.png"
             , text <| String.fromInt model
-            , button buttonElements { onPress = Just Plus, label = buttonImage "https://i.imgur.com/BMg1XjN.png" }
+            , makeButton Plus "https://i.imgur.com/IRdXUrL.png"
             ]
         ]
