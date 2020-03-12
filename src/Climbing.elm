@@ -1,4 +1,4 @@
-module Climbing exposing (Model, Msg, init, update, view, Status(..))
+module Climbing exposing (Model, Msg, Status(..), init, update, view)
 
 import Array
 import Colors exposing (black, blue, purple, sky, white)
@@ -48,11 +48,7 @@ update : Msg -> Model -> Model
 update msg model =
     case msg of
         TriedClimb ->
-            if model.climbStatus == Hanged then
-                { model | triedClimb = True }
-
-            else
-                { model | triedClimb = not model.triedClimb }
+            { model | triedClimb = model.climbStatus == Hanged || not model.triedClimb }
 
         ClimbStatus status ->
             if model.balanced == True then

@@ -13,7 +13,7 @@ import Element.Input exposing (button)
 import File.Download as Download
 import GetMatch
 import Html.Attributes exposing (style)
-import Result.Extra exposing (merge)
+import Result.Extra exposing (isOk, merge)
 import TeamData exposing (currentMatch, getTeam, stationToString)
 import Teleop
 
@@ -26,11 +26,6 @@ main =
         , update = update
         , subscriptions = always Sub.none
         }
-
-
-widthPercent : Int -> Element.Attribute Msg
-widthPercent percent =
-    htmlAttribute << style "width" <| String.fromInt percent ++ "%"
 
 
 heightPercent : Int -> Element.Attribute Msg
@@ -225,7 +220,7 @@ dumpModel model =
                 ballsAmountToString ball =
                     case ball of
                         NoBalls ->
-                            "none"
+                            "0"
 
                         OneBall ->
                             "1"
@@ -243,17 +238,21 @@ dumpModel model =
                 , "level 2" ++ "," ++ String.fromInt model.autonomousData.levelTwo
                 , "level 3" ++ "," ++ String.fromInt model.autonomousData.levelThree
                 , "missed" ++ "," ++ String.fromInt model.autonomousData.missed
-                , if String.contains "Blue" <| TeamData.stationToString model.teamData.station then
-                    String.join "\n"
-                        [ "trenchCollection" ++ "," ++ String.fromInt model.autonomousData.blueTrenchCollection
-                        , "enemyTrenchCollection" ++ "," ++ String.fromInt model.autonomousData.redTrenchCollection
-                        ]
+                , case model.teamData.station of
+                    Just ( GetMatch.Blue, _ ) ->
+                        String.join "\n"
+                            [ "trenchCollection" ++ "," ++ String.fromInt model.autonomousData.blueTrenchCollection
+                            , "enemyTrenchCollection" ++ "," ++ String.fromInt model.autonomousData.redTrenchCollection
+                            ]
 
-                  else
-                    String.join "\n"
-                        [ "trenchCollection" ++ "," ++ String.fromInt model.autonomousData.redTrenchCollection
-                        , "enemyTrenchCollection" ++ "," ++ String.fromInt model.autonomousData.blueTrenchCollection
-                        ]
+                    Just ( GetMatch.Red, _ ) ->
+                        String.join "\n"
+                            [ "trenchCollection" ++ "," ++ String.fromInt model.autonomousData.redTrenchCollection
+                            , "enemyTrenchCollection" ++ "," ++ String.fromInt model.autonomousData.blueTrenchCollection
+                            ]
+
+                    Nothing ->
+                        ""
                 , "rendezvousCollection" ++ "," ++ String.fromInt model.autonomousData.rendezvousCollection
                 ]
 
@@ -368,11 +367,15 @@ update msg model =
 
                 verifier : Bool
                 verifier =
-                    (not <| List.member matchError [ Err "No such match", Err "Invalid match number" ])
-                        && stationError
-                        /= Err "No station"
+                    List.member model.teamData.scouterName [ "Itamar", "tom", "hadar", "shira" ]
+                        || isOk stationError
                         && (not << String.isEmpty << .scouterName << .teamData) model
-                        || List.member model.teamData.scouterName [ "Itamar", "tom", "hadar", "shira" ]
+                        && (if model.teamData.teamEdit then
+                                matchError /= Err "Invalid match number"
+
+                            else
+                                isOk matchError
+                           )
             in
             ( if model.pages == TeamDataPage && verifier then
                 { model | pages = AutonomousPage }
@@ -415,19 +418,16 @@ update msg model =
 
 teamDataToString : Model -> String
 teamDataToString model =
-    if model.teamData.isRematch && not (model.teamData.matchNumber == "") then
-        "R"
-            ++ (model.teamData
-                    |> TeamData.getTeam
-                    |> Result.map String.fromInt
-                    |> merge
-               )
+    let
+        rematchPrefix : String
+        rematchPrefix =
+            if model.teamData.isRematch && model.teamData.matchNumber /= "" then
+                "R"
 
-    else
-        model.teamData
-            |> TeamData.getTeam
-            |> Result.map String.fromInt
-            |> merge
+            else
+                ""
+    in
+    rematchPrefix ++ (merge <| Result.map String.fromInt <| TeamData.getTeam model.teamData)
 
 
 view : Model -> Element.Element Msg
@@ -539,13 +539,3 @@ buttonStyle =
     , height fill
     , width fill
     ]
-
-
-fontExternal : Element.Attr () Msg
-fontExternal =
-    Font.family
-        [ Font.external
-            { name = "Open Sans"
-            , url = "https://fonts.googleapis.com/css?family=Open+Sans:400i&display=swap"
-            }
-        ]
